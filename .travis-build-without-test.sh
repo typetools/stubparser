@@ -12,5 +12,6 @@ if [[ "$SLUGOWNER" == "" ]]; then
 fi
 
 ## Compile
-echo "running \"mvn package\" for stubparser
+echo "running \"mvn package\" for stubparser"
 mvn package -Dmaven.test.skip=true
+cp -i ./javaparser-core/target/javaparser-core-3.3.1-SNAPSHOT.jar stubparser.jar
