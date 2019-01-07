@@ -64,6 +64,20 @@ public class Utils {
         return string;
     }
 
+    public static <T extends Number> T assertNonNegative(T number) {
+        if (number.longValue() < 0) {
+            throw new AssertionError("A number was unexpectedly negative.");
+        }
+        return number;
+    }
+
+    public static <T extends Number> T assertPositive(T number) {
+        if (number.longValue() <= 0) {
+            throw new AssertionError("A number was unexpectedly non-positive.");
+        }
+        return number;
+    }
+
     /**
      * @return string with ASCII characters 10 and 13 replaced by the text "\n" and "\r".
      */
@@ -208,6 +222,20 @@ public class Utils {
         }
         if (value instanceof Collection) {
             if (((Collection) value).isEmpty()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static boolean valueIsNullOrEmptyStringOrOptional(Object value) {
+        if (value == null) {
+            return true;
+        }
+        if (value instanceof Optional) {
+            if (((Optional) value).isPresent()) {
+                value = ((Optional) value).get();
+            } else {
                 return true;
             }
         }

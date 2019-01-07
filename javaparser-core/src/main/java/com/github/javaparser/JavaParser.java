@@ -28,12 +28,16 @@ import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.PackageDeclaration;
 import com.github.javaparser.ast.body.BodyDeclaration;
 import com.github.javaparser.ast.body.Parameter;
+import com.github.javaparser.ast.body.TypeDeclaration;
 import com.github.javaparser.ast.expr.*;
+import com.github.javaparser.ast.modules.ModuleDeclaration;
+import com.github.javaparser.ast.modules.ModuleDirective;
 import com.github.javaparser.ast.stmt.BlockStmt;
 import com.github.javaparser.ast.stmt.ExplicitConstructorInvocationStmt;
 import com.github.javaparser.ast.stmt.Statement;
 import com.github.javaparser.ast.type.ClassOrInterfaceType;
 import com.github.javaparser.ast.type.Type;
+import com.github.javaparser.ast.type.TypeParameter;
 import com.github.javaparser.javadoc.Javadoc;
 
 import java.io.*;
@@ -122,6 +126,11 @@ public final class JavaParser {
     public <N extends Node> ParseResult<N> parse(ParseStart<N> start, Provider provider) {
         assertNotNull(start);
         assertNotNull(provider);
+
+        for (PreProcessor preProcessor : configuration.getPreProcessors()) {
+            provider = preProcessor.process(provider);
+        }
+
         final GeneratedJavaParser parser = getParserForProvider(provider);
         try {
             N resultNode = start.parse(parser);
@@ -660,7 +669,6 @@ public final class JavaParser {
         return simplifiedParse(PARAMETER, provider(parameter));
     }
 
-
     /**
      * Parses a package declaration and returns it as a PackageDeclaration.
      *
@@ -671,4 +679,52 @@ public final class JavaParser {
     public static PackageDeclaration parsePackageDeclaration(String packageDeclaration) {
         return simplifiedParse(PACKAGE_DECLARATION, provider(packageDeclaration));
     }
+
+    /**
+     * Parses a type declaration and returns it as a TypeDeclaration.
+     *
+     * @param typeDeclaration a declaration like "class X {}"
+     * @return the AST for the type declaration
+     * @throws ParseProblemException if the source code has parser errors
+     */
+    public static TypeDeclaration<?> parseTypeDeclaration(String typeDeclaration) {
+        return simplifiedParse(TYPE_DECLARATION, provider(typeDeclaration));
+    }
+
+    /**
+     * Parses a module declaration and returns it as a ModuleDeclaration.
+     *
+     * @param moduleDeclaration a declaration like "module X {}"
+     * @return the AST for the module declaration
+     * @throws ParseProblemException if the source code has parser errors
+     * @see ModuleDeclaration
+     */
+    public static ModuleDeclaration parseModuleDeclaration(String moduleDeclaration) {
+        return simplifiedParse(MODULE_DECLARATION, provider(moduleDeclaration));
+    }
+
+    /**
+     * Parses a module directive and returns it as a ModuleDirective.
+     *
+     * @param moduleDirective a directive like "opens C;"
+     * @return the AST for the module directive
+     * @throws ParseProblemException if the source code has parser errors
+     * @see ModuleDirective
+     */
+    public static ModuleDirective parseModuleDirective(String moduleDirective) {
+        return simplifiedParse(MODULE_DIRECTIVE, provider(moduleDirective));
+    }
+
+
+    /**
+     * Parses a type parameter and returns it as a TypeParameter
+     *
+     * @param typeParameter a parameter like "T extends Serializable"
+     * @return the AST for the type parameter
+     * @throws ParseProblemException if the source code has parser errors
+     */
+    public static TypeParameter parseTypeParameter(String typeParameter) {
+        return simplifiedParse(TYPE_PARAMETER, provider(typeParameter));
+    }
+
 }

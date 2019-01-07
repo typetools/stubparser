@@ -21,7 +21,6 @@
 package com.github.javaparser.ast.expr;
 
 import com.github.javaparser.ast.AllFieldsConstructor;
-import com.github.javaparser.ast.body.TypeDeclaration;
 import com.github.javaparser.ast.observer.ObservableProperty;
 import com.github.javaparser.ast.visitor.GenericVisitor;
 import com.github.javaparser.ast.visitor.VoidVisitor;
@@ -31,21 +30,24 @@ import com.github.javaparser.ast.visitor.CloneVisitor;
 import com.github.javaparser.metamodel.OptionalProperty;
 import com.github.javaparser.metamodel.ThisExprMetaModel;
 import com.github.javaparser.metamodel.JavaParserMetaModel;
-import javax.annotation.Generated;
 import com.github.javaparser.TokenRange;
 import com.github.javaparser.resolution.Resolvable;
-import com.github.javaparser.resolution.declarations.ResolvedConstructorDeclaration;
 import com.github.javaparser.resolution.declarations.ResolvedTypeDeclaration;
 import java.util.function.Consumer;
+import com.github.javaparser.ast.Generated;
 
 /**
- * An occurrence of the "this" keyword. <br/><code>World.this.greet()</code> is a MethodCallExpr of method name greet,
- * and scope "World.super" which is a ThisExpr with classExpr "World". <br/><code>this.name</code> is a
- * FieldAccessExpr of field greet, and a ThisExpr as its scope. The ThisExpr has no classExpr.
+ * An occurrence of the "this" keyword. <br/>
+ * <code>World.this.greet()</code> is a MethodCallExpr of method name greet,
+ * and scope "World.this" which is a ThisExpr with classExpr "World". <br/>
+ * <code>this.name</code> is a FieldAccessExpr of field greet, and a ThisExpr as its scope.
+ * This ThisExpr has no classExpr.
+ * <br>If classExpr is a single identifier (a.this) then it is of type NameExpr.
+ * If classExpr has multiple identifiers (a.b.c.this) then it is of type FieldAccessExpr.
  *
  * @author Julio Vilmar Gesser
  * @see com.github.javaparser.ast.stmt.ExplicitConstructorInvocationStmt
- * @see ThisExpr
+ * @see SuperExpr
  */
 public final class ThisExpr extends Expression implements Resolvable<ResolvedTypeDeclaration> {
 

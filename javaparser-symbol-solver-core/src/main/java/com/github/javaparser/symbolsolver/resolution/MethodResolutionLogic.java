@@ -20,23 +20,15 @@ import com.github.javaparser.resolution.MethodAmbiguityException;
 import com.github.javaparser.resolution.MethodUsage;
 import com.github.javaparser.resolution.declarations.*;
 import com.github.javaparser.resolution.types.*;
-import com.github.javaparser.symbolsolver.core.resolution.Context;
-import com.github.javaparser.symbolsolver.javaparsermodel.declarations.JavaParserAnonymousClassDeclaration;
-import com.github.javaparser.symbolsolver.javaparsermodel.declarations.JavaParserClassDeclaration;
-import com.github.javaparser.symbolsolver.javaparsermodel.declarations.JavaParserEnumDeclaration;
-import com.github.javaparser.symbolsolver.javaparsermodel.declarations.JavaParserInterfaceDeclaration;
-import com.github.javaparser.symbolsolver.javaparsermodel.declarations.JavaParserMethodDeclaration;
-import com.github.javaparser.symbolsolver.javassistmodel.JavassistClassDeclaration;
-import com.github.javaparser.symbolsolver.javassistmodel.JavassistEnumDeclaration;
-import com.github.javaparser.symbolsolver.javassistmodel.JavassistInterfaceDeclaration;
+import com.github.javaparser.symbolsolver.logic.MethodResolutionCapability;
 import com.github.javaparser.symbolsolver.model.resolution.SymbolReference;
 import com.github.javaparser.symbolsolver.model.resolution.TypeSolver;
-import com.github.javaparser.symbolsolver.model.typesystem.*;
-import com.github.javaparser.symbolsolver.reflectionmodel.ReflectionClassDeclaration;
-import com.github.javaparser.symbolsolver.reflectionmodel.ReflectionEnumDeclaration;
-import com.github.javaparser.symbolsolver.reflectionmodel.ReflectionInterfaceDeclaration;
+import com.github.javaparser.symbolsolver.model.typesystem.ReferenceTypeImpl;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 /**
@@ -93,7 +85,7 @@ public class MethodResolutionLogic {
                 } // else it is already assignable, nothing to do
             } else {
                 if (pos > argumentsTypes.size()) {
-                  return false;
+                    return false;
                 }
                 argumentsTypes = groupVariadicParamValues(argumentsTypes, pos, method.getLastParam().getType());
             }
@@ -186,7 +178,7 @@ public class MethodResolutionLogic {
 
             // In the case of nested parameterizations eg. List<R> <-> List<Integer>
             // we should peel off one layer and ensure R <-> Integer
-            if (expectedParam.isReferenceType() && actualParam.isReferenceType()){
+            if (expectedParam.isReferenceType() && actualParam.isReferenceType()) {
                 ResolvedReferenceType r1 = expectedParam.asReferenceType();
                 ResolvedReferenceType r2 = actualParam.asReferenceType();
 
@@ -236,7 +228,7 @@ public class MethodResolutionLogic {
     }
 
     public static ResolvedType replaceTypeParam(ResolvedType type, ResolvedTypeParameterDeclaration tp, TypeSolver typeSolver) {
-        if (type.isTypeVariable()) {
+        if (type.isTypeVariable() || type.isWildcard()) {
             if (type.describe().equals(tp.getName())) {
                 List<ResolvedTypeParameterDeclaration.Bound> bounds = tp.getBounds();
                 if (bounds.size() > 1) {
@@ -256,18 +248,6 @@ public class MethodResolutionLogic {
             ResolvedReferenceType result = type.asReferenceType();
             result = result.transformTypeParameters(typeParam -> replaceTypeParam(typeParam, tp, typeSolver)).asReferenceType();
             return result;
-        } else if (type.isWildcard()) {
-            if (type.describe().equals(tp.getName())) {
-                List<ResolvedTypeParameterDeclaration.Bound> bounds = tp.getBounds();
-                if (bounds.size() > 1) {
-                    throw new UnsupportedOperationException();
-                } else if (bounds.size() == 1) {
-                    return bounds.get(0).getType();
-                } else {
-                    return new ReferenceTypeImpl(typeSolver.solveType(Object.class.getCanonicalName()), typeSolver);
-                }
-            }
-            return type;
         } else {
             throw new UnsupportedOperationException("Replacing " + type + ", param " + tp + " with " + type.getClass().getCanonicalName());
         }
@@ -290,7 +270,7 @@ public class MethodResolutionLogic {
             List<ResolvedTypeParameterDeclaration> typeParameters = method.getDeclaration().getTypeParameters();
             typeParameters.addAll(method.declaringType().getTypeParameters());
 
-            if (expectedType.describe().equals(actualType.describe())){
+            if (expectedType.describe().equals(actualType.describe())) {
                 return true;
             }
 
@@ -304,7 +284,7 @@ public class MethodResolutionLogic {
                 inferTypes(argumentsTypes.get(j), parameterType, derivedValues);
             }
 
-            for (Map.Entry<ResolvedTypeParameterDeclaration, ResolvedType> entry : derivedValues.entrySet()){
+            for (Map.Entry<ResolvedTypeParameterDeclaration, ResolvedType> entry : derivedValues.entrySet()) {
                 ResolvedTypeParameterDeclaration tp = entry.getKey();
                 expectedTypeWithInference = expectedTypeWithInference.replaceTypeVariables(tp, entry.getValue());
             }
@@ -350,34 +330,24 @@ public class MethodResolutionLogic {
         }
         return true;
     }
-
-    private static List<ResolvedMethodDeclaration> getMethodsWithoutDuplicates(List<ResolvedMethodDeclaration> methods) {
-        Set<ResolvedMethodDeclaration> s = new TreeSet<>((m1, m2) -> {
-            if (m1 instanceof JavaParserMethodDeclaration && m2 instanceof JavaParserMethodDeclaration &&
-                    ((JavaParserMethodDeclaration) m1).getWrappedNode().equals(((JavaParserMethodDeclaration) m2).getWrappedNode())) {
-                return 0;
-            }
-            return 1;
-        });
-        s.addAll(methods);
-        List<ResolvedMethodDeclaration> res = new ArrayList<>();
-        Set<String> usedSignatures = new HashSet<>();
-        for (ResolvedMethodDeclaration md : methods) {
-            String signature = md.getQualifiedSignature();
-            if (!usedSignatures.contains(signature)) {
-                usedSignatures.add(signature);
-                res.add(md);
-            }
-        }
-        return res;
+    
+    /**
+     * Filters by given function {@param keyExtractor} using a stateful filter mechanism.
+     * 
+     * <pre>
+     *      persons.stream().filter(distinctByKey(Person::getName))
+     * </pre>
+     * 
+     * The example above would return a distinct list of persons containing only one person per name.
+     * 
+     */
+    private static <T> Predicate<T> distinctByKey(Function<? super T, ?> keyExtractor) {
+        Set<Object> seen = ConcurrentHashMap.newKeySet();
+        return t -> seen.add(keyExtractor.apply(t));
     }
 
     /**
-     * @param methods        we expect the methods to be ordered such that inherited methods are later in the list
-     * @param name
-     * @param argumentsTypes
-     * @param typeSolver
-     * @return
+     * @param methods we expect the methods to be ordered such that inherited methods are later in the list
      */
     public static SymbolReference<ResolvedMethodDeclaration> findMostApplicable(List<ResolvedMethodDeclaration> methods,
                                                                                 String name, List<ResolvedType> argumentsTypes, TypeSolver typeSolver) {
@@ -390,32 +360,43 @@ public class MethodResolutionLogic {
 
     public static SymbolReference<ResolvedMethodDeclaration> findMostApplicable(List<ResolvedMethodDeclaration> methods,
                                                                                 String name, List<ResolvedType> argumentsTypes, TypeSolver typeSolver, boolean wildcardTolerance) {
-        List<ResolvedMethodDeclaration> applicableMethods = getMethodsWithoutDuplicates(methods).stream().filter((m) -> isApplicable(m, name, argumentsTypes, typeSolver, wildcardTolerance)).collect(Collectors.toList());
+        
+        List<ResolvedMethodDeclaration> methodsWithMatchingName = methods.stream()
+                .filter(m -> m.getName().equals(name))
+                .collect(Collectors.toList());
+        
+        List<ResolvedMethodDeclaration> applicableMethods = methodsWithMatchingName.stream()
+                // Filters out duplicate ResolvedMethodDeclaration by their signature.
+                .filter(distinctByKey(ResolvedMethodDeclaration::getQualifiedSignature)) 
+                // Checks if ResolvedMethodDeclaration is applicable to argumentsTypes.
+                .filter((m) -> isApplicable(m, name, argumentsTypes, typeSolver, wildcardTolerance))
+                .collect(Collectors.toList());
+        
         if (applicableMethods.isEmpty()) {
             return SymbolReference.unsolved(ResolvedMethodDeclaration.class);
         }
 
         if (applicableMethods.size() > 1) {
-          List<Integer> nullParamIndexes = new ArrayList<>();
-          for (int i = 0; i < argumentsTypes.size(); i++) {
-            if (argumentsTypes.get(i).isNull()) {
-              nullParamIndexes.add(i);
-            }
-          }
-          if (!nullParamIndexes.isEmpty()) {
-            // remove method with array param if a non array exists and arg is null
-            Set<ResolvedMethodDeclaration> removeCandidates = new HashSet<>();
-            for (Integer nullParamIndex: nullParamIndexes) {
-              for (ResolvedMethodDeclaration methDecl: applicableMethods) {
-                if (methDecl.getParam(nullParamIndex.intValue()).getType().isArray()) {
-                  removeCandidates.add(methDecl);
+            List<Integer> nullParamIndexes = new ArrayList<>();
+            for (int i = 0; i < argumentsTypes.size(); i++) {
+                if (argumentsTypes.get(i).isNull()) {
+                    nullParamIndexes.add(i);
                 }
-              }
             }
-            if (!removeCandidates.isEmpty() && removeCandidates.size() < applicableMethods.size()) {
-              applicableMethods.removeAll(removeCandidates);
+            if (!nullParamIndexes.isEmpty()) {
+                // remove method with array param if a non array exists and arg is null
+                Set<ResolvedMethodDeclaration> removeCandidates = new HashSet<>();
+                for (Integer nullParamIndex : nullParamIndexes) {
+                    for (ResolvedMethodDeclaration methDecl : applicableMethods) {
+                        if (methDecl.getParam(nullParamIndex).getType().isArray()) {
+                            removeCandidates.add(methDecl);
+                        }
+                    }
+                }
+                if (!removeCandidates.isEmpty() && removeCandidates.size() < applicableMethods.size()) {
+                    applicableMethods.removeAll(removeCandidates);
+                }
             }
-          }
         }
         if (applicableMethods.size() == 1) {
             return SymbolReference.solved(applicableMethods.get(0));
@@ -425,9 +406,9 @@ public class MethodResolutionLogic {
             boolean possibleAmbiguity = false;
             for (int i = 1; i < applicableMethods.size(); i++) {
                 other = applicableMethods.get(i);
-                if (isMoreSpecific(winningCandidate, other, argumentsTypes, typeSolver)) {
+                if (isMoreSpecific(winningCandidate, other, argumentsTypes)) {
                     possibleAmbiguity = false;
-                } else if (isMoreSpecific(other, winningCandidate, argumentsTypes, typeSolver)) {
+                } else if (isMoreSpecific(other, winningCandidate, argumentsTypes)) {
                     possibleAmbiguity = false;
                     winningCandidate = other;
                 } else {
@@ -439,30 +420,30 @@ public class MethodResolutionLogic {
                 }
             }
             if (possibleAmbiguity) {
-              // pick the first exact match if it exists
-              if (!isExactMatch(winningCandidate, argumentsTypes)) {
-                if (isExactMatch(other, argumentsTypes)) {
-                  winningCandidate = other;
-                } else {
-                  throw new MethodAmbiguityException("Ambiguous method call: cannot find a most applicable method: " + winningCandidate + ", " + other);
+                // pick the first exact match if it exists
+                if (!isExactMatch(winningCandidate, argumentsTypes)) {
+                    if (isExactMatch(other, argumentsTypes)) {
+                        winningCandidate = other;
+                    } else {
+                        throw new MethodAmbiguityException("Ambiguous method call: cannot find a most applicable method: " + winningCandidate + ", " + other);
+                    }
                 }
-              }
             }
             return SymbolReference.solved(winningCandidate);
         }
     }
 
     protected static boolean isExactMatch(ResolvedMethodLikeDeclaration method, List<ResolvedType> argumentsTypes) {
-      for (int i = 0; i < method.getNumberOfParams(); i++) {
-        if (!method.getParam(i).getType().equals(argumentsTypes.get(i))) {
-          return false;
+        for (int i = 0; i < method.getNumberOfParams(); i++) {
+            if (!method.getParam(i).getType().equals(argumentsTypes.get(i))) {
+                return false;
+            }
         }
-      }
-      return true;
+        return true;
     }
 
     private static boolean isMoreSpecific(ResolvedMethodDeclaration methodA, ResolvedMethodDeclaration methodB,
-                                          List<ResolvedType> argumentTypes, TypeSolver typeSolver) {
+                                          List<ResolvedType> argumentTypes) {
         boolean oneMoreSpecificFound = false;
         if (methodA.getNumberOfParams() < methodB.getNumberOfParams()) {
             return true;
@@ -508,11 +489,10 @@ public class MethodResolutionLogic {
                 }
             }
         }
-
         return oneMoreSpecificFound;
     }
 
-    private static boolean isMoreSpecific(MethodUsage methodA, MethodUsage methodB, TypeSolver typeSolver) {
+    private static boolean isMoreSpecific(MethodUsage methodA, MethodUsage methodB) {
         boolean oneMoreSpecificFound = false;
         for (int i = 0; i < methodA.getNoParams(); i++) {
             ResolvedType tdA = methodA.getParamType(i);
@@ -545,9 +525,9 @@ public class MethodResolutionLogic {
             MethodUsage winningCandidate = applicableMethods.get(0);
             for (int i = 1; i < applicableMethods.size(); i++) {
                 MethodUsage other = applicableMethods.get(i);
-                if (isMoreSpecific(winningCandidate, other, typeSolver)) {
+                if (isMoreSpecific(winningCandidate, other)) {
                     // nothing to do
-                } else if (isMoreSpecific(other, winningCandidate, typeSolver)) {
+                } else if (isMoreSpecific(other, winningCandidate)) {
                     winningCandidate = other;
                 } else {
                     if (winningCandidate.declaringType().getQualifiedName().equals(other.declaringType().getQualifiedName())) {
@@ -580,65 +560,26 @@ public class MethodResolutionLogic {
     }
 
     public static SymbolReference<ResolvedMethodDeclaration> solveMethodInType(ResolvedTypeDeclaration typeDeclaration,
-                                                                               String name, List<ResolvedType> argumentsTypes, TypeSolver typeSolver) {
-        return solveMethodInType(typeDeclaration, name, argumentsTypes, false, typeSolver);
+                                                                               String name,
+                                                                               List<ResolvedType> argumentsTypes) {
+        return solveMethodInType(typeDeclaration, name, argumentsTypes, false);
     }
 
-        /**
-         * Replace TypeDeclaration.solveMethod
-         *
-         * @param typeDeclaration
-         * @param name
-         * @param argumentsTypes
-         * @param staticOnly
-         * @return
-         */
+    // TODO: Replace TypeDeclaration.solveMethod
     public static SymbolReference<ResolvedMethodDeclaration> solveMethodInType(ResolvedTypeDeclaration typeDeclaration,
-                                                                               String name, List<ResolvedType> argumentsTypes, boolean staticOnly,
-                                                                               TypeSolver typeSolver) {
-        if (typeDeclaration instanceof JavaParserClassDeclaration) {
-            Context ctx = ((JavaParserClassDeclaration) typeDeclaration).getContext();
-            return ctx.solveMethod(name, argumentsTypes, staticOnly, typeSolver);
+                                                                               String name,
+                                                                               List<ResolvedType> argumentsTypes,
+                                                                               boolean staticOnly) {
+
+        if (typeDeclaration instanceof MethodResolutionCapability) {
+            return ((MethodResolutionCapability) typeDeclaration).solveMethod(name, argumentsTypes,
+                                                                              staticOnly);
+        } else {
+            throw new UnsupportedOperationException(typeDeclaration.getClass().getCanonicalName());
         }
-        if (typeDeclaration instanceof JavaParserInterfaceDeclaration) {
-            Context ctx = ((JavaParserInterfaceDeclaration) typeDeclaration).getContext();
-            return ctx.solveMethod(name, argumentsTypes, staticOnly, typeSolver);
-        }
-        if (typeDeclaration instanceof JavaParserEnumDeclaration) {
-            if (name.equals("values") && argumentsTypes.isEmpty()) {
-                return SymbolReference.solved(new JavaParserEnumDeclaration.ValuesMethod((JavaParserEnumDeclaration) typeDeclaration, typeSolver));
-            }
-            Context ctx = ((JavaParserEnumDeclaration) typeDeclaration).getContext();
-            return ctx.solveMethod(name, argumentsTypes, staticOnly, typeSolver);
-        }
-        if (typeDeclaration instanceof JavaParserAnonymousClassDeclaration) {
-        	Context ctx = ((JavaParserAnonymousClassDeclaration) typeDeclaration).getContext();
-            return ctx.solveMethod(name, argumentsTypes, staticOnly, typeSolver);
-        }
-        if (typeDeclaration instanceof ReflectionClassDeclaration) {
-            return ((ReflectionClassDeclaration) typeDeclaration).solveMethod(name, argumentsTypes, staticOnly);
-        }
-        if (typeDeclaration instanceof ReflectionInterfaceDeclaration) {
-          return ((ReflectionInterfaceDeclaration) typeDeclaration).solveMethod(name, argumentsTypes, staticOnly);
-        }
-          if (typeDeclaration instanceof ReflectionEnumDeclaration) {
-            return ((ReflectionEnumDeclaration) typeDeclaration).solveMethod(name, argumentsTypes, staticOnly);
-        }
-        if (typeDeclaration instanceof JavassistInterfaceDeclaration) {
-            return ((JavassistInterfaceDeclaration) typeDeclaration).solveMethod(name, argumentsTypes, staticOnly);
-        }
-        if (typeDeclaration instanceof JavassistClassDeclaration) {
-          return ((JavassistClassDeclaration) typeDeclaration).solveMethod(name, argumentsTypes, staticOnly);
-        }
-          if (typeDeclaration instanceof JavassistEnumDeclaration) {
-            return ((JavassistEnumDeclaration) typeDeclaration).solveMethod(name, argumentsTypes, staticOnly);
-        }
-        throw new UnsupportedOperationException(typeDeclaration.getClass().getCanonicalName());
     }
 
     private static void inferTypes(ResolvedType source, ResolvedType target, Map<ResolvedTypeParameterDeclaration, ResolvedType> mappings) {
-
-
         if (source.equals(target)) {
             return;
         }
@@ -669,8 +610,8 @@ public class MethodResolutionLogic {
             return;
         }
 
-        if (source.isWildcard() && target.isReferenceType()){
-            if (source.asWildcard().isBounded()){
+        if (source.isWildcard() && target.isReferenceType()) {
+            if (source.asWildcard().isBounded()) {
                 inferTypes(source.asWildcard().getBoundedType(), target, mappings);
             }
             return;

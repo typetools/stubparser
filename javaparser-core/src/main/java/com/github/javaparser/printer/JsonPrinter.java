@@ -14,7 +14,11 @@ import static java.util.stream.Collectors.toList;
 
 /**
  * Outputs a JSON file containing the AST meant for inspecting it.
+ *
+ * @deprecated this class was mostly used for serialization purposes.
+ * Use JavaParserJsonSerializer in the javaparser-core-serialization module for that.
  */
+@Deprecated
 public class JsonPrinter {
     private final boolean outputNodeType;
 
@@ -37,7 +41,7 @@ public class JsonPrinter {
         final List<String> content = new ArrayList<>();
 
         if (outputNodeType) {
-            content.add(q("type") + ":" + q(metaModel.getTypeName()));
+            content.add(q("_type") + ":" + q(metaModel.getTypeName()));
         }
 
         for (PropertyMetaModel attributeMetaModel : attributes) {
@@ -69,6 +73,6 @@ public class JsonPrinter {
     }
 
     private static String q(String value) {
-        return "\"" + value.replace("\"", "\\\"") + "\"";
+        return "\"" + value.replace("\"", "\\\"").replace("\n", "\\n").replace("\r", "\\r") + "\"";
     }
 }

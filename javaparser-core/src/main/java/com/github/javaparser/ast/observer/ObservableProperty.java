@@ -22,12 +22,12 @@ package com.github.javaparser.ast.observer;
 
 import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.NodeList;
+import com.github.javaparser.ast.Generated;
 import com.github.javaparser.utils.Utils;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 import java.util.Optional;
 import java.util.Arrays;
-import javax.annotation.Generated;
 
 /**
  * Properties considered by the AstObserver
@@ -52,6 +52,7 @@ public enum ObservableProperty {
     CONTENT(Type.SINGLE_ATTRIBUTE),
     DEFAULT_VALUE(Type.SINGLE_REFERENCE),
     DIMENSION(Type.SINGLE_REFERENCE),
+    DIRECTIVES(Type.MULTIPLE_REFERENCE),
     ELEMENTS(Type.MULTIPLE_REFERENCE),
     ELEMENT_TYPE(Type.SINGLE_REFERENCE),
     ELSE_EXPR(Type.SINGLE_REFERENCE),
@@ -71,16 +72,16 @@ public enum ObservableProperty {
     INNER(Type.SINGLE_REFERENCE),
     INTERFACE(Type.SINGLE_ATTRIBUTE),
     ITERABLE(Type.SINGLE_REFERENCE),
+    KEYWORD(Type.SINGLE_ATTRIBUTE),
     LABEL(Type.SINGLE_REFERENCE),
     LEFT(Type.SINGLE_REFERENCE),
     LEVELS(Type.MULTIPLE_REFERENCE),
     MEMBERS(Type.MULTIPLE_REFERENCE),
     MEMBER_VALUE(Type.SINGLE_REFERENCE),
     MESSAGE(Type.SINGLE_REFERENCE),
-    MODIFIERS(Type.MULTIPLE_ATTRIBUTE),
+    MODIFIERS(Type.MULTIPLE_REFERENCE),
     MODULE(Type.SINGLE_REFERENCE),
     MODULE_NAMES(Type.MULTIPLE_REFERENCE),
-    MODULE_STMTS(Type.MULTIPLE_REFERENCE),
     NAME(Type.SINGLE_REFERENCE),
     OPEN(Type.SINGLE_ATTRIBUTE),
     OPERATOR(Type.SINGLE_ATTRIBUTE),
@@ -117,7 +118,7 @@ public enum ObservableProperty {
     VARIABLES(Type.MULTIPLE_REFERENCE),
     VAR_ARGS(Type.SINGLE_ATTRIBUTE),
     VAR_ARGS_ANNOTATIONS(Type.MULTIPLE_REFERENCE),
-    WITH_TYPES(Type.MULTIPLE_REFERENCE),
+    WITH(Type.MULTIPLE_REFERENCE),
     CASCADING_IF_STMT(Type.SINGLE_ATTRIBUTE, true),
     ELSE_BLOCK(Type.SINGLE_ATTRIBUTE, true),
     ELSE_BRANCH(Type.SINGLE_ATTRIBUTE, true),

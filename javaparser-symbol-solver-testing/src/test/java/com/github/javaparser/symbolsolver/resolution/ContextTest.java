@@ -16,40 +16,45 @@
 
 package com.github.javaparser.symbolsolver.resolution;
 
-import com.github.javaparser.JavaParser;
-import com.github.javaparser.ParseException;
+import com.github.javaparser.*;
 import com.github.javaparser.ast.CompilationUnit;
+import com.github.javaparser.ast.Node;
+import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
+import com.github.javaparser.ast.body.ConstructorDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.body.Parameter;
-import com.github.javaparser.ast.expr.AssignExpr;
-import com.github.javaparser.ast.expr.Expression;
-import com.github.javaparser.ast.expr.MethodCallExpr;
-import com.github.javaparser.ast.expr.NameExpr;
-import com.github.javaparser.ast.stmt.ExpressionStmt;
+import com.github.javaparser.ast.body.VariableDeclarator;
+import com.github.javaparser.ast.expr.*;
+import com.github.javaparser.ast.stmt.*;
 import com.github.javaparser.resolution.MethodUsage;
 import com.github.javaparser.resolution.declarations.ResolvedClassDeclaration;
 import com.github.javaparser.resolution.declarations.ResolvedReferenceTypeDeclaration;
 import com.github.javaparser.resolution.declarations.ResolvedTypeDeclaration;
 import com.github.javaparser.resolution.types.ResolvedType;
-import com.github.javaparser.symbolsolver.AbstractTest;
+import com.github.javaparser.symbolsolver.AbstractSymbolResolutionTest;
+import com.github.javaparser.symbolsolver.core.resolution.Context;
 import com.github.javaparser.symbolsolver.javaparser.Navigator;
 import com.github.javaparser.symbolsolver.javaparsermodel.JavaParserFacade;
+import com.github.javaparser.symbolsolver.javaparsermodel.JavaParserFactory;
 import com.github.javaparser.symbolsolver.model.resolution.SymbolReference;
 import com.github.javaparser.symbolsolver.model.resolution.TypeSolver;
 import com.github.javaparser.symbolsolver.reflectionmodel.ReflectionClassDeclaration;
 import com.github.javaparser.symbolsolver.resolution.typesolvers.*;
-import org.junit.Test;
+import com.github.javaparser.symbolsolver.utils.LeanParserConfiguration;
+import org.junit.jupiter.api.Test;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Path;
 import java.util.Collections;
+import java.util.List;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class ContextTest extends AbstractTest {
+class ContextTest extends AbstractSymbolResolutionTest {
 
     private TypeSolver typeSolver = new CombinedTypeSolver(new MemoryTypeSolver(), new ReflectionTypeSolver());
 
@@ -59,7 +64,7 @@ public class ContextTest extends AbstractTest {
     }
 
     @Test
-    public void resolveDeclaredFieldReference() {
+    void resolveDeclaredFieldReference() {
         CompilationUnit cu = parseSample("ReferencesToField");
         com.github.javaparser.ast.body.ClassOrInterfaceDeclaration referencesToField = Navigator.demandClass(cu, "ReferencesToField");
         MethodDeclaration method1 = Navigator.demandMethod(referencesToField, "method1");
@@ -75,7 +80,7 @@ public class ContextTest extends AbstractTest {
     }
 
     @Test
-    public void resolveInheritedFieldReference() {
+    void resolveInheritedFieldReference() {
         CompilationUnit cu = parseSample("ReferencesToField");
         com.github.javaparser.ast.body.ClassOrInterfaceDeclaration referencesToField = Navigator.demandClass(cu, "ReferencesToFieldExtendingClass");
         MethodDeclaration method1 = Navigator.demandMethod(referencesToField, "method2");
@@ -91,7 +96,7 @@ public class ContextTest extends AbstractTest {
     }
 
     @Test
-    public void resolveParameterReference() {
+    void resolveParameterReference() {
         CompilationUnit cu = parseSample("ReferencesToParameter");
         com.github.javaparser.ast.body.ClassOrInterfaceDeclaration referencesToField = Navigator.demandClass(cu, "ReferenceToParameter");
         MethodDeclaration method1 = Navigator.demandMethod(referencesToField, "aMethod");
@@ -106,7 +111,7 @@ public class ContextTest extends AbstractTest {
     }
 
     @Test
-    public void resolveReferenceToImportedType() {
+    void resolveReferenceToImportedType() {
         CompilationUnit cu = parseSample("Navigator");
         com.github.javaparser.ast.body.ClassOrInterfaceDeclaration referencesToField = Navigator.demandClass(cu, "Navigator");
         MethodDeclaration method = Navigator.demandMethod(referencesToField, "findType");
@@ -129,7 +134,7 @@ public class ContextTest extends AbstractTest {
     }
 
     @Test
-    public void resolveReferenceUsingQualifiedName() {
+    void resolveReferenceUsingQualifiedName() {
         CompilationUnit cu = parseSample("Navigator2");
         com.github.javaparser.ast.body.ClassOrInterfaceDeclaration referencesToField = Navigator.demandClass(cu, "Navigator");
         MethodDeclaration method = Navigator.demandMethod(referencesToField, "findType");
@@ -153,7 +158,7 @@ public class ContextTest extends AbstractTest {
     }
 
     @Test
-    public void resolveReferenceToClassesInTheSamePackage() {
+    void resolveReferenceToClassesInTheSamePackage() {
         CompilationUnit cu = parseSample("Navigator3");
         com.github.javaparser.ast.body.ClassOrInterfaceDeclaration referencesToField = Navigator.demandClass(cu, "Navigator");
         MethodDeclaration method = Navigator.demandMethod(referencesToField, "findType");
@@ -176,7 +181,7 @@ public class ContextTest extends AbstractTest {
     }
 
     @Test
-    public void resolveReferenceToClassInJavaLang() {
+    void resolveReferenceToClassInJavaLang() {
         CompilationUnit cu = parseSample("Navigator");
         com.github.javaparser.ast.body.ClassOrInterfaceDeclaration referencesToField = Navigator.demandClass(cu, "Navigator");
         MethodDeclaration method = Navigator.demandMethod(referencesToField, "findType");
@@ -200,13 +205,13 @@ public class ContextTest extends AbstractTest {
     }
 
     @Test
-    public void resolveReferenceToMethod() throws ParseException, IOException {
+    void resolveReferenceToMethod() throws IOException {
         CompilationUnit cu = parseSample("Navigator");
         com.github.javaparser.ast.body.ClassOrInterfaceDeclaration referencesToField = Navigator.demandClass(cu, "Navigator");
         MethodDeclaration method = Navigator.demandMethod(referencesToField, "findType");
         MethodCallExpr callToGetTypes = Navigator.findMethodCall(method, "getTypes").get();
 
-        String pathToJar = adaptPath("src/test/resources/javaparser-core-2.1.0.jar");
+        Path pathToJar = adaptPath("src/test/resources/javaparser-core-2.1.0.jar");
         TypeSolver typeSolver = new CombinedTypeSolver(new JarTypeSolver(pathToJar), new ReflectionTypeSolver(true));
         SymbolSolver symbolSolver = new SymbolSolver(typeSolver);
 
@@ -219,13 +224,13 @@ public class ContextTest extends AbstractTest {
     }
 
     @Test
-    public void resolveCascadeOfReferencesToMethod() throws ParseException, IOException {
+    void resolveCascadeOfReferencesToMethod() throws IOException {
         CompilationUnit cu = parseSample("Navigator");
         com.github.javaparser.ast.body.ClassOrInterfaceDeclaration referencesToField = Navigator.demandClass(cu, "Navigator");
         MethodDeclaration method = Navigator.demandMethod(referencesToField, "findType");
         MethodCallExpr callToStream = Navigator.findMethodCall(method, "stream").get();
 
-        String pathToJar = adaptPath("src/test/resources/javaparser-core-2.1.0.jar");
+        Path pathToJar = adaptPath("src/test/resources/javaparser-core-2.1.0.jar");
         TypeSolver typeSolver = new CombinedTypeSolver(new JarTypeSolver(pathToJar), new ReflectionTypeSolver(true));
         SymbolSolver symbolSolver = new SymbolSolver(typeSolver);
         MethodUsage ref = symbolSolver.solveMethod("stream", Collections.emptyList(), callToStream);
@@ -235,14 +240,14 @@ public class ContextTest extends AbstractTest {
     }
 
     @Test
-    public void resolveReferenceToMethodCalledOnArrayAccess() {
+    void resolveReferenceToMethodCalledOnArrayAccess() {
         CompilationUnit cu = parseSample("ArrayAccess");
         com.github.javaparser.ast.body.ClassOrInterfaceDeclaration clazz = Navigator.demandClass(cu, "ArrayAccess");
         MethodDeclaration method = Navigator.demandMethod(clazz, "access");
         MethodCallExpr callToTrim = Navigator.findMethodCall(method, "trim").get();
 
-        File src = adaptPath(new File("src/test/resources"));
-        TypeSolver typeSolver = new CombinedTypeSolver(new ReflectionTypeSolver(), new JavaParserTypeSolver(src));
+        Path src = adaptPath("src/test/resources");
+        TypeSolver typeSolver = new CombinedTypeSolver(new ReflectionTypeSolver(), new JavaParserTypeSolver(src, new LeanParserConfiguration()));
         SymbolSolver symbolSolver = new SymbolSolver(typeSolver);
         MethodUsage ref = symbolSolver.solveMethod("trim", Collections.emptyList(), callToTrim);
 
@@ -251,7 +256,7 @@ public class ContextTest extends AbstractTest {
     }
 
     @Test
-    public void resolveReferenceToJreType() {
+    void resolveReferenceToJreType() {
         CompilationUnit cu = parseSample("NavigatorSimplified");
         com.github.javaparser.ast.body.ClassOrInterfaceDeclaration clazz = Navigator.demandClass(cu, "Navigator");
         MethodDeclaration method = Navigator.demandMethod(clazz, "foo");
@@ -264,7 +269,7 @@ public class ContextTest extends AbstractTest {
     }
 
     @Test
-    public void resolveReferenceToMethodWithLambda() {
+    void resolveReferenceToMethodWithLambda() {
         CompilationUnit cu = parseSample("NavigatorSimplified");
         com.github.javaparser.ast.body.ClassOrInterfaceDeclaration clazz = Navigator.demandClass(cu, "Navigator");
         MethodDeclaration method = Navigator.demandMethod(clazz, "findType");
@@ -279,7 +284,7 @@ public class ContextTest extends AbstractTest {
     }
 
     @Test
-    public void resolveReferenceToLambdaParamBase() {
+    void resolveReferenceToLambdaParamBase() {
         CompilationUnit cu = parseSample("NavigatorSimplified");
         com.github.javaparser.ast.body.ClassOrInterfaceDeclaration clazz = Navigator.demandClass(cu, "Navigator");
         MethodDeclaration method = Navigator.demandMethod(clazz, "findType");
@@ -293,7 +298,7 @@ public class ContextTest extends AbstractTest {
     }
 
     @Test
-    public void resolveReferenceToLambdaParamSimplified() {
+    void resolveReferenceToLambdaParamSimplified() {
         CompilationUnit cu = parseSample("NavigatorSimplified");
         com.github.javaparser.ast.body.ClassOrInterfaceDeclaration clazz = Navigator.demandClass(cu, "Navigator");
         MethodDeclaration method = Navigator.demandMethod(clazz, "findType");
@@ -308,13 +313,13 @@ public class ContextTest extends AbstractTest {
     }
 
     @Test
-    public void resolveGenericReturnTypeOfMethodInJar() throws ParseException, IOException {
+    void resolveGenericReturnTypeOfMethodInJar() throws IOException {
         CompilationUnit cu = parseSample("Navigator");
         com.github.javaparser.ast.body.ClassOrInterfaceDeclaration clazz = Navigator.demandClass(cu, "Navigator");
         MethodDeclaration method = Navigator.demandMethod(clazz, "findType");
         MethodCallExpr call = Navigator.findMethodCall(method, "getTypes").get();
 
-        String pathToJar = adaptPath("src/test/resources/javaparser-core-2.1.0.jar");
+        Path pathToJar = adaptPath("src/test/resources/javaparser-core-2.1.0.jar");
         TypeSolver typeSolver = new CombinedTypeSolver(new ReflectionTypeSolver(), new JarTypeSolver(pathToJar));
         MethodUsage methodUsage = JavaParserFacade.get(typeSolver).solveMethodAsUsage(call);
 
@@ -325,13 +330,13 @@ public class ContextTest extends AbstractTest {
     }
 
     @Test
-    public void resolveTypeUsageOfFirstMethodInGenericClass() throws ParseException, IOException {
+    void resolveTypeUsageOfFirstMethodInGenericClass() throws IOException {
         CompilationUnit cu = parseSample("Navigator");
         com.github.javaparser.ast.body.ClassOrInterfaceDeclaration clazz = Navigator.demandClass(cu, "Navigator");
         MethodDeclaration method = Navigator.demandMethod(clazz, "findType");
         MethodCallExpr callToGetTypes = Navigator.findMethodCall(method, "getTypes").get();
 
-        String pathToJar = adaptPath("src/test/resources/javaparser-core-2.1.0.jar");
+        Path pathToJar = adaptPath("src/test/resources/javaparser-core-2.1.0.jar");
         TypeSolver typeSolver = new CombinedTypeSolver(new ReflectionTypeSolver(), new JarTypeSolver(pathToJar));
         MethodUsage filterUsage = JavaParserFacade.get(typeSolver).solveMethodAsUsage(callToGetTypes);
 
@@ -341,13 +346,13 @@ public class ContextTest extends AbstractTest {
     }
 
     @Test
-    public void resolveTypeUsageOfMethodInGenericClass() throws ParseException, IOException {
+    void resolveTypeUsageOfMethodInGenericClass() throws IOException {
         CompilationUnit cu = parseSample("Navigator");
         com.github.javaparser.ast.body.ClassOrInterfaceDeclaration clazz = Navigator.demandClass(cu, "Navigator");
         MethodDeclaration method = Navigator.demandMethod(clazz, "findType");
         MethodCallExpr callToStream = Navigator.findMethodCall(method, "stream").get();
 
-        String pathToJar = adaptPath("src/test/resources/javaparser-core-2.1.0.jar");
+        Path pathToJar = adaptPath("src/test/resources/javaparser-core-2.1.0.jar");
         TypeSolver typeSolver = new CombinedTypeSolver(new ReflectionTypeSolver(), new JarTypeSolver(pathToJar));
         MethodUsage filterUsage = JavaParserFacade.get(typeSolver).solveMethodAsUsage(callToStream);
 
@@ -355,13 +360,13 @@ public class ContextTest extends AbstractTest {
     }
 
     @Test
-    public void resolveTypeUsageOfCascadeMethodInGenericClass() throws ParseException, IOException {
+    void resolveTypeUsageOfCascadeMethodInGenericClass() throws IOException {
         CompilationUnit cu = parseSample("Navigator");
         com.github.javaparser.ast.body.ClassOrInterfaceDeclaration clazz = Navigator.demandClass(cu, "Navigator");
         MethodDeclaration method = Navigator.demandMethod(clazz, "findType");
         MethodCallExpr callToFilter = Navigator.findMethodCall(method, "filter").get();
 
-        String pathToJar = adaptPath("src/test/resources/javaparser-core-2.1.0.jar");
+        Path pathToJar = adaptPath("src/test/resources/javaparser-core-2.1.0.jar");
         TypeSolver typeSolver = new CombinedTypeSolver(new ReflectionTypeSolver(), new JarTypeSolver(pathToJar));
         MethodUsage filterUsage = JavaParserFacade.get(typeSolver).solveMethodAsUsage(callToFilter);
 
@@ -369,14 +374,14 @@ public class ContextTest extends AbstractTest {
     }
 
     @Test
-    public void resolveLambdaType() throws ParseException, IOException {
+    void resolveLambdaType() throws IOException {
         CompilationUnit cu = parseSample("Navigator");
         com.github.javaparser.ast.body.ClassOrInterfaceDeclaration clazz = Navigator.demandClass(cu, "Navigator");
         MethodDeclaration method = Navigator.demandMethod(clazz, "findType");
         MethodCallExpr callToFilter = Navigator.findMethodCall(method, "filter").get();
         Expression lambdaExpr = callToFilter.getArguments().get(0);
 
-        String pathToJar = adaptPath("src/test/resources/javaparser-core-2.1.0.jar");
+        Path pathToJar = adaptPath("src/test/resources/javaparser-core-2.1.0.jar");
         TypeSolver typeSolver = new CombinedTypeSolver(new ReflectionTypeSolver(), new JarTypeSolver(pathToJar));
         ResolvedType typeOfLambdaExpr = JavaParserFacade.get(typeSolver).getType(lambdaExpr);
 
@@ -384,14 +389,14 @@ public class ContextTest extends AbstractTest {
     }
 
     @Test
-    public void resolveReferenceToLambdaParam() throws ParseException, IOException {
+    void resolveReferenceToLambdaParam() throws IOException {
         CompilationUnit cu = parseSample("Navigator");
         com.github.javaparser.ast.body.ClassOrInterfaceDeclaration clazz = Navigator.demandClass(cu, "Navigator");
         MethodDeclaration method = Navigator.demandMethod(clazz, "findType");
         MethodCallExpr callToGetName = Navigator.findMethodCall(method, "getName").get();
         Expression referenceToT = callToGetName.getScope().get();
 
-        String pathToJar = adaptPath("src/test/resources/javaparser-core-2.1.0.jar");
+        Path pathToJar = adaptPath("src/test/resources/javaparser-core-2.1.0.jar");
         TypeSolver typeSolver = new CombinedTypeSolver(new ReflectionTypeSolver(), new JarTypeSolver(pathToJar));
         ResolvedType typeOfT = JavaParserFacade.get(typeSolver).getType(referenceToT);
 
@@ -399,13 +404,13 @@ public class ContextTest extends AbstractTest {
     }
 
     @Test
-    public void resolveReferenceToCallOnLambdaParam() throws ParseException, IOException {
+    void resolveReferenceToCallOnLambdaParam() throws IOException {
         CompilationUnit cu = parseSample("Navigator");
         com.github.javaparser.ast.body.ClassOrInterfaceDeclaration clazz = Navigator.demandClass(cu, "Navigator");
         MethodDeclaration method = Navigator.demandMethod(clazz, "findType");
         MethodCallExpr callToGetName = Navigator.findMethodCall(method, "getName").get();
 
-        String pathToJar = adaptPath("src/test/resources/javaparser-core-2.1.0.jar");
+        Path pathToJar = adaptPath("src/test/resources/javaparser-core-2.1.0.jar");
         TypeSolver typeSolver = new CombinedTypeSolver(new ReflectionTypeSolver(), new JarTypeSolver(pathToJar));
         MethodUsage methodUsage = JavaParserFacade.get(typeSolver).solveMethodAsUsage(callToGetName);
 
@@ -414,7 +419,7 @@ public class ContextTest extends AbstractTest {
     }
 
     @Test
-    public void resolveReferenceToOverloadMethodWithNullParam() {
+    void resolveReferenceToOverloadMethodWithNullParam() {
         CompilationUnit cu = parseSample("OverloadedMethods");
         com.github.javaparser.ast.body.ClassOrInterfaceDeclaration clazz = Navigator.demandClass(cu, "OverloadedMethods");
         MethodDeclaration method = Navigator.demandMethod(clazz, "m1");
@@ -429,7 +434,7 @@ public class ContextTest extends AbstractTest {
     }
 
     @Test
-    public void resolveReferenceToOverloadMethodFindStricter() {
+    void resolveReferenceToOverloadMethodFindStricter() {
         CompilationUnit cu = parseSample("OverloadedMethods");
         com.github.javaparser.ast.body.ClassOrInterfaceDeclaration clazz = Navigator.demandClass(cu, "OverloadedMethods");
         MethodDeclaration method = Navigator.demandMethod(clazz, "m2");
@@ -444,13 +449,28 @@ public class ContextTest extends AbstractTest {
     }
 
     @Test
-    public void resolveInheritedMethodFromInterface() {
+    void resolveReferenceToMethodWithGenericArrayTypeParam() {
+        CompilationUnit cu = parseSample("GenericArrayMethodArgument");
+        ClassOrInterfaceDeclaration clazz = Navigator.demandClass(cu, "GenericArrayMethodArgument");
+        MethodDeclaration method = Navigator.demandMethod(clazz, "bar");
+        MethodCallExpr call = Navigator.findMethodCall(method, "foo").get();
+
+        TypeSolver typeSolver = new ReflectionTypeSolver();
+        MethodUsage ref = JavaParserFacade.get(typeSolver).solveMethodAsUsage(call);
+
+        assertEquals("foo", ref.getName());
+        assertEquals(1, ref.getNoParams());
+        assertEquals("java.lang.String[]", ref.getParamType(0).describe());
+    }
+
+    @Test
+    void resolveInheritedMethodFromInterface() {
         CompilationUnit cu = parseSample("InterfaceInheritance");
         com.github.javaparser.ast.body.ClassOrInterfaceDeclaration clazz = Navigator.demandClass(cu, "Test");
         MethodDeclaration method = Navigator.demandMethod(clazz, "test");
         MethodCallExpr call = Navigator.findMethodCall(method, "foobar").get();
 
-        File src = adaptPath(new File("src/test/resources"));
+        Path src = adaptPath("src/test/resources");
         TypeSolver typeSolver = new CombinedTypeSolver(new ReflectionTypeSolver(), new JavaParserTypeSolver(src));
         ResolvedType type = JavaParserFacade.get(typeSolver).getType(call);
 
@@ -458,7 +478,7 @@ public class ContextTest extends AbstractTest {
     }
 
     @Test
-    public void resolveReferenceToOverloadMethodFindOnlyCompatible() {
+    void resolveReferenceToOverloadMethodFindOnlyCompatible() {
         CompilationUnit cu = parseSample("OverloadedMethods");
         com.github.javaparser.ast.body.ClassOrInterfaceDeclaration clazz = Navigator.demandClass(cu, "OverloadedMethods");
         MethodDeclaration method = Navigator.demandMethod(clazz, "m3");
@@ -470,6 +490,183 @@ public class ContextTest extends AbstractTest {
         assertEquals("overloaded", ref.getName());
         assertEquals(1, ref.getNoParams());
         assertEquals("java.lang.Object", ref.getParamTypes().get(0).describe());
+    }
+
+    private <PS extends Node> PS parse(String code, ParseStart<PS> parseStart) {
+        ParserConfiguration parserConfiguration = new ParserConfiguration();
+        parserConfiguration.setLanguageLevel(ParserConfiguration.LanguageLevel.JAVA_10);
+        ParseResult<PS> parseResult = new JavaParser(parserConfiguration).parse(parseStart, new StringProvider(code));
+        if (!parseResult.isSuccessful()) {
+            parseResult.getProblems().forEach(p -> System.out.println("ERR: " + p));
+        }
+        assertTrue(parseResult.isSuccessful());
+        PS root = parseResult.getResult().get();
+        return root;
+    }
+
+    @Test
+    void localVariableDeclarationInScope() {
+        String name = "a";
+        CompilationUnit cu = parse("class A { void foo() {\n" +
+                "SomeClass a; a.aField;" + "\n" +
+                "} }", ParseStart.COMPILATION_UNIT);
+
+        // The block statement expose to the 2nd statement the local var
+        BlockStmt blockStmt = cu.findAll(BlockStmt.class).get(0);
+        Context context1 = JavaParserFactory.getContext(blockStmt, typeSolver);
+        assertEquals(1, context1.localVariablesExposedToChild(blockStmt.getStatement(1)).size());
+
+        Node nameNode = cu.findAll(NameExpr.class).get(0);
+        Context context = JavaParserFactory.getContext(nameNode, typeSolver);
+        assertEquals(true, context.localVariableDeclarationInScope(name).isPresent());
+    }
+
+    //
+    // Testing JLS 6.3 Scope of a Declaration
+    //
+
+    // The scope of a formal parameter of a method (§8.4.1), constructor (§8.8.1), or lambda expression (§15.27) is the
+    // entire body of the method, constructor, or lambda expression.
+
+    private void assertNoParamsExposedToChildInContextNamed(Node parent, Node child, String paramName) {
+        assertNumberOfParamsExposedToChildInContextNamed(parent, child, paramName, 0, "the element is exposed and it should not");
+    }
+
+    private void assertOneParamExposedToChildInContextNamed(Node parent, Node child, String paramName) {
+        assertNumberOfParamsExposedToChildInContextNamed(parent, child, paramName, 1, "the element is not exposed as expected");
+    }
+
+    private void assertNumberOfParamsExposedToChildInContextNamed(Node parent, Node child, String paramName,
+                                                                  int expectedNumber, String message) {
+        assertEquals(expectedNumber, JavaParserFactory.getContext(parent, typeSolver)
+                .parametersExposedToChild(child).stream().filter(p -> p.getNameAsString().equals(paramName)).count(), message);
+    }
+
+    private void assertNoVarsExposedToChildInContextNamed(Node parent, Node child, String paramName) {
+        assertNumberOfVarsExposedToChildInContextNamed(parent, child, paramName, 0, "the element is exposed and it should not");
+    }
+
+    private void assertOneVarExposedToChildInContextNamed(Node parent, Node child, String paramName) {
+        assertNumberOfVarsExposedToChildInContextNamed(parent, child, paramName, 1, "the element is not exposed as expected");
+    }
+
+    private void assertNumberOfVarsExposedToChildInContextNamed(Node parent, Node child, String paramName,
+                                                                  int expectedNumber, String message) {
+        List<VariableDeclarator> vars = JavaParserFactory.getContext(parent, typeSolver)
+                .localVariablesExposedToChild(child);
+        assertEquals(expectedNumber, vars.stream().filter(p -> p.getNameAsString().equals(paramName)).count(), message);
+    }
+
+    @Test
+    void parametersExposedToChildForMethod() {
+        MethodDeclaration method = parse("void foo(int myParam) { aCall(); }",
+                ParseStart.CLASS_BODY).asMethodDeclaration();
+        assertOneParamExposedToChildInContextNamed(method, method.getBody().get(), "myParam");
+        assertNoParamsExposedToChildInContextNamed(method, method.getType(), "myParam");
+        assertNoParamsExposedToChildInContextNamed(method, method.getParameter(0), "myParam");
+    }
+
+    @Test
+    void parametersExposedToChildForConstructor() {
+        ConstructorDeclaration constructor = parse("Foo(int myParam) { aCall(); }",
+                ParseStart.CLASS_BODY).asConstructorDeclaration();
+        assertOneParamExposedToChildInContextNamed(constructor, constructor.getBody(), "myParam");
+        assertNoParamsExposedToChildInContextNamed(constructor, constructor.getParameter(0), "myParam");
+    }
+
+    @Test
+    void parametersExposedToChildForLambda() {
+        LambdaExpr lambda = (LambdaExpr)parse("Object myLambda = (myParam) -> myParam * 2;",
+                ParseStart.STATEMENT).asExpressionStmt().getExpression().asVariableDeclarationExpr()
+                .getVariables().get(0).getInitializer().get();
+        assertOneParamExposedToChildInContextNamed(lambda, lambda.getBody(), "myParam");
+        assertNoParamsExposedToChildInContextNamed(lambda, lambda.getParameter(0), "myParam");
+    }
+
+    // The scope of a local variable declaration in a block (§14.4) is the rest of the block in which the declaration
+    // appears, starting with its own initializer and including any further declarators to the right in the local
+    // variable declaration statement.
+
+    @Test
+    void localVariablesExposedToChildWithinABlock() {
+        BlockStmt blockStmt = parse("{ preStatement(); int a = 1, b = 2; otherStatement(); }",
+                ParseStart.STATEMENT).asBlockStmt();
+        assertNoVarsExposedToChildInContextNamed(blockStmt, blockStmt.getStatement(0), "a");
+        assertNoVarsExposedToChildInContextNamed(blockStmt, blockStmt.getStatement(0), "b");
+        assertOneVarExposedToChildInContextNamed(blockStmt, blockStmt.getStatement(2), "a");
+        assertOneVarExposedToChildInContextNamed(blockStmt, blockStmt.getStatement(2), "b");
+
+        VariableDeclarationExpr varDecl = blockStmt.getStatement(1).asExpressionStmt().getExpression()
+                .asVariableDeclarationExpr();
+        VariableDeclarator varA = varDecl.getVariables().get(0);
+        VariableDeclarator varB = varDecl.getVariables().get(1);
+        assertOneVarExposedToChildInContextNamed(varA,
+                varA.getInitializer().get(), "a");
+        assertOneVarExposedToChildInContextNamed(varDecl,
+                varB, "a");
+        assertNoVarsExposedToChildInContextNamed(varDecl,
+                varA, "b");
+    }
+
+    // The scope of a local variable declared in the ForInit part of a basic for statement (§14.14.1) includes all of the following:
+    // * Its own initializer
+    // * Any further declarators to the right in the ForInit part of the for statement
+    // * The Expression and ForUpdate parts of the for statement
+    // * The contained Statement
+
+    @Test
+    void localVariablesExposedToChildWithinForStmt() {
+        ForStmt forStmt = parse("for (int i=0, j=1;i<10;i++) { body(); }",
+                ParseStart.STATEMENT).asForStmt();
+        VariableDeclarationExpr initializations = forStmt.getInitialization().get(0).asVariableDeclarationExpr();
+        assertOneVarExposedToChildInContextNamed(initializations,
+                initializations.getVariable(1),
+                "i");
+        assertOneVarExposedToChildInContextNamed(forStmt,
+                forStmt.getCompare().get(),
+                "i");
+        assertOneVarExposedToChildInContextNamed(forStmt,
+                forStmt.getUpdate().get(0),
+                "i");
+        assertOneVarExposedToChildInContextNamed(forStmt,
+                forStmt.getBody(),
+                "i");
+    }
+
+    // The scope of a local variable declared in the FormalParameter part of an enhanced for statement (§14.14.2) is
+    // the contained Statement.
+
+    @Test
+    void localVariablesExposedToChildWithinEnhancedForeachStmt() {
+        ForEachStmt foreachStmt = parse("for (int i: myList) { body(); }",
+                ParseStart.STATEMENT).asForeachStmt();
+        assertOneVarExposedToChildInContextNamed(foreachStmt, foreachStmt.getBody(), "i");
+        assertNoVarsExposedToChildInContextNamed(foreachStmt, foreachStmt.getVariable(), "i");
+        assertNoVarsExposedToChildInContextNamed(foreachStmt, foreachStmt.getIterable(), "i");
+    }
+
+    // The scope of a parameter of an exception handler that is declared in a catch clause of a try statement (§14.20)
+    // is the entire block associated with the catch.
+
+    @Test
+    void parametersExposedToChildWithinTryStatement() {
+        CatchClause catchClause = parse("try {  } catch(Exception e) { body(); }",
+                ParseStart.STATEMENT).asTryStmt().getCatchClauses().get(0);
+        assertOneParamExposedToChildInContextNamed(catchClause, catchClause.getBody(), "e");
+        assertNoParamsExposedToChildInContextNamed(catchClause, catchClause.getParameter(), "e");
+    }
+
+    // The scope of a variable declared in the ResourceSpecification of a try-with-resources statement (§14.20.3) is
+    // from the declaration rightward over the remainder of the ResourceSpecification and the entire try block
+    // associated with the try-with-resources statement.
+
+    @Test
+    void localVariablesExposedToChildWithinTryWithResourcesStatement() {
+        TryStmt stmt = parse("try (Object res1 = foo(); Object res2 = foo()) { body(); }",
+                ParseStart.STATEMENT).asTryStmt();
+        assertOneVarExposedToChildInContextNamed(stmt, stmt.getResources().get(1), "res1");
+        assertNoVarsExposedToChildInContextNamed(stmt, stmt.getResources().get(0), "res1");
+        assertOneVarExposedToChildInContextNamed(stmt, stmt.getTryBlock(), "res1");
     }
 
 }

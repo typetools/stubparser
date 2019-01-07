@@ -1,3 +1,217 @@
+Version 3.9.1
+------------------
+[issues resolved](https://github.com/javaparser/javaparser/milestone/119?closed=1)
+
+Version 3.9.0
+------------------
+* MAJOR BREAKAGE: modifiers (like public, static, transient) used to be a special case:
+they were enums stored in an EnumSet.
+This meant they were not true `Node`s, had to be treated in a special way, and missed some information.
+This has now been corrected in [PR 1975](https://github.com/javaparser/javaparser/pull/1975). 
+
+[issues resolved](https://github.com/javaparser/javaparser/milestone/118?closed=1)
+
+Version 3.8.3
+------------------
+[issues resolved](https://github.com/javaparser/javaparser/milestone/117?closed=1)
+
+Version 3.8.2
+------------------
+* slightly breaking: `ObjectCreationExpr` no longer gets a diamond when constructed with the default constructor.
+
+[issues resolved](https://github.com/javaparser/javaparser/milestone/116?closed=1)
+
+Version 3.8.1
+------------------
+[issues resolved](https://github.com/javaparser/javaparser/milestone/114?closed=1)
+
+Version 3.8.0
+------------------
+* A Unicode preprocessing filter is now available again.
+
+[issues resolved](https://github.com/javaparser/javaparser/milestone/113?closed=1)
+
+Version 3.7.1
+------------------
+* slightly breaking: the enum constants in JsonToken are now capitalized.
+* slightly breaking: [some obscure methods in the symbol solver changed](https://github.com/javaparser/javaparser/pull/1922) 
+
+[issues resolved](https://github.com/javaparser/javaparser/milestone/115?closed=1)
+
+Version 3.7.0
+------------------
+* BREAKING: `ForeachStmt` is now correctly capitalized: `ForEachStmt`
+* BREAKING: when using modules, everything that was called `...Statement` is now correctly called `...Directive`
+
+[issues resolved](https://github.com/javaparser/javaparser/milestone/112?closed=1)
+
+Version 3.6.27
+------------------
+* The Json serialization now serializes more fields,
+which *should* not impact existing code.
+
+[issues resolved](https://github.com/javaparser/javaparser/milestone/111?closed=1)
+
+Version 3.6.26
+------------------
+* BREAKING: Node.getData now throws an exception if the data was not set before.
+This can be rewritten by checking with Node.containsData before doing getData.
+
+[issues resolved](https://github.com/javaparser/javaparser/milestone/110?closed=1)
+
+Version 3.6.25
+------------------
+[issues resolved](https://github.com/javaparser/javaparser/milestone/109?closed=1)
+
+Version 3.6.24
+------------------
+* `findAncestor(type, predicate)` is now available
+
+[issues resolved](https://github.com/javaparser/javaparser/milestone/108?closed=1)
+
+Version 3.6.23
+------------------
+[issues resolved](https://github.com/javaparser/javaparser/milestone/107?closed=1)
+
+Version 3.6.22
+------------------
+[issues resolved](https://github.com/javaparser/javaparser/milestone/106?closed=1)
+
+Version 3.6.21
+------------------
+[issues resolved](https://github.com/javaparser/javaparser/milestone/105?closed=1)
+
+Version 3.6.20
+------------------
+[issues resolved](https://github.com/javaparser/javaparser/milestone/104?closed=1)
+
+Version 3.6.19
+------------------
+[issues resolved](https://github.com/javaparser/javaparser/milestone/103?closed=1)
+
+Version 3.6.18
+------------------
+* Parsing Java 11 is now supported.
+* Running on Java 11 is now supported.
+* Building on JDK 11 is NOT yet supported.
+
+[issues resolved](https://github.com/javaparser/javaparser/milestone/101?closed=1)
+
+Version 3.6.17
+------------------
+* A new artifact was added: javaparser-core-serialization.
+It contains a JSON serializer, and might get more serializers in the future.
+
+[issues resolved](https://github.com/javaparser/javaparser/milestone/100?closed=1)
+
+Version 3.6.16
+------------------
+* BREAKING: some parts of the module syntax used `Type` where they should have used `Name`.
+This is now fixed, but your code may need to be adapted if you are parsing modules.
+
+[issues resolved](https://github.com/javaparser/javaparser/milestone/99?closed=1)
+
+Version 3.6.15
+------------------
+[issues resolved](https://github.com/javaparser/javaparser/milestone/98?closed=1)
+
+Version 3.6.14
+------------------
+[issues resolved](https://github.com/javaparser/javaparser/milestone/97?closed=1)
+
+Version 3.6.13
+------------------
+[issues resolved](https://github.com/javaparser/javaparser/milestone/96?closed=1)
+* JavaParserFacade.getType now can also handle NameExpr referring to types 
+while before they were not supported.
+See [issue #1491](https://github.com/javaparser/javaparser/issues/1491#issuecomment-403277963)
+
+Version 3.6.12
+------------------
+[issues resolved](https://github.com/javaparser/javaparser/milestone/95?closed=1)
+
+Version 3.6.10 & Version 3.6.11
+------------------
+* A mixup during the release put all the issues in the same milestone:
+
+[issues resolved](https://github.com/javaparser/javaparser/milestone/94?closed=1)
+
+Version 3.6.9
+------------------
+[issues resolved](https://github.com/javaparser/javaparser/milestone/93?closed=1)
+
+Version 3.6.8
+------------------
+[issues resolved](https://github.com/javaparser/javaparser/milestone/92?closed=1)
+* Intellij Idea project files were deleted from the repository,
+so if you have a clone of the JP source, your local files will be deleted as well.
+Save anything you want to keep.
+
+Version 3.6.7
+------------------
+[issues resolved](https://github.com/javaparser/javaparser/milestone/91?closed=1)
+
+Version 3.6.6
+------------------
+[issues resolved](https://github.com/javaparser/javaparser/milestone/90?closed=1)
+* You can now configure the parser inside JavaParserTypeSolver.
+
+Version 3.6.5
+------------------
+[issues resolved](https://github.com/javaparser/javaparser/milestone/89?closed=1)
+* Be aware of annotations or indents looking slightly different when output!
+
+Version 3.6.4
+------------------
+[issues resolved](https://github.com/javaparser/javaparser/milestone/88?closed=1)
+
+Version 3.6.3
+------------------
+[issues resolved](https://github.com/javaparser/javaparser/milestone/87?closed=1)
+
+Version 3.6.2
+------------------
+[issues resolved](https://github.com/javaparser/javaparser/milestone/86?closed=1)
+
+Version 3.6.1
+------------------
+[issues resolved](https://github.com/javaparser/javaparser/milestone/85?closed=1)
+* BREAKING: `SymbolSolverQuickSetup` has been removed in favor of `ProjectRoot` and `SymbolSolverCollectionStrategy`.
+
+Version 3.6.0
+------------------
+[issues resolved](https://github.com/javaparser/javaparser/milestone/84?closed=1)
+* @daanschipper added `ProjectRoot` which is used for analysing and storing project structure.
+* Upgraded version from 3.5.20 to 3.6.0 because people got tired of seeing 3.5.
+
+Version 3.5.20
+------------------
+[issues resolved](https://github.com/javaparser/javaparser/milestone/83?closed=1)
+* Thanks to @daanschipper for the PR :-)
+
+Version 3.5.19
+------------------
+[issues resolved](https://github.com/javaparser/javaparser/milestone/82?closed=1)
+
+Version 3.5.18
+------------------
+[issues resolved](https://github.com/javaparser/javaparser/milestone/81?closed=1)
+
+Version 3.5.17
+------------------
+[issues resolved](https://github.com/javaparser/javaparser/milestone/80?closed=1)
+
+Version 3.5.16
+------------------
+[issues resolved](https://github.com/javaparser/javaparser/milestone/79?closed=1)
+
+Version 3.5.15
+------------------
+[issues resolved](https://github.com/javaparser/javaparser/milestone/78?closed=1)
+* Java 10 support is complete.
+* BREAKING: Java language level support has changed to make Java 10 support possible.
+[Here's a little article about it](https://matozoid.github.io/2017/04/11/enable-java-9-support.html)
+
 Version 3.5.14
 ------------------
 [issues resolved](https://github.com/javaparser/javaparser/milestone/77?closed=1)

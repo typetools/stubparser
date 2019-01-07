@@ -43,12 +43,15 @@ public class SwitchEntryContext extends AbstractJavaParserContext<SwitchEntryStm
     }
 
     @Override
-    public SymbolReference<? extends ResolvedValueDeclaration> solveSymbol(String name, TypeSolver typeSolver) {
+    public SymbolReference<? extends ResolvedValueDeclaration> solveSymbol(String name) {
         SwitchStmt switchStmt = (SwitchStmt) requireParentNode(wrappedNode);
         ResolvedType type = JavaParserFacade.get(typeSolver).getType(switchStmt.getSelector());
         if (type.isReferenceType() && type.asReferenceType().getTypeDeclaration().isEnum()) {
             if (type instanceof ReferenceTypeImpl) {
                 ReferenceTypeImpl typeUsageOfTypeDeclaration = (ReferenceTypeImpl) type;
+                if (typeUsageOfTypeDeclaration.getTypeDeclaration().asEnum().hasEnumConstant(name)) {
+                    return SymbolReference.solved(typeUsageOfTypeDeclaration.getTypeDeclaration().asEnum().getEnumConstant(name));
+                }
                 if (typeUsageOfTypeDeclaration.getTypeDeclaration().hasField(name)) {
                     return SymbolReference.solved(typeUsageOfTypeDeclaration.getTypeDeclaration().getField(name));
                 }
@@ -57,24 +60,26 @@ public class SwitchEntryContext extends AbstractJavaParserContext<SwitchEntryStm
             }
         }
 
-        // look for declaration in other switch statements
+        // look for declaration in this and previous switch entry statements
         for (SwitchEntryStmt seStmt : switchStmt.getEntries()) {
-            if (!seStmt.equals(wrappedNode)) {
-                for (Statement stmt : seStmt.getStatements()) {
-                    SymbolDeclarator symbolDeclarator = JavaParserFactory.getSymbolDeclarator(stmt, typeSolver);
-                    SymbolReference<? extends ResolvedValueDeclaration> symbolReference = solveWith(symbolDeclarator, name);
-                    if (symbolReference.isSolved()) {
-                        return symbolReference;
-                    }
+            for (Statement stmt : seStmt.getStatements()) {
+                SymbolDeclarator symbolDeclarator = JavaParserFactory.getSymbolDeclarator(stmt, typeSolver);
+                SymbolReference<? extends ResolvedValueDeclaration> symbolReference = solveWith(symbolDeclarator, name);
+                if (symbolReference.isSolved()) {
+                    return symbolReference;
                 }
+            }
+            // once we reach this switch entry statement, stop: we do not want to look in later switch entry statements
+            if (seStmt == wrappedNode) {
+                break;
             }
         }
 
-        return getParent().solveSymbol(name, typeSolver);
+        return getParent().solveSymbol(name);
     }
 
     @Override
-    public SymbolReference<ResolvedMethodDeclaration> solveMethod(String name, List<ResolvedType> argumentsTypes, boolean staticOnly, TypeSolver typeSolver) {
-        return getParent().solveMethod(name, argumentsTypes, false, typeSolver);
+    public SymbolReference<ResolvedMethodDeclaration> solveMethod(String name, List<ResolvedType> argumentsTypes, boolean staticOnly) {
+        return getParent().solveMethod(name, argumentsTypes, false);
     }
 }

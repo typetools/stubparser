@@ -11,28 +11,28 @@ import com.github.javaparser.symbolsolver.model.resolution.TypeSolver;
 import com.github.javaparser.symbolsolver.resolution.typesolvers.CombinedTypeSolver;
 import com.github.javaparser.symbolsolver.resolution.typesolvers.JavaParserTypeSolver;
 import com.github.javaparser.symbolsolver.resolution.typesolvers.ReflectionTypeSolver;
-import org.junit.Before;
-import org.junit.Test;
+import com.github.javaparser.symbolsolver.utils.LeanParserConfiguration;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.nio.file.Path;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class Issue113 extends AbstractTest {
+class Issue113 extends AbstractSymbolResolutionTest {
 
     private TypeSolver typeSolver;
 
-    @Before
-    public void setup() throws IOException {
-        typeSolver = new CombinedTypeSolver(new ReflectionTypeSolver(), new JavaParserTypeSolver(adaptPath(new File("src/test/resources/issue113"))));
+    @BeforeEach
+    void setup() {
+        typeSolver = new CombinedTypeSolver(new ReflectionTypeSolver(), new JavaParserTypeSolver(adaptPath("src/test/resources/issue113"), new LeanParserConfiguration()));
     }
 
     @Test
-    public void issue113providedCodeDoesNotCrash() throws FileNotFoundException {
-        String pathToSourceFile = adaptPath("src/test/resources/issue113/com/foo/Widget.java");
-        CompilationUnit cu = JavaParser.parse(new File(pathToSourceFile));
+    void issue113providedCodeDoesNotCrash() throws IOException {
+        Path pathToSourceFile = adaptPath("src/test/resources/issue113/com/foo/Widget.java");
+        CompilationUnit cu = JavaParser.parse(pathToSourceFile);
 
         JavaParserFacade parserFacade = JavaParserFacade.get(typeSolver);
         MethodDeclaration methodDeclaration = cu.findAll(MethodDeclaration.class).stream()
@@ -41,9 +41,9 @@ public class Issue113 extends AbstractTest {
     }
 
     @Test
-    public void issue113superClassIsResolvedCorrectly() throws FileNotFoundException {
-        String pathToSourceFile = adaptPath("src/test/resources/issue113/com/foo/Widget.java");
-        CompilationUnit cu = JavaParser.parse(new File(pathToSourceFile));
+    void issue113superClassIsResolvedCorrectly() throws IOException {
+        Path pathToSourceFile = adaptPath("src/test/resources/issue113/com/foo/Widget.java");
+        CompilationUnit cu = JavaParser.parse(pathToSourceFile);
 
         JavaParserClassDeclaration jssExtendedWidget = new JavaParserClassDeclaration(cu.getClassByName("Widget").get(), typeSolver);
         ResolvedReferenceType superClass = jssExtendedWidget.getSuperClass();
