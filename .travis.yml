@@ -5,7 +5,6 @@ script: ./.travis-build.sh
 jdk:
   - oraclejdk8
   - oraclejdk9
-
 notifications:
   webhooks:
     urls:

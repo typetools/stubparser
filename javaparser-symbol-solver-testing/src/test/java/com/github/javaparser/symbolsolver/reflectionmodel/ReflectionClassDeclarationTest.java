@@ -16,31 +16,31 @@
 
 package com.github.javaparser.symbolsolver.reflectionmodel;
 
-import com.github.javaparser.ast.AccessSpecifier;
+import com.github.javaparser.ast.Modifier;
 import com.github.javaparser.resolution.declarations.*;
 import com.github.javaparser.resolution.types.ResolvedReferenceType;
 import com.github.javaparser.resolution.types.ResolvedTypeVariable;
-import com.github.javaparser.symbolsolver.AbstractTest;
+import com.github.javaparser.symbolsolver.AbstractSymbolResolutionTest;
 import com.github.javaparser.symbolsolver.model.resolution.TypeSolver;
 import com.github.javaparser.symbolsolver.model.typesystem.ReferenceTypeImpl;
 import com.github.javaparser.symbolsolver.resolution.typesolvers.ReflectionTypeSolver;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.io.Serializable;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static java.util.Comparator.*;
+import static org.junit.jupiter.api.Assertions.*;
 
-public class ReflectionClassDeclarationTest extends AbstractTest {
-    
+class ReflectionClassDeclarationTest extends AbstractSymbolResolutionTest {
+
     private TypeSolver typeResolver = new ReflectionTypeSolver(false);
 
     @Test
-    public void testIsClass() {
+    void testIsClass() {
         class Foo<E> {
             E field;
         }
@@ -57,7 +57,7 @@ public class ReflectionClassDeclarationTest extends AbstractTest {
     }
 
     @Test
-    public void testGetSuperclassSimpleImplicit() {
+    void testGetSuperclassSimpleImplicit() {
         class Foo<E> {
             E field;
         }
@@ -71,7 +71,7 @@ public class ReflectionClassDeclarationTest extends AbstractTest {
     }
 
     @Test
-    public void testGetSuperclassSimple() {
+    void testGetSuperclassSimple() {
         class Bar {
         }
         class Foo<E> extends Bar {
@@ -87,7 +87,7 @@ public class ReflectionClassDeclarationTest extends AbstractTest {
     }
 
     @Test
-    public void testGetSuperclassWithGenericSimple() {
+    void testGetSuperclassWithGenericSimple() {
         class Foo<E> {
             E field;
         }
@@ -105,7 +105,7 @@ public class ReflectionClassDeclarationTest extends AbstractTest {
     }
 
     @Test
-    public void testGetSuperclassWithGenericInheritanceSameName() {
+    void testGetSuperclassWithGenericInheritanceSameName() {
         class Foo<E> {
             E field;
         }
@@ -127,7 +127,7 @@ public class ReflectionClassDeclarationTest extends AbstractTest {
     }
 
     @Test
-    public void testGetSuperclassWithGenericInheritanceDifferentName() {
+    void testGetSuperclassWithGenericInheritanceDifferentName() {
         class Foo<E> {
             E field;
         }
@@ -144,7 +144,7 @@ public class ReflectionClassDeclarationTest extends AbstractTest {
     }
 
     @Test
-    public void testGetFieldDeclarationTypeVariableInheritance() {
+    void testGetFieldDeclarationTypeVariableInheritance() {
         class Foo<E> {
             E field;
         }
@@ -166,37 +166,41 @@ public class ReflectionClassDeclarationTest extends AbstractTest {
     }
 
     @Test
-    public void testGetDeclaredMethods() {
+    void testGetDeclaredMethods() {
         TypeSolver typeResolver = new ReflectionTypeSolver();
         ResolvedReferenceTypeDeclaration string = new ReflectionClassDeclaration(String.class, typeResolver);
         List<ResolvedMethodDeclaration> methods = string.getDeclaredMethods().stream()
-                .filter(m -> m.accessSpecifier() != AccessSpecifier.PRIVATE && m.accessSpecifier() != AccessSpecifier.DEFAULT)
+                .filter(m -> m.accessSpecifier() != Modifier.Keyword.PRIVATE && m.accessSpecifier() != Modifier.Keyword.PACKAGE_PRIVATE)
                 .sorted((a, b) -> a.getName().compareTo(b.getName()))
                 .collect(Collectors.toList());
-        if (isJava9()) {
-            assertEquals(69, methods.size());
-        } else {
-            assertEquals(67, methods.size());
+        int foundCount = 0;
+        for (ResolvedMethodDeclaration method : methods) {
+            switch (method.getName()) {
+                case "charAt":
+                    assertFalse(method.isAbstract());
+                    assertEquals(1, method.getNumberOfParams());
+                    assertEquals("int", method.getParam(0).getType().describe());
+                    foundCount++;
+                    break;
+                case "compareTo":
+                    assertFalse(method.isAbstract());
+                    assertEquals(1, method.getNumberOfParams());
+                    assertEquals("java.lang.String", method.getParam(0).getType().describe());
+                    foundCount++;
+                    break;
+                case "concat":
+                    assertFalse(method.isAbstract());
+                    assertEquals(1, method.getNumberOfParams());
+                    assertEquals("java.lang.String", method.getParam(0).getType().describe());
+                    foundCount++;
+                    break;
+            }
         }
-        assertEquals("charAt", methods.get(0).getName());
-        assertEquals(false, methods.get(0).isAbstract());
-        assertEquals(1, methods.get(0).getNumberOfParams());
-        assertEquals("int", methods.get(0).getParam(0).getType().describe());
-        if (isJava9()) {
-            assertEquals("compareTo", methods.get(6).getName());
-            assertEquals(false, methods.get(6).isAbstract());
-            assertEquals(1, methods.get(6).getNumberOfParams());
-            assertEquals("java.lang.String", methods.get(6).getParam(0).getType().describe());
-        } else {
-            assertEquals("concat", methods.get(6).getName());
-            assertEquals(false, methods.get(6).isAbstract());
-            assertEquals(1, methods.get(6).getNumberOfParams());
-            assertEquals("java.lang.String", methods.get(6).getParam(0).getType().describe());
-        }
+        assertEquals(3, foundCount);
     }
 
     @Test
-    public void testGetInterfaces() {
+    void testGetInterfaces() {
         TypeSolver typeResolver = new ReflectionTypeSolver();
         ResolvedClassDeclaration arraylist = new ReflectionClassDeclaration(ArrayList.class, typeResolver);
         // Serializable, Cloneable, List<E>, RandomAccess
@@ -208,7 +212,7 @@ public class ReflectionClassDeclarationTest extends AbstractTest {
     }
 
     @Test
-    public void testGetAllInterfaces() {
+    void testGetAllInterfaces() {
         TypeSolver typeResolver = new ReflectionTypeSolver();
         ResolvedClassDeclaration arraylist = new ReflectionClassDeclaration(ArrayList.class, typeResolver);
         // Serializable, Cloneable, Iterable<E>, Collection<E>, List<E>, RandomAccess
@@ -222,7 +226,7 @@ public class ReflectionClassDeclarationTest extends AbstractTest {
     }
 
     @Test
-    public void testGetAllSuperclasses() {
+    void testGetAllSuperclasses() {
         TypeSolver typeResolver = new ReflectionTypeSolver();
         ResolvedClassDeclaration arraylist = new ReflectionClassDeclaration(ArrayList.class, typeResolver);
         assertEquals(ImmutableSet.of(Object.class.getCanonicalName(),
@@ -235,7 +239,7 @@ public class ReflectionClassDeclarationTest extends AbstractTest {
     }
 
     @Test
-    public void testGetPackageName() {
+    void testGetPackageName() {
         TypeSolver typeResolver = new ReflectionTypeSolver();
         ResolvedClassDeclaration arraylist = new ReflectionClassDeclaration(ArrayList.class, typeResolver);
         assertEquals("java.util", arraylist.getPackageName());
@@ -244,7 +248,7 @@ public class ReflectionClassDeclarationTest extends AbstractTest {
     }
 
     @Test
-    public void testGetClassName() {
+    void testGetClassName() {
         TypeSolver typeResolver = new ReflectionTypeSolver();
         ResolvedClassDeclaration arraylist = new ReflectionClassDeclaration(ArrayList.class, typeResolver);
         assertEquals("ArrayList", arraylist.getClassName());
@@ -253,7 +257,7 @@ public class ReflectionClassDeclarationTest extends AbstractTest {
     }
 
     @Test
-    public void testGetQualifiedName() {
+    void testGetQualifiedName() {
         TypeSolver typeResolver = new ReflectionTypeSolver();
         ResolvedClassDeclaration arraylist = new ReflectionClassDeclaration(ArrayList.class, typeResolver);
         assertEquals("java.util.ArrayList", arraylist.getQualifiedName());
@@ -271,7 +275,7 @@ public class ReflectionClassDeclarationTest extends AbstractTest {
     // getAllMethods
 
     @Test
-    public void testGetAllFields() {
+    void testGetAllFields() {
         TypeSolver typeResolver = new ReflectionTypeSolver();
         ResolvedClassDeclaration arraylist = new ReflectionClassDeclaration(ArrayList.class, typeResolver);
         assertEquals(ImmutableSet.of("modCount", "serialVersionUID", "MAX_ARRAY_SIZE", "size", "elementData", "EMPTY_ELEMENTDATA", "DEFAULTCAPACITY_EMPTY_ELEMENTDATA", "DEFAULT_CAPACITY"),
@@ -283,7 +287,7 @@ public class ReflectionClassDeclarationTest extends AbstractTest {
     ///    
 
     @Test
-    public void testAllAncestors() {
+    void testAllAncestors() {
         TypeSolver typeResolver = new ReflectionTypeSolver();
         ResolvedClassDeclaration arraylist = new ReflectionClassDeclaration(ArrayList.class, typeResolver);
         Map<String, ResolvedReferenceType> ancestors = new HashMap<>();
@@ -303,26 +307,26 @@ public class ReflectionClassDeclarationTest extends AbstractTest {
     }
 
     @Test
-    public void testGetSuperclassWithoutTypeParameters() {
+    void testGetSuperclassWithoutTypeParameters() {
         ReflectionClassDeclaration compilationUnit = (ReflectionClassDeclaration) typeResolver.solveType("com.github.javaparser.ast.CompilationUnit");
         assertEquals("com.github.javaparser.ast.Node", compilationUnit.getSuperClass().getQualifiedName());
     }
 
     @Test
-    public void testGetSuperclassWithTypeParameters() {
+    void testGetSuperclassWithTypeParameters() {
         ReflectionClassDeclaration compilationUnit = (ReflectionClassDeclaration) typeResolver.solveType("com.github.javaparser.ast.body.ConstructorDeclaration");
         assertEquals("com.github.javaparser.ast.body.CallableDeclaration", compilationUnit.getSuperClass().getQualifiedName());
         assertEquals("com.github.javaparser.ast.body.ConstructorDeclaration", compilationUnit.getSuperClass().typeParametersMap().getValueBySignature("com.github.javaparser.ast.body.CallableDeclaration.T").get().asReferenceType().getQualifiedName());
     }
 
     @Test
-    public void testGetAllSuperclassesWithoutTypeParameters() {
+    void testGetAllSuperclassesWithoutTypeParameters() {
         ReflectionClassDeclaration cu = (ReflectionClassDeclaration) typeResolver.solveType("com.github.javaparser.ast.CompilationUnit");
         assertEquals(ImmutableSet.of("com.github.javaparser.ast.Node", "java.lang.Object"), cu.getAllSuperClasses().stream().map(i -> i.getQualifiedName()).collect(Collectors.toSet()));
     }
 
     @Test
-    public void testGetAllSuperclassesWithTypeParameters() {
+    void testGetAllSuperclassesWithTypeParameters() {
         ReflectionClassDeclaration constructorDeclaration = (ReflectionClassDeclaration) typeResolver.solveType("com.github.javaparser.ast.body.ConstructorDeclaration");
         assertEquals(4, constructorDeclaration.getAllSuperClasses().size());
         assertEquals(true, constructorDeclaration.getAllSuperClasses().stream().anyMatch(s -> s.getQualifiedName().equals("com.github.javaparser.ast.body.CallableDeclaration")));
@@ -330,7 +334,7 @@ public class ReflectionClassDeclarationTest extends AbstractTest {
         assertEquals(true, constructorDeclaration.getAllSuperClasses().stream().anyMatch(s -> s.getQualifiedName().equals("com.github.javaparser.ast.Node")));
         assertEquals(true, constructorDeclaration.getAllSuperClasses().stream().anyMatch(s -> s.getQualifiedName().equals("java.lang.Object")));
 
-        ResolvedReferenceType ancestor = null;
+        ResolvedReferenceType ancestor;
 
         ancestor = constructorDeclaration.getAllSuperClasses().get(0);
         assertEquals("com.github.javaparser.ast.body.CallableDeclaration", ancestor.getQualifiedName());
@@ -348,7 +352,7 @@ public class ReflectionClassDeclarationTest extends AbstractTest {
     }
 
     @Test
-    public void testGetInterfacesWithoutParameters() {
+    void testGetInterfacesWithoutParameters() {
         ReflectionClassDeclaration compilationUnit = (ReflectionClassDeclaration) typeResolver.solveType("com.github.javaparser.ast.CompilationUnit");
         assertEquals(ImmutableSet.of(), compilationUnit.getInterfaces().stream().map(i -> i.getQualifiedName()).collect(Collectors.toSet()));
 
@@ -365,12 +369,12 @@ public class ReflectionClassDeclarationTest extends AbstractTest {
     }
 
     @Test
-    public void testGetInterfacesWithParameters() {
+    void testGetInterfacesWithParameters() {
         ReflectionClassDeclaration constructorDeclaration = (ReflectionClassDeclaration) typeResolver.solveType("com.github.javaparser.ast.body.ConstructorDeclaration");
         System.out.println(constructorDeclaration.getInterfaces().stream().map(t -> t.getQualifiedName()).collect(Collectors.toList()));
-        assertEquals(9, constructorDeclaration.getInterfaces().size());
+        assertEquals(8, constructorDeclaration.getInterfaces().size());
 
-        ResolvedReferenceType interfaze = null;
+        ResolvedReferenceType interfaze;
 
         interfaze = constructorDeclaration.getInterfaces().get(0);
         assertEquals("com.github.javaparser.ast.nodeTypes.NodeWithBlockStmt", interfaze.getQualifiedName());
@@ -385,30 +389,27 @@ public class ReflectionClassDeclarationTest extends AbstractTest {
         assertEquals("com.github.javaparser.ast.body.ConstructorDeclaration", interfaze.typeParametersMap().getValueBySignature("com.github.javaparser.ast.nodeTypes.NodeWithJavadoc.N").get().asReferenceType().getQualifiedName());
 
         interfaze = constructorDeclaration.getInterfaces().get(3);
-        assertEquals("com.github.javaparser.ast.nodeTypes.NodeWithDeclaration", interfaze.getQualifiedName());
-
-        interfaze = constructorDeclaration.getInterfaces().get(4);
         assertEquals("com.github.javaparser.ast.nodeTypes.NodeWithSimpleName", interfaze.getQualifiedName());
         assertEquals("com.github.javaparser.ast.body.ConstructorDeclaration", interfaze.typeParametersMap().getValueBySignature("com.github.javaparser.ast.nodeTypes.NodeWithSimpleName.N").get().asReferenceType().getQualifiedName());
 
-        interfaze = constructorDeclaration.getInterfaces().get(5);
+        interfaze = constructorDeclaration.getInterfaces().get(4);
         assertEquals("com.github.javaparser.ast.nodeTypes.NodeWithParameters", interfaze.getQualifiedName());
         assertEquals("com.github.javaparser.ast.body.ConstructorDeclaration", interfaze.typeParametersMap().getValueBySignature("com.github.javaparser.ast.nodeTypes.NodeWithParameters.N").get().asReferenceType().getQualifiedName());
 
-        interfaze = constructorDeclaration.getInterfaces().get(6);
+        interfaze = constructorDeclaration.getInterfaces().get(5);
         assertEquals("com.github.javaparser.ast.nodeTypes.NodeWithThrownExceptions", interfaze.getQualifiedName());
         assertEquals("com.github.javaparser.ast.body.ConstructorDeclaration", interfaze.typeParametersMap().getValueBySignature("com.github.javaparser.ast.nodeTypes.NodeWithThrownExceptions.N").get().asReferenceType().getQualifiedName());
 
-        interfaze = constructorDeclaration.getInterfaces().get(7);
+        interfaze = constructorDeclaration.getInterfaces().get(6);
         assertEquals("com.github.javaparser.ast.nodeTypes.NodeWithTypeParameters", interfaze.getQualifiedName());
         assertEquals("com.github.javaparser.ast.body.ConstructorDeclaration", interfaze.typeParametersMap().getValueBySignature("com.github.javaparser.ast.nodeTypes.NodeWithTypeParameters.N").get().asReferenceType().getQualifiedName());
 
-        interfaze = constructorDeclaration.getInterfaces().get(8);
+        interfaze = constructorDeclaration.getInterfaces().get(7);
         assertEquals("com.github.javaparser.resolution.Resolvable", interfaze.getQualifiedName());
     }
 
     @Test
-    public void testGetAllInterfacesWithoutParameters() {
+    void testGetAllInterfacesWithoutParameters() {
         ReflectionClassDeclaration compilationUnit = (ReflectionClassDeclaration) typeResolver.solveType("com.github.javaparser.ast.CompilationUnit");
         assertEquals(ImmutableSet.of("java.lang.Cloneable", "com.github.javaparser.ast.visitor.Visitable", "com.github.javaparser.ast.observer.Observable",
                 "com.github.javaparser.HasParentNode", "com.github.javaparser.ast.nodeTypes.NodeWithRange",
@@ -443,12 +444,12 @@ public class ReflectionClassDeclarationTest extends AbstractTest {
     }
 
     @Test
-    public void testGetAllInterfacesWithParameters() {
+    void testGetAllInterfacesWithParameters() {
         ReflectionClassDeclaration constructorDeclaration = (ReflectionClassDeclaration) typeResolver.solveType("com.github.javaparser.ast.body.ConstructorDeclaration");
         List<ResolvedReferenceType> interfaces = constructorDeclaration.getAllInterfaces();
-        assertEquals(35, interfaces.size());
+        assertEquals(34, interfaces.size());
 
-        ResolvedReferenceType interfaze = null;
+        ResolvedReferenceType interfaze;
         int i = 0;
 
         interfaze = constructorDeclaration.getAllInterfaces().get(i++);
@@ -478,9 +479,6 @@ public class ReflectionClassDeclarationTest extends AbstractTest {
         interfaze = constructorDeclaration.getAllInterfaces().get(i++);
         assertEquals("com.github.javaparser.ast.nodeTypes.NodeWithJavadoc", interfaze.getQualifiedName());
         assertEquals("com.github.javaparser.ast.body.ConstructorDeclaration", interfaze.typeParametersMap().getValueBySignature("com.github.javaparser.ast.nodeTypes.NodeWithJavadoc.N").get().asReferenceType().getQualifiedName());
-
-        interfaze = constructorDeclaration.getAllInterfaces().get(i++);
-        assertEquals("com.github.javaparser.ast.nodeTypes.NodeWithDeclaration", interfaze.getQualifiedName());
 
         interfaze = constructorDeclaration.getAllInterfaces().get(i++);
         assertEquals("com.github.javaparser.ast.nodeTypes.NodeWithSimpleName", interfaze.getQualifiedName());
@@ -587,13 +585,13 @@ public class ReflectionClassDeclarationTest extends AbstractTest {
     }
 
     @Test
-    public void testGetAncestorsWithTypeParameters() {
+    void testGetAncestorsWithTypeParameters() {
         ReflectionClassDeclaration constructorDeclaration = (ReflectionClassDeclaration) typeResolver.solveType("com.github.javaparser.ast.body.ConstructorDeclaration");
-        assertEquals(10, constructorDeclaration.getAncestors().size());
+        assertEquals(9, constructorDeclaration.getAncestors().size());
 
-        ResolvedReferenceType ancestor = null;
+        ResolvedReferenceType ancestor;
         List<ResolvedReferenceType> ancestors = constructorDeclaration.getAncestors();
-        ancestors.sort(Comparator.comparing(ResolvedReferenceType::getQualifiedName));
+        ancestors.sort(comparing(ResolvedReferenceType::getQualifiedName));
 
         ancestor = ancestors.get(0);
         assertEquals("com.github.javaparser.ast.body.CallableDeclaration", ancestor.getQualifiedName());
@@ -604,38 +602,35 @@ public class ReflectionClassDeclarationTest extends AbstractTest {
         assertEquals("com.github.javaparser.ast.body.ConstructorDeclaration", ancestor.typeParametersMap().getValueBySignature("com.github.javaparser.ast.nodeTypes.NodeWithBlockStmt.N").get().asReferenceType().getQualifiedName());
 
         ancestor = ancestors.get(2);
-        assertEquals("com.github.javaparser.ast.nodeTypes.NodeWithDeclaration", ancestor.getQualifiedName());
-
-        ancestor = ancestors.get(3);
         assertEquals("com.github.javaparser.ast.nodeTypes.NodeWithJavadoc", ancestor.getQualifiedName());
         assertEquals("com.github.javaparser.ast.body.ConstructorDeclaration", ancestor.typeParametersMap().getValueBySignature("com.github.javaparser.ast.nodeTypes.NodeWithJavadoc.N").get().asReferenceType().getQualifiedName());
 
-        ancestor = ancestors.get(4);
+        ancestor = ancestors.get(3);
         assertEquals("com.github.javaparser.ast.nodeTypes.NodeWithParameters", ancestor.getQualifiedName());
         assertEquals("com.github.javaparser.ast.body.ConstructorDeclaration", ancestor.typeParametersMap().getValueBySignature("com.github.javaparser.ast.nodeTypes.NodeWithParameters.N").get().asReferenceType().getQualifiedName());
 
-        ancestor = ancestors.get(5);
+        ancestor = ancestors.get(4);
         assertEquals("com.github.javaparser.ast.nodeTypes.NodeWithSimpleName", ancestor.getQualifiedName());
         assertEquals("com.github.javaparser.ast.body.ConstructorDeclaration", ancestor.typeParametersMap().getValueBySignature("com.github.javaparser.ast.nodeTypes.NodeWithSimpleName.N").get().asReferenceType().getQualifiedName());
 
-        ancestor = ancestors.get(6);
+        ancestor = ancestors.get(5);
         assertEquals("com.github.javaparser.ast.nodeTypes.NodeWithThrownExceptions", ancestor.getQualifiedName());
         assertEquals("com.github.javaparser.ast.body.ConstructorDeclaration", ancestor.typeParametersMap().getValueBySignature("com.github.javaparser.ast.nodeTypes.NodeWithThrownExceptions.N").get().asReferenceType().getQualifiedName());
 
-        ancestor = ancestors.get(7);
+        ancestor = ancestors.get(6);
         assertEquals("com.github.javaparser.ast.nodeTypes.NodeWithTypeParameters", ancestor.getQualifiedName());
         assertEquals("com.github.javaparser.ast.body.ConstructorDeclaration", ancestor.typeParametersMap().getValueBySignature("com.github.javaparser.ast.nodeTypes.NodeWithTypeParameters.N").get().asReferenceType().getQualifiedName());
 
-        ancestor = ancestors.get(8);
+        ancestor = ancestors.get(7);
         assertEquals("com.github.javaparser.ast.nodeTypes.modifiers.NodeWithAccessModifiers", ancestor.getQualifiedName());
         assertEquals("com.github.javaparser.ast.body.ConstructorDeclaration", ancestor.typeParametersMap().getValueBySignature("com.github.javaparser.ast.nodeTypes.modifiers.NodeWithAccessModifiers.N").get().asReferenceType().getQualifiedName());
 
-        ancestor = ancestors.get(9);
+        ancestor = ancestors.get(8);
         assertEquals("com.github.javaparser.resolution.Resolvable", ancestor.getQualifiedName());
     }
 
     @Test
-    public void testGetAllAncestorsWithoutTypeParameters() {
+    void testGetAllAncestorsWithoutTypeParameters() {
         ReflectionClassDeclaration cu = (ReflectionClassDeclaration) typeResolver.solveType("com.github.javaparser.ast.CompilationUnit");
         assertEquals(ImmutableSet.of("java.lang.Cloneable", "com.github.javaparser.ast.visitor.Visitable",
                 "com.github.javaparser.ast.observer.Observable", "com.github.javaparser.ast.Node",
@@ -644,12 +639,12 @@ public class ReflectionClassDeclarationTest extends AbstractTest {
     }
 
     @Test
-    public void testGetAllAncestorsWithTypeParameters() {
+    void testGetAllAncestorsWithTypeParameters() {
         ReflectionClassDeclaration constructorDeclaration = (ReflectionClassDeclaration) typeResolver.solveType("com.github.javaparser.ast.body.ConstructorDeclaration");
 
-        ResolvedReferenceType ancestor = null;
+        ResolvedReferenceType ancestor;
         List<ResolvedReferenceType> ancestors = constructorDeclaration.getAllAncestors();
-        ancestors.sort(Comparator.comparing(ResolvedReferenceType::getQualifiedName));
+        ancestors.sort(comparing(ResolvedReferenceType::getQualifiedName));
 
         ancestor = ancestors.remove(0);
         assertEquals("com.github.javaparser.HasParentNode", ancestor.getQualifiedName());
@@ -673,9 +668,6 @@ public class ReflectionClassDeclarationTest extends AbstractTest {
         ancestor = ancestors.remove(0);
         assertEquals("com.github.javaparser.ast.nodeTypes.NodeWithBlockStmt", ancestor.getQualifiedName());
         assertEquals("com.github.javaparser.ast.body.ConstructorDeclaration", ancestor.typeParametersMap().getValueBySignature("com.github.javaparser.ast.nodeTypes.NodeWithBlockStmt.N").get().asReferenceType().getQualifiedName());
-
-        ancestor = ancestors.remove(0);
-        assertEquals("com.github.javaparser.ast.nodeTypes.NodeWithDeclaration", ancestor.getQualifiedName());
 
         ancestor = ancestors.remove(0);
         assertEquals("com.github.javaparser.ast.nodeTypes.NodeWithDeclaration", ancestor.getQualifiedName());

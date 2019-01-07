@@ -16,30 +16,36 @@
 
 package com.github.javaparser.symbolsolver.resolution;
 
+import com.github.javaparser.JavaParser;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.expr.Expression;
 import com.github.javaparser.ast.expr.MethodCallExpr;
 import com.github.javaparser.ast.expr.ThisExpr;
+import com.github.javaparser.ast.stmt.ExpressionStmt;
 import com.github.javaparser.ast.stmt.ReturnStmt;
 import com.github.javaparser.resolution.MethodUsage;
 import com.github.javaparser.resolution.declarations.ResolvedMethodDeclaration;
 import com.github.javaparser.resolution.types.ResolvedType;
+import com.github.javaparser.symbolsolver.JavaSymbolSolver;
 import com.github.javaparser.symbolsolver.javaparser.Navigator;
 import com.github.javaparser.symbolsolver.javaparsermodel.JavaParserFacade;
 import com.github.javaparser.symbolsolver.javaparsermodel.declarations.JavaParserAnonymousClassDeclaration;
+import com.github.javaparser.symbolsolver.javaparsermodel.declarations.JavaParserClassDeclaration;
 import com.github.javaparser.symbolsolver.model.resolution.SymbolReference;
 import com.github.javaparser.symbolsolver.model.resolution.TypeSolver;
+import com.github.javaparser.symbolsolver.model.typesystem.ReferenceTypeImpl;
 import com.github.javaparser.symbolsolver.resolution.typesolvers.ReflectionTypeSolver;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class MethodsResolutionTest extends AbstractResolutionTest {
+class MethodsResolutionTest extends AbstractResolutionTest {
 
     @Test
-    public void solveMethodAccessThroughSuper() {
+    void solveMethodAccessThroughSuper() {
         CompilationUnit cu = parseSample("AccessThroughSuper");
         com.github.javaparser.ast.body.ClassOrInterfaceDeclaration clazz = Navigator.demandClass(cu, "AccessThroughSuper.SubClass");
         MethodDeclaration method = Navigator.demandMethod(clazz, "methodTest");
@@ -51,7 +57,7 @@ public class MethodsResolutionTest extends AbstractResolutionTest {
     }
 
     @Test
-    public void solveMethodWithClassExpressionAsParameter() {
+    void solveMethodWithClassExpressionAsParameter() {
         CompilationUnit cu = parseSample("ClassExpression");
         com.github.javaparser.ast.body.ClassOrInterfaceDeclaration clazz = Navigator.demandClass(cu, "ClassExpression");
         MethodDeclaration method = Navigator.demandMethod(clazz, "foo");
@@ -62,7 +68,7 @@ public class MethodsResolutionTest extends AbstractResolutionTest {
     }
 
     @Test
-    public void solveMethodInInterfaceParent() {
+    void solveMethodInInterfaceParent() {
         CompilationUnit cu = parseSample("MethodCalls");
         ClassOrInterfaceDeclaration clazz = Navigator.demandClass(cu, "MethodCalls");
 
@@ -77,7 +83,7 @@ public class MethodsResolutionTest extends AbstractResolutionTest {
     }
 
     @Test
-    public void solveMethodWithTypePromotionsToLong() {
+    void solveMethodWithTypePromotionsToLong() {
         CompilationUnit cu = parseSample("Issue338");
         ClassOrInterfaceDeclaration clazz = Navigator.demandClass(cu, "TypePromotions");
 
@@ -111,7 +117,7 @@ public class MethodsResolutionTest extends AbstractResolutionTest {
     }
 
     @Test
-    public void solveMethodWithTypePromotionsToInt() {
+    void solveMethodWithTypePromotionsToInt() {
         CompilationUnit cu = parseSample("Issue338");
         ClassOrInterfaceDeclaration clazz = Navigator.demandClass(cu, "TypePromotions");
 
@@ -144,7 +150,7 @@ public class MethodsResolutionTest extends AbstractResolutionTest {
     }
 
     @Test
-    public void solveMethodWithTypePromotionsToShort() {
+    void solveMethodWithTypePromotionsToShort() {
         CompilationUnit cu = parseSample("Issue338");
         ClassOrInterfaceDeclaration clazz = Navigator.demandClass(cu, "TypePromotions");
 
@@ -176,7 +182,7 @@ public class MethodsResolutionTest extends AbstractResolutionTest {
     }
 
     @Test
-    public void solveMethodWithTypePromotionsToByte() {
+    void solveMethodWithTypePromotionsToByte() {
         CompilationUnit cu = parseSample("Issue338");
         ClassOrInterfaceDeclaration clazz = Navigator.demandClass(cu, "TypePromotions");
 
@@ -207,7 +213,7 @@ public class MethodsResolutionTest extends AbstractResolutionTest {
     }
 
     @Test
-    public void solveMethodWithTypePromotionsToLongWithExtraParam() {
+    void solveMethodWithTypePromotionsToLongWithExtraParam() {
         CompilationUnit cu = parseSample("Issue338");
         ClassOrInterfaceDeclaration clazz = Navigator.demandClass(cu, "TypePromotionsWithExtraParam");
 
@@ -241,7 +247,7 @@ public class MethodsResolutionTest extends AbstractResolutionTest {
     }
 
     @Test
-    public void solveMethodWithTypePromotionsToIntWithExtraParam() {
+    void solveMethodWithTypePromotionsToIntWithExtraParam() {
         CompilationUnit cu = parseSample("Issue338");
         ClassOrInterfaceDeclaration clazz = Navigator.demandClass(cu, "TypePromotionsWithExtraParam");
 
@@ -274,7 +280,7 @@ public class MethodsResolutionTest extends AbstractResolutionTest {
     }
 
     @Test
-    public void solveMethodWithTypePromotionsToShortWithExtraParam() {
+    void solveMethodWithTypePromotionsToShortWithExtraParam() {
         CompilationUnit cu = parseSample("Issue338");
         ClassOrInterfaceDeclaration clazz = Navigator.demandClass(cu, "TypePromotionsWithExtraParam");
 
@@ -306,7 +312,7 @@ public class MethodsResolutionTest extends AbstractResolutionTest {
     }
 
     @Test
-    public void solveMethodWithTypePromotionsToByteWithExtraParam() {
+    void solveMethodWithTypePromotionsToByteWithExtraParam() {
         CompilationUnit cu = parseSample("Issue338");
         ClassOrInterfaceDeclaration clazz = Navigator.demandClass(cu, "TypePromotionsWithExtraParam");
 
@@ -337,7 +343,7 @@ public class MethodsResolutionTest extends AbstractResolutionTest {
     }
 
     @Test
-    public void callOnThisInAnonymousClass() {
+    void callOnThisInAnonymousClass() {
         CompilationUnit cu = parseSample("ThisInAnonymousClass");
         ClassOrInterfaceDeclaration clazz = Navigator.demandClass(cu, "Bar");
 
@@ -348,7 +354,7 @@ public class MethodsResolutionTest extends AbstractResolutionTest {
     }
 
     @Test
-    public void thisInAnonymousClass() {
+    void thisInAnonymousClass() {
         CompilationUnit cu = parseSample("ThisInAnonymousClass");
         ClassOrInterfaceDeclaration clazz = Navigator.demandClass(cu, "Bar");
 
@@ -357,5 +363,110 @@ public class MethodsResolutionTest extends AbstractResolutionTest {
         ResolvedType type = JavaParserFacade.get(new ReflectionTypeSolver()).getType(thisExpression);
         assertEquals(true, type.isReferenceType());
         assertEquals(true, type.asReferenceType().getTypeDeclaration() instanceof JavaParserAnonymousClassDeclaration);
+    }
+
+    @Test
+    void resolveMethodCallWithScopeDeclarationInSwitchEntryStmt() {
+        CompilationUnit cu = parseSample("TryInSwitch");
+        ClassOrInterfaceDeclaration clazz = Navigator.demandClass(cu, "TryInSwitch");
+
+        MethodDeclaration method = Navigator.demandMethod(clazz, "foo");
+
+        MethodCallExpr callExpr = method.getBody().get().getStatement(1)
+                                          .asSwitchStmt().getEntry(0).getStatement(1)
+                                          .asTryStmt().getTryBlock().getStatement(1)
+                                          .asExpressionStmt().getExpression()
+                                          .asMethodCallExpr();
+
+        SymbolReference<ResolvedMethodDeclaration> reference = JavaParserFacade.get(new ReflectionTypeSolver()).solve(callExpr);
+
+        assertTrue(reference.isSolved());
+        assertEquals("java.io.File.delete()", reference.getCorrespondingDeclaration().getQualifiedSignature());
+    }
+
+    @Test
+    void complexTypeSolving() {
+        CompilationUnit cu = parseSample("ComplexTypeResolving");
+        ClassOrInterfaceDeclaration mainClass = Navigator.demandClass(cu, "Main");
+
+        ClassOrInterfaceDeclaration childDec = (ClassOrInterfaceDeclaration) mainClass.getMember(1);
+        ExpressionStmt stmt =
+                (ExpressionStmt) Navigator.demandMethod(childDec, "foo").getBody().get().getStatement(0);
+        ReferenceTypeImpl resolvedType =
+                (ReferenceTypeImpl) JavaParserFacade.get(new ReflectionTypeSolver()).getType(stmt.getExpression());
+        ClassOrInterfaceDeclaration resolvedTypeDeclaration
+                = ((JavaParserClassDeclaration) resolvedType.getTypeDeclaration()).getWrappedNode();
+
+        assertEquals(mainClass, resolvedTypeDeclaration.getParentNode().get());
+    }
+
+    @Test
+    void resolveMethodCallOfMethodInMemberClassOfAnotherClass() {
+        CompilationUnit cu = parseSample("NestedClasses");
+        ClassOrInterfaceDeclaration classA = Navigator.demandClass(cu, "A");
+
+        MethodDeclaration method = Navigator.demandMethod(classA, "foo");
+
+        MethodCallExpr callExpr = method.getBody().get().getStatement(1)
+                                          .asExpressionStmt().getExpression().asMethodCallExpr();
+
+        SymbolReference<ResolvedMethodDeclaration> reference = JavaParserFacade.get(new ReflectionTypeSolver())
+                                                                       .solve(callExpr);
+
+        assertTrue(reference.isSolved());
+        assertEquals("X.Y.bar()", reference.getCorrespondingDeclaration().getQualifiedSignature());
+    }
+
+    @Test
+    void resolveMethodCallOfMethodInMemberInterfaceOfAnotherInterface() {
+        CompilationUnit cu = parseSample("NestedInterfaces");
+        ClassOrInterfaceDeclaration classA = Navigator.demandInterface(cu, "A");
+
+        MethodDeclaration method = Navigator.demandMethod(classA, "foo");
+
+        MethodCallExpr callExpr = method.getBody().get().getStatement(1)
+                                          .asExpressionStmt().getExpression().asMethodCallExpr();
+
+        SymbolReference<ResolvedMethodDeclaration> reference = JavaParserFacade.get(new ReflectionTypeSolver())
+                                                                       .solve(callExpr);
+
+        assertTrue(reference.isSolved());
+        assertEquals("X.Y.bar()", reference.getCorrespondingDeclaration().getQualifiedSignature());
+    }
+
+    @Test
+    void resolveMethodCallOfMethodInMemberInterfaceWithIdenticalNameOfAnotherInterface() {
+        CompilationUnit cu = parseSample("NestedInterfacesWithIdenticalNames");
+        ClassOrInterfaceDeclaration classA = Navigator.demandInterface(cu, "A");
+
+        MethodDeclaration method = Navigator.demandMethod(classA, "foo");
+
+        MethodCallExpr callExpr = method.getBody().get().getStatement(1)
+                                          .asExpressionStmt().getExpression().asMethodCallExpr();
+
+        SymbolReference<ResolvedMethodDeclaration> reference = JavaParserFacade.get(new ReflectionTypeSolver())
+                                                                       .solve(callExpr);
+
+        assertTrue(reference.isSolved());
+        assertEquals("X.A.bar()", reference.getCorrespondingDeclaration().getQualifiedSignature());
+    }
+
+    @Test
+    void resolveLocalMethodInClassExtendingUnknownClass() {
+        // configure symbol solver before parsing
+        JavaParser.getStaticConfiguration().setSymbolResolver(new JavaSymbolSolver(new ReflectionTypeSolver()));
+
+        // parse compilation unit and get field access expression
+        CompilationUnit cu = parseSample("ClassExtendingUnknownClass");
+        ClassOrInterfaceDeclaration clazz = Navigator.demandClass(cu, "ClassExtendingUnknownClass");
+        MethodDeclaration method = Navigator.demandMethod(clazz, "foo");
+        MethodCallExpr methodCallExpr = method.getBody().get().getStatements().get(0).asExpressionStmt()
+                                                .getExpression().asMethodCallExpr();
+
+        // resolve field access expression
+        ResolvedMethodDeclaration resolvedMethodDeclaration = methodCallExpr.resolve();
+
+        // check that the expected method declaration equals the resolved method declaration
+        assertEquals("ClassExtendingUnknownClass.bar(java.lang.String)", resolvedMethodDeclaration.getQualifiedSignature());
     }
 }

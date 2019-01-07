@@ -17,6 +17,7 @@
 package com.github.javaparser.symbolsolver.model.typesystem;
 
 import com.github.javaparser.resolution.MethodUsage;
+import com.github.javaparser.resolution.declarations.ResolvedFieldDeclaration;
 import com.github.javaparser.resolution.declarations.ResolvedMethodDeclaration;
 import com.github.javaparser.resolution.declarations.ResolvedReferenceTypeDeclaration;
 import com.github.javaparser.resolution.declarations.ResolvedTypeParameterDeclaration;
@@ -30,7 +31,6 @@ import com.github.javaparser.symbolsolver.javaparsermodel.declarations.JavaParse
 import com.github.javaparser.symbolsolver.model.resolution.SymbolReference;
 import com.github.javaparser.symbolsolver.model.resolution.TypeSolver;
 
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -47,7 +47,7 @@ public class ReferenceTypeImpl extends ResolvedReferenceType {
 
     public static ResolvedReferenceType undeterminedParameters(ResolvedReferenceTypeDeclaration typeDeclaration, TypeSolver typeSolver) {
         return new ReferenceTypeImpl(typeDeclaration, typeDeclaration.getTypeParameters().stream().map(
-                tp -> new ResolvedTypeVariable(tp)
+                ResolvedTypeVariable::new
         ).collect(Collectors.toList()), typeSolver);
     }
 
@@ -204,8 +204,36 @@ public class ReferenceTypeImpl extends ResolvedReferenceType {
         return ancestors;
     }
 
+    public List<ResolvedReferenceType> getDirectAncestors() {
+        // We need to go through the inheritance line and propagate the type parametes
+
+        List<ResolvedReferenceType> ancestors = typeDeclaration.getAncestors();
+
+        ancestors = ancestors.stream()
+                .map(a -> typeParametersMap().replaceAll(a).asReferenceType())
+                .collect(Collectors.toList());
+
+        // Avoid repetitions of Object
+        ancestors.removeIf(a -> a.getQualifiedName().equals(Object.class.getCanonicalName()));
+        boolean isClassWithSuperClassOrObject = this.getTypeDeclaration().isClass()
+                && (this.getTypeDeclaration().asClass().getSuperClass() == null ||
+                !this.getTypeDeclaration().asClass().getSuperClass().getQualifiedName().equals(Object.class.getCanonicalName()));
+        if (!isClassWithSuperClassOrObject) {
+            ResolvedReferenceTypeDeclaration objectType = typeSolver.solveType(Object.class.getCanonicalName());
+            ResolvedReferenceType objectRef = create(objectType);
+            ancestors.add(objectRef);
+        }
+        return ancestors;
+    }
+
     public ResolvedReferenceType deriveTypeParameters(ResolvedTypeParametersMap typeParametersMap) {
         return create(typeDeclaration, typeParametersMap);
     }
 
+    @Override
+    public Set<ResolvedFieldDeclaration> getDeclaredFields() {
+        Set<ResolvedFieldDeclaration> res = new HashSet<>();
+        res.addAll(getTypeDeclaration().getDeclaredFields());
+        return res;
+    }
 }

@@ -14,7 +14,6 @@
 
 package com.github.javaparser.symbolsolver.javassistmodel;
 
-import com.github.javaparser.ast.AccessSpecifier;
 import com.github.javaparser.resolution.declarations.ResolvedReferenceTypeDeclaration;
 import com.github.javaparser.resolution.types.*;
 import com.github.javaparser.symbolsolver.model.resolution.TypeSolver;
@@ -57,12 +56,12 @@ public class JavassistFactory {
   }
 
   public static ResolvedReferenceTypeDeclaration toTypeDeclaration(CtClass ctClazz, TypeSolver typeSolver) {
-    if (ctClazz.isInterface()) {
+    if (ctClazz.isAnnotation()) {
+      return new JavassistAnnotationDeclaration(ctClazz, typeSolver);
+    } else if (ctClazz.isInterface()) {
       return new JavassistInterfaceDeclaration(ctClazz, typeSolver);
     } else if (ctClazz.isEnum()) {
       return new JavassistEnumDeclaration(ctClazz, typeSolver);
-    } else if (ctClazz.isAnnotation()) {
-      throw new UnsupportedOperationException("CtClass of annotation not yet supported");
     } else if (ctClazz.isArray()) {
       throw new IllegalArgumentException("This method should not be called passing an array");
     } else {
@@ -70,15 +69,15 @@ public class JavassistFactory {
     }
   }
 
-  static AccessSpecifier modifiersToAccessLevel(final int modifiers) {
+  static com.github.javaparser.ast.Modifier.Keyword modifiersToAccessLevel(final int modifiers) {
     if (Modifier.isPublic(modifiers)) {
-      return AccessSpecifier.PUBLIC;
+      return com.github.javaparser.ast.Modifier.Keyword.PUBLIC;
     } else if (Modifier.isProtected(modifiers)) {
-      return AccessSpecifier.PROTECTED;
+      return com.github.javaparser.ast.Modifier.Keyword.PROTECTED;
     } else if (Modifier.isPrivate(modifiers)) {
-      return AccessSpecifier.PRIVATE;
+      return com.github.javaparser.ast.Modifier.Keyword.PRIVATE;
     } else {
-      return AccessSpecifier.DEFAULT;
+      return com.github.javaparser.ast.Modifier.Keyword.PACKAGE_PRIVATE;
     }
   }
 

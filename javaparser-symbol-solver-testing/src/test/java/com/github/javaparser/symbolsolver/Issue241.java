@@ -12,18 +12,19 @@ import com.github.javaparser.symbolsolver.resolution.AbstractResolutionTest;
 import com.github.javaparser.symbolsolver.resolution.typesolvers.CombinedTypeSolver;
 import com.github.javaparser.symbolsolver.resolution.typesolvers.JavaParserTypeSolver;
 import com.github.javaparser.symbolsolver.resolution.typesolvers.ReflectionTypeSolver;
-import org.junit.Test;
+import com.github.javaparser.symbolsolver.utils.LeanParserConfiguration;
+import org.junit.jupiter.api.Test;
 
-import java.io.File;
+import java.nio.file.Path;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class Issue241 extends AbstractResolutionTest{
+class Issue241 extends AbstractResolutionTest{
 
     @Test
-    public void testSolveStaticallyImportedMemberType() {
-        File src = adaptPath(new File("src/test/resources"));
-        TypeSolver typeSolver = new CombinedTypeSolver(new ReflectionTypeSolver(), new JavaParserTypeSolver(src));
+    void testSolveStaticallyImportedMemberType() {
+        Path src = adaptPath("src/test/resources");
+        TypeSolver typeSolver = new CombinedTypeSolver(new ReflectionTypeSolver(), new JavaParserTypeSolver(src, new LeanParserConfiguration()));
         		
         JavaParserFacade javaParserFacade = JavaParserFacade.get(typeSolver);
         

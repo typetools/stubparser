@@ -26,13 +26,12 @@ import com.github.javaparser.ast.NodeList;
 import com.github.javaparser.ast.expr.AnnotationExpr;
 import com.github.javaparser.ast.nodeTypes.NodeWithAnnotations;
 import com.github.javaparser.ast.observer.ObservableProperty;
-
 import static com.github.javaparser.utils.Utils.assertNotNull;
 import com.github.javaparser.ast.visitor.CloneVisitor;
 import com.github.javaparser.metamodel.BodyDeclarationMetaModel;
 import com.github.javaparser.metamodel.JavaParserMetaModel;
-import javax.annotation.Generated;
 import com.github.javaparser.TokenRange;
+import com.github.javaparser.ast.Generated;
 import java.util.function.Consumer;
 import static com.github.javaparser.utils.CodeGenerationUtils.f;
 import java.util.Optional;
