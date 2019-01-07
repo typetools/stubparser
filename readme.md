@@ -6,16 +6,14 @@ It is a fork of the [JavaParser](http://javaparser.org) project.
 
 ## Differences between the StubParser and JavaParser
 
-Following list is the differences that were added to the JavaParser to adjust it for using as StubParser for 
-[the Checker Framework](https://github.com/typetools/checker-framework).
+These are the differences between JavaParser and StubParser:
 
 1. StubUnit class that represents the parsed [stubfile](https://checkerframework.org/manual/#stub).
-2. Changes at the java.jj file to parse the stub files.
-3. Methods for parsing the stub files at the JavaParser.class.
+2. Changes to the `java.jj` file to parse the stub files.
+3. Methods for parsing the stub files in the `JavaParser` class.
 
-To check the code difference "git diff" could be used. 
-[Stackoverflow link on how to get diff between forks](https://stackoverflow.com/questions/4927519/diff-a-git-fork).
-Enter the root directory of the StubParser and perform following commands:
+To see the {diffs between the forks](https://stackoverflow.com/questions/4927519/diff-a-git-fork),
+enter the root directory of the StubParser and perform following commands:
 ```bash
 git remote add original https://github.com/javaparser/javaparser
 git fetch original
@@ -34,7 +32,7 @@ StubParser.  Only developers, not users, of StubParser need to do this.
 ```bash
 git clone https://github.com/{user.name}/stubparser
 ```
-4. Enter the main directory of the local project.
+4. Enter the main directory of the local clone.
 ```bash
 cd stubparser
 ```
@@ -43,6 +41,7 @@ cd stubparser
 git checkout -b updating
 ```
 6. Pull the upstream of [the JavaParser project](https://github.com/javaparser/javaparser).
+TODO: It's probably better to pull a released tag or commit, rather than HEAD.
 ```bash
 git pull https://github.com/javaparser/javaparser master
 ```
@@ -56,7 +55,7 @@ mvn test
 git push
 ```
 10. Check that the Travis build was successful. If not, resolve the issues and repeat steps 7-9.
-11. Create a pull request to the typetools/stubparser.
+11. Create a pull request to `typetools/stubparser`.
 
 ## Original JavaParser README
 
