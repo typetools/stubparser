@@ -28,22 +28,25 @@ StubParser.  Only developers, not users, of StubParser need to do this.
 1. Fork [the StubParser project](https://github.com/typetools/stubparser) to your GitHub account.
 2. Enable Travis build for your fork of the StubParser. 
 [How to get started with Travis CI](https://docs.travis-ci.com/user/getting-started/#To-get-started-with-Travis-CI).
-3. Clone the repository.
+3. Clone the repository, using *one* of the following two commands:
 ```bash
+git clone git@github.com:{user.name}/stubparser.git
 git clone https://github.com/{user.name}/stubparser
 ```
-4. Enter the main directory of the local clone.
+4. Update from StubParser.
 ```bash
 cd stubparser
+git pull --ff-only https://github.com/typetools/stubparser
 ```
 5. Create and checkout a branch named `updating`.
 ```bash
 git checkout -b updating
 ```
 6. Pull the upstream of [the JavaParser project](https://github.com/javaparser/javaparser).
-TODO: It's probably better to pull a released tag or commit, rather than HEAD.
+Find an appropriate [tag name](https://github.com/javaparser/javaparser/tags)
+such as `javaparser-parent-3.10.2`.
 ```bash
-git pull https://github.com/javaparser/javaparser master
+git pull https://github.com/javaparser/javaparser TAG-NAME
 ```
 7. Resolve conflicts if required and commit it.
 8. Run maven tests in the root StubParser directory. If any tests fail, fix them before continuing.
@@ -56,8 +59,13 @@ git push
 ```
 10. Check that the Travis build was successful. If not, resolve the issues and repeat steps 7-9.
 11. Create a pull request to `typetools/stubparser`.
+When merging the pull request, give it a commit message like "Update to JavaParser 3.10.2".
+Do *not* squash-and-merge the pull request;
+you want to keep a history of what upstream commits were merged in.
+
 
 ## Original JavaParser README
+
 
 The remainder of this README file is the original JavaParser README.
 
