@@ -61,11 +61,7 @@ git push
 
 The remainder of this README file is the original JavaParser README.
 
-## Java Parser and Abstract Syntax Tree
-
-This package contains a Java 1.0 - Java 9 Parser with AST generation and visitor support.
-
-Our main site is at [JavaParser.org](http://javaparser.org)
+# JavaParser
 
 [![Maven Central](https://img.shields.io/maven-central/v/com.github.javaparser/javaparser-core.svg)](http://search.maven.org/#search%7Cgav%7C1%7Cg%3A%22com.github.javaparser%22%20AND%20a%3A%22javaparser-core%22)
 [![Build Status](https://travis-ci.org/javaparser/javaparser.svg?branch=master)](https://travis-ci.org/javaparser/javaparser)
@@ -96,14 +92,14 @@ Just add the following to your maven configuration or tailor to your own depende
 <dependency>
     <groupId>com.github.javaparser</groupId>
     <artifactId>javaparser-symbol-solver-core</artifactId>
-    <version>3.9.1</version>
+    <version>3.10.2</version>
 </dependency>
 ```
 
 **Gradle**:
 
 ```
-compile 'com.github.javaparser:javaparser-symbol-solver-core:3.9.1'
+compile 'com.github.javaparser:javaparser-symbol-solver-core:3.10.2'
 ```
 
 Since Version 3.5.10, the JavaParser project includes the JavaSymbolSolver. 
@@ -118,14 +114,14 @@ Using the dependency above will add both JavaParser and JavaSymbolSolver to your
 <dependency>
     <groupId>com.github.javaparser</groupId>
     <artifactId>javaparser-core</artifactId>
-    <version>3.9.1</version>
+    <version>3.10.2</version>
 </dependency>
 ```
 
 **Gradle**:
 
 ```
-compile 'com.github.javaparser:javaparser-core:3.9.1'
+compile 'com.github.javaparser:javaparser-core:3.10.2'
 ```
 
 Since version 3.6.17 the AST can be serialized to JSON.
@@ -137,14 +133,14 @@ There is a separate module for this:
 <dependency>
     <groupId>com.github.javaparser</groupId>
     <artifactId>javaparser-core-serialization</artifactId>
-    <version>3.9.1</version>
+    <version>3.10.2</version>
 </dependency>
 ```
 
 **Gradle**:
 
 ```
-compile 'com.github.javaparser:javaparser-core-serialization:3.9.1'
+compile 'com.github.javaparser:javaparser-core-serialization:3.10.2'
 ```
 
 ## How To Compile Sources

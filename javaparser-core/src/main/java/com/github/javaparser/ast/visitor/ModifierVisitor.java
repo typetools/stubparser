@@ -180,9 +180,9 @@ public class ModifierVisitor<A> implements GenericVisitor<Visitable, A> {
 
     @Override
     public Visitable visit(final BreakStmt n, final A arg) {
-        SimpleName label = n.getLabel().map(s -> (SimpleName) s.accept(this, arg)).orElse(null);
+        Expression value = n.getValue().map(s -> (Expression) s.accept(this, arg)).orElse(null);
         Comment comment = n.getComment().map(s -> (Comment) s.accept(this, arg)).orElse(null);
-        n.setLabel(label);
+        n.setValue(value);
         n.setComment(comment);
         return n;
     }
@@ -288,7 +288,6 @@ public class ModifierVisitor<A> implements GenericVisitor<Visitable, A> {
 
     // TODO Implement ModifierVisitor for StubUnit
     @Override
-    @Generated("com.github.javaparser.generator.core.visitor.ModifierVisitorGenerator")
     public Visitable visit(final StubUnit n, final A arg) {
         /*NodeList<ImportDeclaration> imports = modifyList(n.getImports(), arg);
         ModuleDeclaration module = n.getModule().map(s -> (ModuleDeclaration) s.accept(this, arg)).orElse(null);

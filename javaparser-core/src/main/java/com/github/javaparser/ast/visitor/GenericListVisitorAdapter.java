@@ -319,8 +319,8 @@ public abstract class GenericListVisitorAdapter<R, A> implements GenericVisitor<
     public List<R> visit(final BreakStmt n, final A arg) {
         List<R> result = new ArrayList<>();
         List<R> tmp;
-        if (n.getLabel().isPresent()) {
-            tmp = n.getLabel().get().accept(this, arg);
+        if (n.getValue().isPresent()) {
+            tmp = n.getValue().get().accept(this, arg);
             if (tmp != null)
                 result.addAll(tmp);
         }
@@ -510,7 +510,6 @@ public abstract class GenericListVisitorAdapter<R, A> implements GenericVisitor<
     }
 
     // TODO Implement GenericListVisitorAdapter # visit on StubUnit
-    @Generated("com.github.javaparser.generator.core.visitor.GenericListVisitorAdapterGenerator")
     public List<R> visit(StubUnit n, A arg) {
         throw new RuntimeException("The method is not implemented!");
     }
