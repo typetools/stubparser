@@ -147,7 +147,6 @@ public class EqualsVisitor implements GenericVisitor<Boolean, Visitable> {
 
     // TODO Implement EqualsVisitor for StubUnit
     @Override
-    @Generated("com.github.javaparser.generator.core.visitor.EqualsVisitorGenerator")
     public Boolean visit(StubUnit n, Visitable arg) {
         throw new RuntimeException("The method is not implemented!");
     }
@@ -993,7 +992,7 @@ public class EqualsVisitor implements GenericVisitor<Boolean, Visitable> {
     @Override
     public Boolean visit(final BreakStmt n, final Visitable arg) {
         final BreakStmt n2 = (BreakStmt) arg;
-        if (!nodeEquals(n.getLabel(), n2.getLabel()))
+        if (!nodeEquals(n.getValue(), n2.getValue()))
             return false;
         if (!nodeEquals(n.getComment(), n2.getComment()))
             return false;

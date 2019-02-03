@@ -3,8 +3,7 @@ language: java
 script: ./.travis-build.sh
 
 jdk:
-  - oraclejdk8
-  - oraclejdk9
+  - openjdk11
 notifications:
   webhooks:
     urls:
@@ -12,7 +11,7 @@ notifications:
     on_success: always  # options: [always|never|change] default: always
     on_failure: always  # options: [always|never|change] default: always
 after_success:
-  - mvn test jacoco:report coveralls:report
+  - mvn -B test jacoco:report coveralls:report
 # http://lint.travis-ci.org/ validator
 
 jobs:

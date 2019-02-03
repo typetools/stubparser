@@ -262,8 +262,8 @@ public abstract class GenericVisitorAdapter<R, A> implements GenericVisitor<R, A
     @Override
     public R visit(final BreakStmt n, final A arg) {
         R result;
-        if (n.getLabel().isPresent()) {
-            result = n.getLabel().get().accept(this, arg);
+        if (n.getValue().isPresent()) {
+            result = n.getValue().get().accept(this, arg);
             if (result != null)
                 return result;
         }
@@ -454,7 +454,6 @@ public abstract class GenericVisitorAdapter<R, A> implements GenericVisitor<R, A
 
     // TODO Implement GenericVisitorAdapter # visit on StubUnit
     @Override
-    @Generated("com.github.javaparser.generator.core.visitor.GenericVisitorAdapterGenerator")
     public R visit(final StubUnit n, final A arg) {
         throw new RuntimeException("The method is not implemented!");
     }
