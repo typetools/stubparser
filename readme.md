@@ -66,14 +66,10 @@ you want to keep a history of what upstream commits were merged in.
 
 ## Original JavaParser README
 
-
 The remainder of this README file is the original JavaParser README.
 
-## Java Parser and Abstract Syntax Tree
 
-This package contains a Java 1.0 - Java 9 Parser with AST generation and visitor support.
-
-Our main site is at [JavaParser.org](http://javaparser.org)
+# JavaParser
 
 [![Maven Central](https://img.shields.io/maven-central/v/com.github.javaparser/javaparser-core.svg)](http://search.maven.org/#search%7Cgav%7C1%7Cg%3A%22com.github.javaparser%22%20AND%20a%3A%22javaparser-core%22)
 [![Build Status](https://travis-ci.org/javaparser/javaparser.svg?branch=master)](https://travis-ci.org/javaparser/javaparser)
