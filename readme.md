@@ -38,7 +38,7 @@ git clone https://github.com/{user.name}/stubparser
 cd stubparser
 git pull --ff-only https://github.com/typetools/stubparser
 ```
-5. Create and checkout a branch named `updating`.
+5. Create and checkout a new branch named `updating`.
 ```bash
 git checkout -b updating
 ```
@@ -49,7 +49,7 @@ such as `javaparser-parent-3.10.2`.
 git pull https://github.com/javaparser/javaparser TAG-NAME
 ```
 7. Resolve conflicts if required and commit it.
-8. Run maven tests in the root StubParser directory. If any tests fail, fix them before continuing.
+8. Run maven tests in the root directory. If any tests fail, fix them before continuing.
 ```bash
 mvn test
 ```
