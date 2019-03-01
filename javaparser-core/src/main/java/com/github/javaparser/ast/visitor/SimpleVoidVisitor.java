@@ -225,7 +225,7 @@ public class SimpleVoidVisitor<A> implements VoidVisitor<A> {
     public void visit(SuperExpr n, A arg) { defaultAction(n, arg); }
 
     @Override
-    public void visit(SwitchEntryStmt n, A arg) { defaultAction(n, arg); }
+    public void visit(SwitchEntry n, A arg) { defaultAction(n, arg); }
 
     @Override
     public void visit(SwitchStmt n, A arg) { defaultAction(n, arg); }

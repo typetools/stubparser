@@ -889,7 +889,7 @@ public class PrettyPrintVisitor implements VoidVisitor<Void> {
         printer.println(") {");
         if (n.getEntries() != null) {
             printer.indent();
-            for (final SwitchEntryStmt e : n.getEntries()) {
+            for (final SwitchEntry e : n.getEntries()) {
                 e.accept(this, arg);
             }
             printer.unindent();
@@ -899,7 +899,7 @@ public class PrettyPrintVisitor implements VoidVisitor<Void> {
     }
 
     @Override
-    public void visit(final SwitchEntryStmt n, final Void arg) {
+    public void visit(final SwitchEntry n, final Void arg) {
         printJavaComment(n.getComment(), arg);
         if (n.getLabel().isPresent()) {
             printer.print("case ");
