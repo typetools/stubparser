@@ -304,8 +304,8 @@ public final class JavaParser {
      * @return CompilationUnit representing the stub files source code.
      * @throws ParseProblemException if the source code has parser errors.
      */
-    public static StubUnit parseStubUnit(final InputStream in, Charset encoding) {
-        return simplifiedParse(STUB_UNIT, provider(in, encoding));
+    public ParseResult<StubUnit> parseStubUnit(final InputStream in, Charset encoding) {
+        return parse(STUB_UNIT, provider(in, encoding));
     }
 
     /**
@@ -317,7 +317,7 @@ public final class JavaParser {
      * @return StubUnit representing the stub files source code.
      * @throws ParseProblemException if the source code has parser errors.
      */
-    public static StubUnit parseStubUnit(final InputStream in) {
+    public ParseResult<StubUnit> parseStubUnit(final InputStream in) {
         return parseStubUnit(in, UTF8);
     }
 
@@ -331,8 +331,8 @@ public final class JavaParser {
      * @throws ParseProblemException if the source code has parser errors.
      * @throws FileNotFoundException the file was not found.
      */
-    public static StubUnit parseStubUnit(final File file, final Charset encoding) throws FileNotFoundException {
-        return simplifiedParse(STUB_UNIT, provider(file, encoding)).setStorage(file.toPath());
+    public ParseResult<StubUnit> parseStubUnit(final File file, final Charset encoding) throws FileNotFoundException {
+        return parse(STUB_UNIT, provider(file, encoding)).setStorage(file.toPath());
     }
 
     /**
@@ -345,8 +345,8 @@ public final class JavaParser {
      * @throws ParseProblemException if the source code has parser errors.
      * @throws FileNotFoundException the file was not found.
      */
-    public static StubUnit parseStubUnit(final File file) throws FileNotFoundException {
-        return simplifiedParse(STUB_UNIT, provider(file)).setStorage(file.toPath());
+    public ParseResult<StubUnit> parseStubUnit(final File file) throws FileNotFoundException {
+        return parse(STUB_UNIT, provider(file)).setStorage(file.toPath());
     }
 
     /**
@@ -359,8 +359,8 @@ public final class JavaParser {
      * @throws IOException the path could not be accessed.
      * @throws ParseProblemException if the source code has parser errors.
      */
-    public static StubUnit parseStubUnit(final Path path, final Charset encoding) throws IOException {
-        return simplifiedParse(STUB_UNIT, provider(path, encoding)).setStorage(path);
+    public ParseResult<StubUnit> parseStubUnit(final Path path, final Charset encoding) throws IOException {
+        return parse(STUB_UNIT, provider(path, encoding)).setStorage(path);
     }
 
     /**
@@ -373,8 +373,8 @@ public final class JavaParser {
      * @throws ParseProblemException if the source code has parser errors.
      * @throws IOException the path could not be accessed.
      */
-    public static StubUnit parseStubUnit(final Path path) throws IOException {
-        return simplifiedParse(STUB_UNIT, provider(path)).setStorage(path);
+    public ParseResult<StubUnit> parseStubUnit(final Path path) throws IOException {
+        return parse(STUB_UNIT, provider(path)).setStorage(path);
     }
 
     /**
@@ -388,8 +388,8 @@ public final class JavaParser {
      * @throws ParseProblemException if the source code has parser errors.
      * @throws IOException the path could not be accessed.
      */
-    public static StubUnit parseResourceStubUnit(final String path) throws IOException {
-        return simplifiedParse(STUB_UNIT, resourceProvider(path));
+    public ParseResult<StubUnit> parseResourceStubUnit(final String path) throws IOException {
+        return parse(STUB_UNIT, resourceProvider(path));
     }
 
     /**
@@ -403,8 +403,8 @@ public final class JavaParser {
      * @throws ParseProblemException if the source code has parser errors.
      * @throws IOException the path could not be accessed.
      */
-    public static StubUnit parseResourceStubUnit(final String path, Charset encoding) throws IOException {
-        return simplifiedParse(STUB_UNIT, resourceProvider(path, encoding));
+    public ParseResult<StubUnit> parseResourceStubUnit(final String path, Charset encoding) throws IOException {
+        return parse(STUB_UNIT, resourceProvider(path, encoding));
     }
 
     /**
@@ -418,8 +418,8 @@ public final class JavaParser {
      * @throws ParseProblemException if the source code has parser errors.
      * @throws IOException the path could not be accessed.
      */
-    public static StubUnit parseResourceStubUnit(final ClassLoader classLoader, final String path, Charset encoding) throws IOException {
-        return simplifiedParse(STUB_UNIT, resourceProvider(classLoader, path, encoding));
+    public ParseResult<StubUnit> parseResourceStubUnit(final ClassLoader classLoader, final String path, Charset encoding) throws IOException {
+        return parse(STUB_UNIT, resourceProvider(classLoader, path, encoding));
     }
 
     /**
@@ -430,8 +430,8 @@ public final class JavaParser {
      * @return StubUnit representing the stub files source code.
      * @throws ParseProblemException if the source code has parser errors.
      */
-    public static StubUnit parseStubUnit(final Reader reader) {
-        return simplifiedParse(STUB_UNIT, provider(reader));
+    public ParseResult<StubUnit> parseStubUnit(final Reader reader) {
+        return parse(STUB_UNIT, provider(reader));
     }
 
     /**
@@ -442,8 +442,8 @@ public final class JavaParser {
      * @return StubUnit representing the stub files source code.
      * @throws ParseProblemException if the source code has parser errors.
      */
-    public static StubUnit parseStubUnit(String code) {
-        return simplifiedParse(STUB_UNIT, provider(code));
+    public ParseResult<StubUnit> parseStubUnit(String code) {
+        return parse(STUB_UNIT, provider(code));
     }
 
     /**
