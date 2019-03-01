@@ -53,12 +53,13 @@ git pull https://github.com/javaparser/javaparser TAG-NAME
 ```bash
 mvn test
 ```
-9. Push commits to your fork of the StubParser.
+9. Run Checker Framework tests, using your StubParser branch. If any tests fail, fix them before continuing.
+10. Push commits to your fork of the StubParser.
 ```bash
 git push
 ```
-10. Check that the Travis build was successful. If not, resolve the issues and repeat steps 7-9.
-11. Create a [pull request to `typetools/stubparser`](https://github.com/typetools/stubparser).
+11. Check that the Travis build was successful. If not, resolve the issues and repeat steps 7-9.
+12. Create a [pull request to `typetools/stubparser`](https://github.com/typetools/stubparser).
 When merging the pull request, give it a commit message like "Update to JavaParser 3.10.2".
 Do *not* squash-and-merge the pull request;
 you want to keep a history of what upstream commits were merged in.
