@@ -20,7 +20,6 @@
  */
 package com.github.javaparser.ast.expr;
 
-import com.github.javaparser.JavaParser;
 import com.github.javaparser.TokenRange;
 import com.github.javaparser.ast.AllFieldsConstructor;
 import com.github.javaparser.ast.Node;
@@ -35,8 +34,6 @@ import com.github.javaparser.metamodel.OptionalProperty;
 import java.util.Optional;
 import static com.github.javaparser.utils.Utils.assertNonEmpty;
 import com.github.javaparser.ast.visitor.CloneVisitor;
-import com.github.javaparser.metamodel.NameMetaModel;
-import com.github.javaparser.metamodel.JavaParserMetaModel;
 import com.github.javaparser.ast.Generated;
 
 /**
@@ -51,7 +48,7 @@ import com.github.javaparser.ast.Generated;
  * @author Julio Vilmar Gesser
  * @see SimpleName
  */
-public final class Name extends Node implements NodeWithIdentifier<Name> {
+public class Name extends Node implements NodeWithIdentifier<Name> {
 
     @NonEmptyProperty
     private String identifier;

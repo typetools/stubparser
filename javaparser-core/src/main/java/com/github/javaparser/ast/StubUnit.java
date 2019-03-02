@@ -1,5 +1,8 @@
 package com.github.javaparser.ast;
 
+import com.github.javaparser.JavaParser;
+import com.github.javaparser.ParseResult;
+import com.github.javaparser.ParseStart;
 import com.github.javaparser.TokenRange;
 import com.github.javaparser.ast.visitor.GenericVisitor;
 import com.github.javaparser.ast.visitor.VoidVisitor;
@@ -14,15 +17,16 @@ import java.util.Optional;
 import java.util.function.Function;
 
 import static com.github.javaparser.Providers.UTF8;
+import static com.github.javaparser.Providers.provider;
 
 /**
  * <p>
  * This class represents a stub file. The stub file is concentration of multiple Java files (1+),
- * but with the optionally omitted information that is not relevant to pluggable type-checking;
- * this makes the stub file smaller and easier for people to read and write.
+ * but with the optionally omitted information that is not relevant to pluggable type-checking of
+ * clients; this makes the stub file smaller and easier for people to read and write.
  * </p>
  * A stub unit contains the list of compilation units.
- * This class copied the {@link CompilationUnit} and then adjusted to the needs of the Checker Framework.
+ * This class was copied from {@link CompilationUnit} and then modified.
  *
  * @see CompilationUnit
  */
@@ -95,7 +99,7 @@ public class StubUnit extends Node {
      */
     public static class Storage {
 
-        /** An stub unit that it represents. */
+        /** A stub unit that it represents. */
         private final StubUnit stubUnit;
 
         /** The path to the source for this stub unit. */
@@ -132,7 +136,7 @@ public class StubUnit extends Node {
             return path.getParent();
         }
 
-        /** Saves the stub unit to its original location.*/
+        /** Saves the stub unit to its original location. */
         public void save() {
             save(stubUnit -> new PrettyPrinter().print(stubUnit));
         }
@@ -148,6 +152,14 @@ public class StubUnit extends Node {
                 Files.createDirectories(path.getParent());
                 final String code = makeOutput.apply(getStubUnit());
                 Files.write(path, code.getBytes(UTF8));
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+
+        public ParseResult<StubUnit> reparse(JavaParser javaParser) {
+            try {
+                return javaParser.parse(ParseStart.STUB_UNIT, provider(getPath()));
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
