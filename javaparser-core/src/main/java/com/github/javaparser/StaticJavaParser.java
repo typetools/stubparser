@@ -21,6 +21,7 @@
 
 package com.github.javaparser;
 
+import com.github.javaparser.ast.StubUnit;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.ImportDeclaration;
 import com.github.javaparser.ast.Node;
@@ -84,6 +85,19 @@ public final class StaticJavaParser {
 
     /**
      * Parses the Java code contained in the {@link InputStream} and returns a
+     * {@link StubUnit} that represents it.
+     *
+     * @param in {@link InputStream} containing Java source code. It will be closed after parsing.
+     * @param encoding encoding of the source code
+     * @return StubUnit representing the Java source code
+     * @throws ParseProblemException if the source code has parser errors
+     */
+    public static StubUnit parseStubUnit(final InputStream in, Charset encoding) {
+        return handleResult(parser.parseStubUnit(in, encoding));
+    }
+
+    /**
+     * Parses the Java code contained in the {@link InputStream} and returns a
      * {@link CompilationUnit} that represents it.<br>
      * Note: Uses UTF-8 encoding
      *
@@ -93,6 +107,19 @@ public final class StaticJavaParser {
      */
     public static CompilationUnit parse(final InputStream in) {
         return handleResult(parser.parse(in));
+    }
+
+    /**
+     * Parses the Java code contained in the {@link InputStream} and returns a
+     * {@link StubUnit} that represents it.<br>
+     * Note: Uses UTF-8 encoding
+     *
+     * @param in {@link InputStream} containing Java source code. It will be closed after parsing.
+     * @return StubUnit representing the Java source code
+     * @throws ParseProblemException if the source code has parser errors
+     */
+    public static StubUnit parseStubUnit(final InputStream in) {
+        return handleResult(parser.parseStubUnit(in));
     }
 
     /**
@@ -111,6 +138,20 @@ public final class StaticJavaParser {
 
     /**
      * Parses the Java code contained in a {@link File} and returns a
+     * {@link StubUnit} that represents it.
+     *
+     * @param file {@link File} containing Java source code. It will be closed after parsing.
+     * @param encoding encoding of the source code
+     * @return StubUnit representing the Java source code
+     * @throws ParseProblemException if the source code has parser errors
+     * @throws FileNotFoundException the file was not found
+     */
+    public static StubUnit parseStubUnit(final File file, final Charset encoding) throws FileNotFoundException {
+        return handleResult(parser.parseStubUnit(file, encoding));
+    }
+
+    /**
+     * Parses the Java code contained in a {@link File} and returns a
      * {@link CompilationUnit} that represents it.<br>
      * Note: Uses UTF-8 encoding
      *
@@ -121,6 +162,20 @@ public final class StaticJavaParser {
      */
     public static CompilationUnit parse(final File file) throws FileNotFoundException {
         return handleResult(parser.parse(file));
+    }
+
+    /**
+     * Parses the Java code contained in a {@link File} and returns a
+     * {@link StubUnit} that represents it.<br>
+     * Note: Uses UTF-8 encoding
+     *
+     * @param file {@link File} containing Java source code. It will be closed after parsing.
+     * @return StubUnit representing the Java source code
+     * @throws ParseProblemException if the source code has parser errors
+     * @throws FileNotFoundException the file was not found
+     */
+    public static StubUnit parseStubUnit(final File file) throws FileNotFoundException {
+        return handleResult(parser.parseStubUnit(file));
     }
 
     /**
@@ -139,6 +194,20 @@ public final class StaticJavaParser {
 
     /**
      * Parses the Java code contained in a file and returns a
+     * {@link StubUnit} that represents it.
+     *
+     * @param path path to a file containing Java source code
+     * @param encoding encoding of the source code
+     * @return StubUnit representing the Java source code
+     * @throws IOException the path could not be accessed
+     * @throws ParseProblemException if the source code has parser errors
+     */
+    public static StubUnit parseStubUnit(final Path path, final Charset encoding) throws IOException {
+        return handleResult(parser.parseStubUnit(path, encoding));
+    }
+
+    /**
+     * Parses the Java code contained in a file and returns a
      * {@link CompilationUnit} that represents it.<br>
      * Note: Uses UTF-8 encoding
      *
@@ -149,6 +218,20 @@ public final class StaticJavaParser {
      */
     public static CompilationUnit parse(final Path path) throws IOException {
         return handleResult(parser.parse(path));
+    }
+
+    /**
+     * Parses the Java code contained in a file and returns a
+     * {@link StubUnit} that represents it.<br>
+     * Note: Uses UTF-8 encoding
+     *
+     * @param path path to a file containing Java source code
+     * @return StubUnit representing the Java source code
+     * @throws ParseProblemException if the source code has parser errors
+     * @throws IOException the path could not be accessed
+     */
+    public static StubUnit parseStubUnit(final Path path) throws IOException {
+        return handleResult(parser.parseStubUnit(path));
     }
 
     /**
@@ -168,6 +251,21 @@ public final class StaticJavaParser {
 
     /**
      * Parses the Java code contained in a resource and returns a
+     * {@link StubUnit} that represents it.<br>
+     * Note: Uses UTF-8 encoding
+     *
+     * @param path path to a resource containing Java source code. As resource is accessed through a class loader, a
+     * leading "/" is not allowed in pathToResource
+     * @return StubUnit representing the Java source code
+     * @throws ParseProblemException if the source code has parser errors
+     * @throws IOException the path could not be accessed
+     */
+    public static StubUnit parseResourceStubUnit(final String path) throws IOException {
+        return handleResult(parser.parseResourceStubUnit(path));
+    }
+
+    /**
+     * Parses the Java code contained in a resource and returns a
      * {@link CompilationUnit} that represents it.<br>
      *
      * @param path path to a resource containing Java source code. As resource is accessed through a class loader, a
@@ -179,6 +277,21 @@ public final class StaticJavaParser {
      */
     public static CompilationUnit parseResource(final String path, Charset encoding) throws IOException {
         return handleResult(parser.parseResource(path, encoding));
+    }
+
+    /**
+     * Parses the Java code contained in a resource and returns a
+     * {@link StubUnit} that represents it.<br>
+     *
+     * @param path path to a resource containing Java source code. As resource is accessed through a class loader, a
+     * leading "/" is not allowed in pathToResource
+     * @param encoding encoding of the source code
+     * @return StubUnit representing the Java source code
+     * @throws ParseProblemException if the source code has parser errors
+     * @throws IOException the path could not be accessed
+     */
+    public static StubUnit parseResourceStubUnit(final String path, Charset encoding) throws IOException {
+        return handleResult(parser.parseResourceStubUnit(path, encoding));
     }
 
     /**
@@ -197,6 +310,21 @@ public final class StaticJavaParser {
     }
 
     /**
+     * Parses the Java code contained in a resource and returns a
+     * {@link StubUnit} that represents it.<br>
+     *
+     * @param classLoader the classLoader that is asked to load the resource
+     * @param path path to a resource containing Java source code. As resource is accessed through a class loader, a
+     * leading "/" is not allowed in pathToResource
+     * @return StubUnit representing the Java source code
+     * @throws ParseProblemException if the source code has parser errors
+     * @throws IOException the path could not be accessed
+     */
+    public static StubUnit parseResourceStubUnit(final ClassLoader classLoader, final String path, Charset encoding) throws IOException {
+        return handleResult(parser.parseResourceStubUnit(classLoader, path, encoding));
+    }
+
+    /**
      * Parses Java code from a Reader and returns a
      * {@link CompilationUnit} that represents it.<br>
      *
@@ -204,8 +332,20 @@ public final class StaticJavaParser {
      * @return CompilationUnit representing the Java source code
      * @throws ParseProblemException if the source code has parser errors
      */
-    public static CompilationUnit parse(final Reader reader) {
+    public static CompilationUnit parseResource(final Reader reader) {
         return handleResult(parser.parse(reader));
+    }
+
+    /**
+     * Parses Java code from a Reader and returns a
+     * {@link StubUnit} that represents it.<br>
+     *
+     * @param reader the reader containing Java source code. It will be closed after parsing.
+     * @return StubUnit representing the Java source code
+     * @throws ParseProblemException if the source code has parser errors
+     */
+    public static StubUnit parseStubUnit(final Reader reader) {
+        return handleResult(parser.parseStubUnit(reader));
     }
 
     /**
@@ -218,6 +358,18 @@ public final class StaticJavaParser {
      */
     public static CompilationUnit parse(String code) {
         return handleResult(parser.parse(code));
+    }
+
+    /**
+     * Parses the Java code contained in code and returns a
+     * {@link StubUnit} that represents it.
+     *
+     * @param code Java source code
+     * @return StubUnit representing the Java source code
+     * @throws ParseProblemException if the source code has parser errors
+     */
+    public static StubUnit parseStubUnit(String code) {
+        return handleResult(parser.parseStubUnit(code));
     }
 
     /**
