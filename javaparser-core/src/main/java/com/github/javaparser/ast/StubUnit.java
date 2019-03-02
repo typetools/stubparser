@@ -17,6 +17,7 @@ import java.util.Optional;
 import java.util.function.Function;
 
 import static com.github.javaparser.Providers.UTF8;
+import static com.github.javaparser.Providers.provider;
 
 /**
  * <p>

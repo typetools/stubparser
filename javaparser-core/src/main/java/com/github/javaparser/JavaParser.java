@@ -332,7 +332,9 @@ public final class JavaParser {
      * @throws FileNotFoundException the file was not found.
      */
     public ParseResult<StubUnit> parseStubUnit(final File file, final Charset encoding) throws FileNotFoundException {
-        return parse(STUB_UNIT, provider(file, encoding)).setStorage(file.toPath());
+        ParseResult<StubUnit> result =  parse(STUB_UNIT, provider(file, encoding));
+        result.getResult().ifPresent(cu -> cu.setStorage(file.toPath()));
+        return result;
     }
 
     /**
@@ -346,7 +348,9 @@ public final class JavaParser {
      * @throws FileNotFoundException the file was not found.
      */
     public ParseResult<StubUnit> parseStubUnit(final File file) throws FileNotFoundException {
-        return parse(STUB_UNIT, provider(file)).setStorage(file.toPath());
+        ParseResult<StubUnit> result =         parse(STUB_UNIT, provider(file));
+        result.getResult().ifPresent(cu -> cu.setStorage(file.toPath()));
+        return result;
     }
 
     /**
@@ -360,7 +364,9 @@ public final class JavaParser {
      * @throws ParseProblemException if the source code has parser errors.
      */
     public ParseResult<StubUnit> parseStubUnit(final Path path, final Charset encoding) throws IOException {
-        return parse(STUB_UNIT, provider(path, encoding)).setStorage(path);
+        ParseResult<StubUnit> result = parse(STUB_UNIT, provider(path, encoding));
+        result.getResult().ifPresent(cu -> cu.setStorage(path));
+        return result;
     }
 
     /**
@@ -374,7 +380,9 @@ public final class JavaParser {
      * @throws IOException the path could not be accessed.
      */
     public ParseResult<StubUnit> parseStubUnit(final Path path) throws IOException {
-        return parse(STUB_UNIT, provider(path)).setStorage(path);
+        ParseResult<StubUnit> result = parse(STUB_UNIT, provider(path));
+        result.getResult().ifPresent(cu -> cu.setStorage(path));
+        return result;
     }
 
     /**
