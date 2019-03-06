@@ -25,7 +25,11 @@ jobs:
           curl -LO https://raw.github.com/mernst/plume-lib/master/bin/trigger-travis.sh
           SLUGOWNER=${TRAVIS_REPO_SLUG%/*}
           echo "SLUGOWNER=$SLUGOWNER"
-          sh trigger-travis.sh ${SLUGOWNER} checker-framework $TRAVIS_ACCESS_TOKEN
+          if [ -v ${TRAVIS_ACCESS_TOKEN+x} ] ; then
+            echo "TRAVIS_ACCESS_TOKEN is not set" && false
+          else
+            sh trigger-travis.sh ${SLUGOWNER} checker-framework $TRAVIS_ACCESS_TOKEN
+          fi
         fi
 
 git:
