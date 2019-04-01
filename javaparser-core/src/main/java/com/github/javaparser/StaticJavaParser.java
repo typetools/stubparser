@@ -97,7 +97,7 @@ public final class StaticJavaParser {
      * @throws ParseProblemException if the source code has parser errors
      */
     public static StubUnit parseStubUnit(final InputStream in, Charset encoding) {
-        return handleResult(parser.parseStubUnit(in, encoding));
+        return handleResult(newParser().parseStubUnit(in, encoding));
     }
 
     /**
@@ -122,7 +122,7 @@ public final class StaticJavaParser {
      * @throws ParseProblemException if the source code has parser errors
      */
     public static StubUnit parseStubUnit(final InputStream in) {
-        return handleResult(parser.parseStubUnit(in));
+        return handleResult(newParser().parseStubUnit(in));
     }
 
     /**
@@ -152,7 +152,7 @@ public final class StaticJavaParser {
      * @throws FileNotFoundException the file was not found
      */
     public static StubUnit parseStubUnit(final File file, final Charset encoding) throws FileNotFoundException {
-        return handleResult(parser.parseStubUnit(file, encoding));
+        return handleResult(newParser().parseStubUnit(file, encoding));
     }
 
     /**
@@ -179,7 +179,7 @@ public final class StaticJavaParser {
      * @throws FileNotFoundException the file was not found
      */
     public static StubUnit parseStubUnit(final File file) throws FileNotFoundException {
-        return handleResult(parser.parseStubUnit(file));
+        return handleResult(newParser().parseStubUnit(file));
     }
 
     /**
@@ -209,7 +209,7 @@ public final class StaticJavaParser {
      * @throws ParseProblemException if the source code has parser errors
      */
     public static StubUnit parseStubUnit(final Path path, final Charset encoding) throws IOException {
-        return handleResult(parser.parseStubUnit(path, encoding));
+        return handleResult(newParser().parseStubUnit(path, encoding));
     }
 
     /**
@@ -236,7 +236,7 @@ public final class StaticJavaParser {
      * @throws IOException the path could not be accessed
      */
     public static StubUnit parseStubUnit(final Path path) throws IOException {
-        return handleResult(parser.parseStubUnit(path));
+        return handleResult(newParser().parseStubUnit(path));
     }
 
     /**
@@ -265,7 +265,7 @@ public final class StaticJavaParser {
      * @throws IOException the path could not be accessed
      */
     public static StubUnit parseResourceStubUnit(final String path) throws IOException {
-        return handleResult(parser.parseResourceStubUnit(path));
+        return handleResult(newParser().parseResourceStubUnit(path));
     }
 
     /**
@@ -297,7 +297,7 @@ public final class StaticJavaParser {
      * @throws IOException the path could not be accessed
      */
     public static StubUnit parseResourceStubUnit(final String path, Charset encoding) throws IOException {
-        return handleResult(parser.parseResourceStubUnit(path, encoding));
+        return handleResult(newParser().parseResourceStubUnit(path, encoding));
     }
 
     /**
@@ -329,7 +329,7 @@ public final class StaticJavaParser {
      * @throws IOException the path could not be accessed
      */
     public static StubUnit parseResourceStubUnit(final ClassLoader classLoader, final String path, Charset encoding) throws IOException {
-        return handleResult(parser.parseResourceStubUnit(classLoader, path, encoding));
+        return handleResult(newParser().parseResourceStubUnit(classLoader, path, encoding));
     }
 
     /**
@@ -353,7 +353,7 @@ public final class StaticJavaParser {
      * @throws ParseProblemException if the source code has parser errors
      */
     public static StubUnit parseStubUnit(final Reader reader) {
-        return handleResult(parser.parseStubUnit(reader));
+        return handleResult(newParser().parseStubUnit(reader));
     }
 
     /**
@@ -377,7 +377,7 @@ public final class StaticJavaParser {
      * @throws ParseProblemException if the source code has parser errors
      */
     public static StubUnit parseStubUnit(String code) {
-        return handleResult(parser.parseStubUnit(code));
+        return handleResult(newParser().parseStubUnit(code));
     }
 
     /**
