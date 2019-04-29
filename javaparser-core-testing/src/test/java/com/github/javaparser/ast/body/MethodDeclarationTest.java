@@ -1,7 +1,7 @@
 package com.github.javaparser.ast.body;
 
 import org.junit.jupiter.api.Test;
-import org.junit.Ignore;
+import org.junit.jupiter.api.Disabled;
 
 import static com.github.javaparser.StaticJavaParser.parseBodyDeclaration;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -25,8 +25,8 @@ class MethodDeclarationTest {
         assertEquals("Source.Inner.this", method.getReceiverParameter().get().getNameAsString());
     }
 
-    // Ignored this test as for the Checker Framework purposes receiver parameter should only pass receiver annotations
-    @Ignore
+    // Disable this test as for the Checker Framework purposes receiver parameter should only pass receiver annotations
+    @Disabled
     @Test
     void explicitReceiverParameters2() {
         MethodDeclaration method = parseBodyDeclaration("void x(A this) { }").asMethodDeclaration();
