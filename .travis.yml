@@ -2,6 +2,9 @@ language: java
 
 script: ./.travis-build.sh
 
+cache:
+  directories:
+    - $HOME/.ivy2
 jdk:
   - openjdk11
 notifications:
