@@ -200,7 +200,7 @@ public final class JavaParser {
     @Deprecated
     public ParseResult<CompilationUnit> parse(final File file, final Charset encoding) throws FileNotFoundException {
         ParseResult<CompilationUnit> result = parse(COMPILATION_UNIT, provider(file, encoding));
-        result.getResult().ifPresent(cu -> cu.setStorage(file.toPath()));
+        result.getResult().ifPresent(cu -> cu.setStorage(file.toPath(), encoding));
         return result;
     }
 
@@ -231,7 +231,7 @@ public final class JavaParser {
      */
     public ParseResult<CompilationUnit> parse(final File file) throws FileNotFoundException {
         ParseResult<CompilationUnit> result = parse(COMPILATION_UNIT, provider(file, configuration.getCharacterEncoding()));
-        result.getResult().ifPresent(cu -> cu.setStorage(file.toPath()));
+        result.getResult().ifPresent(cu -> cu.setStorage(file.toPath(), configuration.getCharacterEncoding()));
         return result;
     }
 
@@ -265,7 +265,7 @@ public final class JavaParser {
     @Deprecated
     public ParseResult<CompilationUnit> parse(final Path path, final Charset encoding) throws IOException {
         ParseResult<CompilationUnit> result = parse(COMPILATION_UNIT, provider(path, encoding));
-        result.getResult().ifPresent(cu -> cu.setStorage(path));
+        result.getResult().ifPresent(cu -> cu.setStorage(path, encoding));
         return result;
     }
 
@@ -296,7 +296,7 @@ public final class JavaParser {
      */
     public ParseResult<CompilationUnit> parse(final Path path) throws IOException {
         ParseResult<CompilationUnit> result = parse(COMPILATION_UNIT, provider(path, configuration.getCharacterEncoding()));
-        result.getResult().ifPresent(cu -> cu.setStorage(path));
+        result.getResult().ifPresent(cu -> cu.setStorage(path, configuration.getCharacterEncoding()));
         return result;
     }
 
