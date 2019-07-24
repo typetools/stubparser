@@ -51,7 +51,7 @@ git pull https://github.com/javaparser/javaparser TAG-NAME
 7. Resolve conflicts if required and commit it.
 8. Run maven tests in the root directory. If any tests fail, fix them before continuing.
 ```bash
-mvn test
+mvn install test
 ```
 9. Run Checker Framework tests, using your StubParser branch. If any tests fail, fix them before continuing.
 10. Push commits to your fork of the StubParser.
