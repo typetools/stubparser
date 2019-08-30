@@ -6,7 +6,7 @@ cache:
   directories:
     - $HOME/.ivy2
 jdk:
-  - oraclejdk8
+  - openjdk8
 notifications:
   webhooks:
     urls:
@@ -20,7 +20,7 @@ after_success:
 jobs:
   include:
     - stage: trigger-downstream
-      jdk: oraclejdk8
+      jdk: openjdk8
       script: |
         echo "TRAVIS_BRANCH=$TRAVIS_BRANCH TRAVIS_PULL_REQUEST=$TRAVIS_PULL_REQUEST"
         if [[ ($TRAVIS_BRANCH == master) &&
