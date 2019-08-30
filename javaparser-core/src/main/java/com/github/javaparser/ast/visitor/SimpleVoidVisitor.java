@@ -304,4 +304,10 @@ public class SimpleVoidVisitor<A> implements VoidVisitor<A> {
 
     @Override
     public void visit(SwitchExpr n, A arg) { defaultAction(n, arg); }
+
+    @Override
+    public void visit(TextBlockLiteralExpr n, A arg) { defaultAction(n, arg); }
+
+    @Override
+    public void visit(YieldStmt yieldStmt, A arg) { defaultAction(yieldStmt, arg); }
 }
