@@ -12,7 +12,7 @@ These are the differences between JavaParser and StubParser:
 2. Changes to the `java.jj` file to parse the stub files.
 3. Methods for parsing the stub files in the `JavaParser` class.
 
-To see the {diffs between the forks](https://stackoverflow.com/questions/4927519/diff-a-git-fork),
+To see the [diffs between the forks](https://stackoverflow.com/questions/4927519/diff-a-git-fork),
 enter the root directory of the StubParser and perform following commands:
 ```bash
 git remote add original https://github.com/javaparser/javaparser
