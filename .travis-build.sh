@@ -1,5 +1,7 @@
 #!/bin/bash
 
+echo Entering "$(cd "$(dirname "$0")" && pwd -P)/$(basename "$0")" in `pwd`
+
 # Fail the whole script if any command fails
 set -e
 
@@ -9,4 +11,6 @@ export SHELLOPTS
 
 ## Test
 echo "running \"mvn test\" for stubparser"
-mvn test
+mvn -B test
+
+echo Exiting "$(cd "$(dirname "$0")" && pwd -P)/$(basename "$0")" in `pwd`
