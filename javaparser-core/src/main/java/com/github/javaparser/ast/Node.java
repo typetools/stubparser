@@ -21,6 +21,7 @@
 package com.github.javaparser.ast;
 
 import com.github.javaparser.HasParentNode;
+import com.github.javaparser.Position;
 import com.github.javaparser.Range;
 import com.github.javaparser.TokenRange;
 import com.github.javaparser.ast.comments.BlockComment;
@@ -401,9 +402,17 @@ public abstract class Node implements Cloneable, HasParentNode<Node>, Visitable,
         }
     }
 
-    public static final int ABSOLUTE_BEGIN_LINE = -1;
+    /**
+     * @deprecated Use {@link Position#ABSOLUTE_BEGIN_LINE}
+     */
+    @Deprecated
+    public static final int ABSOLUTE_BEGIN_LINE = Position.ABSOLUTE_BEGIN_LINE;
 
-    public static final int ABSOLUTE_END_LINE = -2;
+    /**
+     * @deprecated Use {@link Position#ABSOLUTE_END_LINE}
+     */
+    @Deprecated
+    public static final int ABSOLUTE_END_LINE = Position.ABSOLUTE_END_LINE;
 
     public void tryAddImportToParentCompilationUnit(Class<?> clazz) {
         findAncestor(CompilationUnit.class).ifPresent(p -> p.addImport(clazz));
@@ -764,7 +773,7 @@ public abstract class Node implements Cloneable, HasParentNode<Node>, Visitable,
 
     /**
      * Walks the AST, calling the consumer for every node, with traversal algorithm "traversal".
-     * <br/>This is the most general walk method. All other walk and findAll methods are based on this.
+     * <br>This is the most general walk method. All other walk and findAll methods are based on this.
      */
     public void walk(TreeTraversal traversal, Consumer<Node> consumer) {
         // Could be implemented as a call to the above walk method, but this is a little more efficient.
@@ -814,7 +823,7 @@ public abstract class Node implements Cloneable, HasParentNode<Node>, Visitable,
 
     /**
      * Walks the AST, applying the function for every node, with traversal algorithm "traversal". If the function
-     * returns something else than null, the traversal is stopped and the function result is returned. <br/>This is the
+     * returns something else than null, the traversal is stopped and the function result is returned. <br>This is the
      * most general findFirst method. All other findFirst methods are based on this.
      */
     public <T> Optional<T> findFirst(TreeTraversal traversal, Function<Node, Optional<T>> consumer) {

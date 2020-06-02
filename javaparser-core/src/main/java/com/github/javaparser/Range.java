@@ -79,7 +79,7 @@ public class Range {
      * @return A new `Range` object with the given start/end position.
      */
     public static Range range(int beginLine, int beginColumn, int endLine, int endColumn) {
-        return new Range(pos(beginLine, beginColumn), pos(endLine, endColumn));
+        return new Range(new Position(beginLine, beginColumn), new Position(endLine, endColumn));
     }
 
     /**
@@ -142,8 +142,9 @@ public class Range {
      * In these cases, the `other` range is not strictly "inside" of this range.
      */
     public boolean contains(Range other) {
-        return (begin.isBefore(other.begin) || begin.equals(other.begin)) &&
-                (end.isAfter(other.end) || end.equals(other.end));
+        boolean beginResult = (begin.isBeforeOrEqual(other.begin));
+        boolean endResult = (end.isAfterOrEqual(other.end));
+        return beginResult && endResult;
     }
 
     /**
@@ -164,7 +165,9 @@ public class Range {
      * It means that this has to be larger than other and it has to start before other and end after other.
      */
     public boolean strictlyContains(Range other) {
-        return begin.isBefore(other.begin) && end.isAfter(other.end);
+        boolean beginResult = (begin.isBefore(other.begin));
+        boolean endResult = (end.isAfter(other.end));
+        return beginResult && endResult;
     }
 
     /**
