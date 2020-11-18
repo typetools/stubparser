@@ -35,6 +35,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.stream.Collectors;
 
 import com.github.javaparser.ast.ArrayCreationLevel;
 import com.github.javaparser.ast.CompilationUnit;
@@ -1241,9 +1242,9 @@ public class PrettyPrintVisitor implements VoidVisitor<Void> {
                 s.accept(this, arg);
                 printer.println();
             }
-            printer.unindent();
         }
         printOrphanCommentsEnding(n);
+        printer.unindent();
         printer.print("}");
     }
 
@@ -1910,7 +1911,8 @@ public class PrettyPrintVisitor implements VoidVisitor<Void> {
     private void printOrphanCommentsEnding(final Node node) {
         if (configuration.isIgnoreComments()) return;
 
-        List<Node> everything = new ArrayList<>(node.getChildNodes());
+        // extract all nodes for which the position/range is indicated to avoid to skip orphan comments
+        List<Node> everything = node.getChildNodes().stream().filter(n->n.getRange().isPresent()).collect(Collectors.toList());
         sortByBeginPosition(everything);
         if (everything.isEmpty()) {
             return;

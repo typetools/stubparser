@@ -103,14 +103,14 @@ Just add the following to your maven configuration or tailor to your own depende
 <dependency>
     <groupId>com.github.javaparser</groupId>
     <artifactId>javaparser-symbol-solver-core</artifactId>
-    <version>3.16.1</version>
+    <version>3.17.0</version>
 </dependency>
 ```
 
 **Gradle**:
 
 ```
-implementation 'com.github.javaparser:javaparser-symbol-solver-core:3.16.1'
+implementation 'com.github.javaparser:javaparser-symbol-solver-core:3.17.0'
 ```
 
 Since Version 3.5.10, the JavaParser project includes the JavaSymbolSolver. 
@@ -125,14 +125,14 @@ Using the dependency above will add both JavaParser and JavaSymbolSolver to your
 <dependency>
     <groupId>com.github.javaparser</groupId>
     <artifactId>javaparser-core</artifactId>
-    <version>3.16.1</version>
+    <version>3.17.0</version>
 </dependency>
 ```
 
 **Gradle**:
 
 ```
-implementation 'com.github.javaparser:javaparser-core:3.16.1'
+implementation 'com.github.javaparser:javaparser-core:3.17.0'
 ```
 
 Since version 3.6.17 the AST can be serialized to JSON.
@@ -144,14 +144,14 @@ There is a separate module for this:
 <dependency>
     <groupId>com.github.javaparser</groupId>
     <artifactId>javaparser-core-serialization</artifactId>
-    <version>3.16.1</version>
+    <version>3.17.0</version>
 </dependency>
 ```
 
 **Gradle**:
 
 ```
-implementation 'com.github.javaparser:javaparser-core-serialization:3.16.1'
+implementation 'com.github.javaparser:javaparser-core-serialization:3.17.0'
 ```
 
 ## How To Compile Sources

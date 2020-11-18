@@ -1,10 +1,116 @@
-Next Release (Version 3.16.2)
+Next Release (Version 3.17.1)
+------------------
+[issues resolved](https://github.com/javaparser/javaparser/milestone/179?closed=1)
+
+### Added
+### Changed
+### Deprecated
+### Removed
+### Fixed
+### Security
+
+
+Version 3.17.0
+------------------
+[issues resolved](https://github.com/javaparser/javaparser/milestone/178?closed=1)
+### Fixed
+* BEHAVIOUR CHANGE: Fix ArrayType brackets precedence
+    (PR [#2758](https://github.com/javaparser/javaparser/pull/2758), by [@iTakeshi](https://github.com/iTakeshi))
+* BEHAVIOUR CHANGE: Issue 2535 Comments within method missing indentation  
+    (PR [#2918](https://github.com/javaparser/javaparser/pull/2918), by [@jlerbsc](https://github.com/jlerbsc))
+* Issue 2290 Removing the second instance of a cloned statement within a block fails
+    (PR [#2892](https://github.com/javaparser/javaparser/pull/2892), by [@jlerbsc](https://github.com/jlerbsc))
+* Issue 2393 Apply difference in node text after if condition replacement
+    (PR [#2895](https://github.com/javaparser/javaparser/pull/2895), by [@jlerbsc](https://github.com/jlerbsc))
+* Issue 2406 Symbol solver fails to solve generic array type 
+    (PR [#2896](https://github.com/javaparser/javaparser/pull/2896), by [@jlerbsc](https://github.com/jlerbsc))
+* Issue 2489 SymbolSolver choosing wrong method after resolving 
+    (PR [#2898](https://github.com/javaparser/javaparser/pull/2898), by [@jlerbsc](https://github.com/jlerbsc))
+* Issue 2062 Type inference issue for method arguments 
+    (PR [#2900](https://github.com/javaparser/javaparser/pull/2900), by [@jlerbsc](https://github.com/jlerbsc))
+* Fix LOOKAHEAD for ReferenceType 
+    (PR [#2904](https://github.com/javaparser/javaparser/pull/2904), by [@mernst](https://github.com/mernst))
+* Issue 2578 Orphaned Comments exist but not printed on unrelated change to AST 
+    (PR [#2916](https://github.com/javaparser/javaparser/pull/2916), by [@jlerbsc](https://github.com/jlerbsc))
+* Issue 2909 Unexpected result when solving an outer class reference 
+    (PR [#2914](https://github.com/javaparser/javaparser/pull/2914), by [@jlerbsc](https://github.com/jlerbsc))
+* Issue 2909 Improving how to resolve inner classes  
+    (PR [#2920](https://github.com/javaparser/javaparser/pull/2920), by [@jlerbsc](https://github.com/jlerbsc))
+    (PR [#2921](https://github.com/javaparser/javaparser/pull/2921), by [@jlerbsc](https://github.com/jlerbsc))
+* Ensure spaces between annotations and types for lexical-preserving printing
+    (PR [#2795](https://github.com/javaparser/javaparser/pull/2918), by [@jwaataja](https://github.com/jwaataja))
+
+### Changed
+* Updated dependencies, and dependabot config
+    (PR [#2893](https://github.com/javaparser/javaparser/pull/2893), by [@mysteraitch](https://github.com/mysteraitch))
+    (PR [#2902](https://github.com/javaparser/javaparser/pull/2902), by Dependabot)
+* Issue 2613 Auto update the version in the readme 
+    (PR [#2903](https://github.com/javaparser/javaparser/pull/2903), by [@mysteraitch](https://github.com/mysteraitch))
+* Fix jacoco and enable codecov.io action
+    (PR [#2906](https://github.com/javaparser/javaparser/pull/2906), by [@mysteraitch](https://github.com/mysteraitch))
+* Minor refactoring of binary numeric promotion 
+    (PR [#2915](https://github.com/javaparser/javaparser/pull/2915), by [@jlerbsc](https://github.com/jlerbsc))
+* Testcases for logical and/or 
+    (PR [#2907](https://github.com/javaparser/javaparser/pull/2907), by [@mysteraitch](https://github.com/mysteraitch))
+* Format and document the grammar 
+    (PR [#2901](https://github.com/javaparser/javaparser/pull/2901), by [@mysteraitch](https://github.com/mysteraitch))
+    (PR [#2913](https://github.com/javaparser/javaparser/pull/2913), by [@mernst](https://github.com/mernst))
+
+Version 3.16.3
+------------------
+[issues resolved](https://github.com/javaparser/javaparser/milestone/177?closed=1)
+* ADDED: Created MANY test cases for older issues resolved but not directly linked/closed.
+    (PRs
+    [#2838](https://github.com/javaparser/javaparser/pull/2838), 
+    [#2842](https://github.com/javaparser/javaparser/pull/2842), 
+    [#2843](https://github.com/javaparser/javaparser/pull/2843), 
+    [#2852](https://github.com/javaparser/javaparser/pull/2852), 
+    [#2853](https://github.com/javaparser/javaparser/pull/2853), 
+    [#2854](https://github.com/javaparser/javaparser/pull/2854), 
+    [#2855](https://github.com/javaparser/javaparser/pull/2855), 
+    [#2867](https://github.com/javaparser/javaparser/pull/2867), 
+    [#2868](https://github.com/javaparser/javaparser/pull/2868), 
+    [#2862](https://github.com/javaparser/javaparser/pull/2862), 
+    [#2873](https://github.com/javaparser/javaparser/pull/2873), 
+    by [@jlerbsc](https://github.com/jlerbsc)
+    )
+* ADDED: Added helper method to `ResolvedPrimitiveType.java` which checks if it is a boolean
+    (PR [#2856](https://github.com/javaparser/javaparser/pull/2856), by [@jlerbsc](https://github.com/jlerbsc))
+* ADDED: Added helper method to `ResolvedPrimitiveType.java` which returns all numeric types
+    (PR [#2858](https://github.com/javaparser/javaparser/pull/2858), by [@jlerbsc](https://github.com/jlerbsc))
+* ADDED/CHANGED: Minor refactoring - formatting code and adding convenient methods to `TypeHelper` and `ResolvedPrimitveType`
+    (PR [#2860](https://github.com/javaparser/javaparser/pull/2860), by [@jlerbsc](https://github.com/jlerbsc))
+* ADDED: Allow the symbol resolver for a `SymbolSolverCollectionStrategy` to be set via the given parser configuration
+    (PR [#2864](https://github.com/javaparser/javaparser/pull/2864), by [@jlerbsc](https://github.com/jlerbsc))
+* FIXED: `MethodResolutionLogic.findMostApplicable` not return correct symbol reference when resolving overloaded method
+    (PR [#2866](https://github.com/javaparser/javaparser/pull/2866), by [@jlerbsc](https://github.com/jlerbsc))
+* FIXED: Updated `AbstractSymbolResolutionTest.java` with better `@BeforeEach`/`@AfterEach`  
+    (PR [#2871](https://github.com/javaparser/javaparser/pull/2871), by [@jlerbsc](https://github.com/jlerbsc))
+* FIXED: `TypeResolver` fails on method with args to static imported fields
+    (PR [#2872](https://github.com/javaparser/javaparser/pull/2872), by [@jlerbsc](https://github.com/jlerbsc))
+* FIXED: Fix issue Resolution error for non-generic constructor if generic constructor declared
+    (PR [#2874](https://github.com/javaparser/javaparser/pull/2874), by [@jlerbsc](https://github.com/jlerbsc))
+* FIXED: Fix issue Fails to calculate the type of a generic return type constructed from a Primitive type
+    (PR [#2875](https://github.com/javaparser/javaparser/pull/2875), by [@jlerbsc](https://github.com/jlerbsc))
+* FIXED: Fix issue Can't get qualified signature of a resolved method inside a Constant Enum declaration 
+    (PR [#2876](https://github.com/javaparser/javaparser/pull/2876), by [@jlerbsc](https://github.com/jlerbsc))
+* FIXED: Fix issue Constructor resolution error for overloaded variadic constructor
+    (PR [#2877](https://github.com/javaparser/javaparser/pull/2877), by [@jlerbsc](https://github.com/jlerbsc))
+* FIXED: Fix issue Unable to find the constructor declaration when the argument list contains multiple `Optional.empty()` for different `Optional<T>`
+    (PR [#2880](https://github.com/javaparser/javaparser/pull/2880), by [@jlerbsc](https://github.com/jlerbsc))
+* FIXED: Fix issue Solving symbol as value in the case where the scope is a constraint
+    (PR [#2883](https://github.com/javaparser/javaparser/pull/2883), by [@jlerbsc](https://github.com/jlerbsc))
+
+
+
+Version 3.16.2
 ------------------
 [issues resolved](https://github.com/javaparser/javaparser/milestone/176?closed=1)
 * FIXED: Enhanced the handling of line separator, introducing an enum `LineSeparator` that can be used.
     (PR [#2685](https://github.com/javaparser/javaparser/pull/2685), by [@MysterAitch](https://github.com/MysterAitch))
 * FIXED: The generated metamodel classes now have the `@Generated` annotation 
     (PR [#2706](https://github.com/javaparser/javaparser/pull/2706), by [@MysterAitch](https://github.com/MysterAitch))
+* various other bugfixes and enhancements
 
 Version 3.16.1
 ------------------
