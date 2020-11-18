@@ -87,7 +87,7 @@ class Issue1364Test extends AbstractResolutionTest {
 
     @Test
     void resolveSubClassOfObject() {
-        assertTimeoutPreemptively(Duration.ofMillis(1000L), () -> {
+        assertTimeoutPreemptively(Duration.ofMillis(2000L), () -> {
             String code = String.join(System.lineSeparator(), "package graph;", "public class Vertex {", "    public static void main(String[] args) {", "        System.out.println();", "    }", "}");
         ParseResult<CompilationUnit> parseResult = javaParser.parse(ParseStart.COMPILATION_UNIT, Providers.provider(code));
         assertTrue(parseResult.isSuccessful());
