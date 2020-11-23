@@ -25,6 +25,8 @@ git diff HEAD original/master
 This section describes how to incorporate changes from JavaParser into
 StubParser.  Only developers, not users, of StubParser need to do this.
 
+### Preparation
+
 1. Fork [the StubParser project](https://github.com/typetools/stubparser) to your GitHub account.
 2. Enable Travis build for your fork of the StubParser. 
 [How to get started with Travis CI](https://docs.travis-ci.com/user/getting-started/#To-get-started-with-Travis-CI).
@@ -33,33 +35,36 @@ StubParser.  Only developers, not users, of StubParser need to do this.
 git clone git@github.com:{user.name}/stubparser.git
 git clone https://github.com/{user.name}/stubparser
 ```
-4. Update from StubParser.
+
+### Updating
+
+1. Update from StubParser.
 ```bash
 cd stubparser
 git pull --ff-only https://github.com/typetools/stubparser
 ```
-5. Create and checkout a new branch named `updating`.
-```bash
-git checkout -b updating
-```
-6. Pull the upstream of [the JavaParser project](https://github.com/javaparser/javaparser).
-Find an appropriate [tag name](https://github.com/javaparser/javaparser/tags)
+2. Find an appropriate [tag name](https://github.com/javaparser/javaparser/tags)
 such as `javaparser-parent-3.10.2`.
+3. Create and checkout a new branch
+```bash
+git checkout -b updating-TAG-NAME
+```
+4. Pull the upstream of [the JavaParser project](https://github.com/javaparser/javaparser).
 ```bash
 git pull https://github.com/javaparser/javaparser TAG-NAME
 ```
-7. Resolve conflicts if required and commit it.
-8. Run maven tests in the root directory. If any tests fail, fix them before continuing.
+5. Resolve conflicts if required and commit it.
+6. Run Maven tests in the root directory. If any tests fail, fix them before continuing.
 ```bash
 mvn install test
 ```
-9. Run Checker Framework tests, using your StubParser branch. If any tests fail, fix them before continuing.
-10. Push commits to your fork of the StubParser.
+7. Run Checker Framework tests, using your StubParser branch. If any tests fail, fix them before continuing.
+8. Push commits to your fork of the StubParser.
 ```bash
 git push
 ```
-11. Check that the Travis build was successful. If not, resolve the issues and repeat steps 7-9.
-12. Create a [pull request to `typetools/stubparser`](https://github.com/typetools/stubparser).
+9. Check that the Travis build was successful. If not, resolve the issues and start over at step 6 (run Maven tests).
+10. Create a [pull request to `typetools/stubparser`](https://github.com/typetools/stubparser).
 When merging the pull request, give it a commit message like "Update to JavaParser 3.10.2".
 Do *not* squash-and-merge the pull request;
 you want to keep a history of what upstream commits were merged in.
