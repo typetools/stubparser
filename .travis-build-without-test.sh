@@ -1,6 +1,6 @@
 #!/bin/bash
 
-echo Entering "$(cd "$(dirname "$0")" && pwd -P)/$(basename "$0")" in `pwd`
+echo Entering "$(cd "$(dirname "$0")" && pwd -P)/$(basename "$0") in $(pwd)"
 
 # Fail the whole script if any command fails
 set -e
@@ -10,6 +10,8 @@ export SHELLOPTS
 ## Compile
 echo "running \"mvn package\" for stubparser"
 mvn --version
-cd javaparser-core && mvn -B -q package -Dmaven.test.skip=true
+# Try twice in case of network lossage
+(cd javaparser-core && mvn -B -q package -Dmaven.test.skip=true) \
+    || sleep 1m && (cd javaparser-core && mvn -B -q package -Dmaven.test.skip=true)
 
-echo Exiting "$(cd "$(dirname "$0")" && pwd -P)/$(basename "$0")" in `pwd`
+echo Exiting "$(cd "$(dirname "$0")" && pwd -P)/$(basename "$0") in $(pwd)"
