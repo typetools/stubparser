@@ -1054,7 +1054,7 @@ StubUnit StubUnit():
      * Represents a compilation unit components in each iteration of
      * reading compilation units from the stub file
      */
-    PackageDeclaration pakage = null;
+    PackageDeclaration packageDeclaration = null;
     NodeList<ImportDeclaration> imports = emptyNodeList();
     ImportDeclaration in = null;
     NodeList<TypeDeclaration<?>> types = emptyNodeList();
