@@ -1080,10 +1080,10 @@ StubUnit StubUnit():
 	 * Number of compilation units in a stub file is 1+.
 	 * Each CompilationUnit declaration (except maybe the first) starts with a package declaration.
 	*/
-	(packageDeclaration = PackageDeclaration())?
+        [ LOOKAHEAD(PackageDeclaration()) packageDeclaration = PackageDeclaration() ]
 	(in = ImportDeclaration() { imports = add(imports, in); })*
 
-	(LOOKAHEAD(999, PackageDeclaration())
+	( LOOKAHEAD(PackageDeclaration())
 	    (
 		/*
 		 * The Stub parser encountered a package declaration.
