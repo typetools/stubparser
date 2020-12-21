@@ -28,8 +28,6 @@ StubParser.  Only developers, not users, of StubParser need to do this.
 ### Preparation
 
 1. Fork [the StubParser project](https://github.com/typetools/stubparser) to your GitHub account.
-2. Enable Travis build for your fork of the StubParser. 
-[How to get started with Travis CI](https://docs.travis-ci.com/user/getting-started/#To-get-started-with-Travis-CI).
 3. Clone the repository, using *one* of the following two commands:
 ```bash
 git clone git@github.com:{user.name}/stubparser.git
@@ -58,14 +56,15 @@ git pull https://github.com/javaparser/javaparser TAG-NAME
 ```bash
 mvn install test
 ```
-7. Run Checker Framework tests, using your StubParser branch. If any tests fail, fix them before continuing.
+7. Run Checker Framework tests (`./gradlew build`), using your StubParser branch.
+If any tests fail, fix them before continuing.
 8. Push commits to your fork of the StubParser.
 ```bash
 git push
 ```
-9. Check that the Travis build was successful. If not, resolve the issues and start over at step 6 (run Maven tests).
-10. Create a [pull request to `typetools/stubparser`](https://github.com/typetools/stubparser).
-When merging the pull request, give it a commit message like "Update to JavaParser 3.10.2".
+GitHub Actions CI will not run for your branch.
+9. Create a [pull request to `typetools/stubparser`](https://github.com/typetools/stubparser).
+Give it a title like "Update to JavaParser 3.10.2".
 Do *not* squash-and-merge the pull request;
 you want to keep a history of what upstream commits were merged in.
 
@@ -108,14 +107,14 @@ Just add the following to your maven configuration or tailor to your own depende
 <dependency>
     <groupId>com.github.javaparser</groupId>
     <artifactId>javaparser-symbol-solver-core</artifactId>
-    <version>3.17.0</version>
+    <version>3.18.0</version>
 </dependency>
 ```
 
 **Gradle**:
 
 ```
-implementation 'com.github.javaparser:javaparser-symbol-solver-core:3.17.0'
+implementation 'com.github.javaparser:javaparser-symbol-solver-core:3.18.0'
 ```
 
 Since Version 3.5.10, the JavaParser project includes the JavaSymbolSolver. 
@@ -130,14 +129,14 @@ Using the dependency above will add both JavaParser and JavaSymbolSolver to your
 <dependency>
     <groupId>com.github.javaparser</groupId>
     <artifactId>javaparser-core</artifactId>
-    <version>3.17.0</version>
+    <version>3.18.0</version>
 </dependency>
 ```
 
 **Gradle**:
 
 ```
-implementation 'com.github.javaparser:javaparser-core:3.17.0'
+implementation 'com.github.javaparser:javaparser-core:3.18.0'
 ```
 
 Since version 3.6.17 the AST can be serialized to JSON.
@@ -149,14 +148,14 @@ There is a separate module for this:
 <dependency>
     <groupId>com.github.javaparser</groupId>
     <artifactId>javaparser-core-serialization</artifactId>
-    <version>3.17.0</version>
+    <version>3.18.0</version>
 </dependency>
 ```
 
 **Gradle**:
 
 ```
-implementation 'com.github.javaparser:javaparser-core-serialization:3.17.0'
+implementation 'com.github.javaparser:javaparser-core-serialization:3.18.0'
 ```
 
 ## How To Compile Sources

@@ -122,6 +122,12 @@ public class NoCommentHashCodeVisitor implements GenericVisitor<Integer, Void> {
         return (n.getImports().accept(this, arg)) * 31 + (n.getModule().isPresent() ? n.getModule().get().accept(this, arg) : 0) * 31 + (n.getPackageDeclaration().isPresent() ? n.getPackageDeclaration().get().accept(this, arg) : 0) * 31 + (n.getTypes().accept(this, arg));
     }
 
+    @Override
+    public Integer visit(StubUnit n, Void arg) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
     public Integer visit(final ConditionalExpr n, final Void arg) {
         return (n.getCondition().accept(this, arg)) * 31 + (n.getElseExpr().accept(this, arg)) * 31 + (n.getThenExpr().accept(this, arg));
     }
@@ -195,7 +201,7 @@ public class NoCommentHashCodeVisitor implements GenericVisitor<Integer, Void> {
     }
 
     public Integer visit(final InstanceOfExpr n, final Void arg) {
-        return (n.getExpression().accept(this, arg)) * 31 + (n.getType().accept(this, arg));
+        return (n.getExpression().accept(this, arg)) * 31 + (n.getPattern().isPresent() ? n.getPattern().get().accept(this, arg) : 0) * 31 + (n.getType().accept(this, arg));
     }
 
     public Integer visit(final IntegerLiteralExpr n, final Void arg) {
@@ -438,8 +444,7 @@ public class NoCommentHashCodeVisitor implements GenericVisitor<Integer, Void> {
     }
 
     @Override
-    public Integer visit(StubUnit n, Void arg) {
-        // TODO Auto-generated method stub
-        return null;
+    public Integer visit(final PatternExpr n, final Void arg) {
+        return (n.getName().accept(this, arg)) * 31 + (n.getType().accept(this, arg));
     }
 }

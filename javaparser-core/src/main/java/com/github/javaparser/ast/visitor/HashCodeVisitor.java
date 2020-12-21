@@ -39,7 +39,7 @@ public class HashCodeVisitor implements GenericVisitor<Integer, Void> {
     private static final HashCodeVisitor SINGLETON = new HashCodeVisitor();
 
     private HashCodeVisitor() {
-    // hide constructor
+        // hide constructor
     }
 
     public static int hashCode(final Node node) {
@@ -209,7 +209,7 @@ public class HashCodeVisitor implements GenericVisitor<Integer, Void> {
     }
 
     public Integer visit(final InstanceOfExpr n, final Void arg) {
-        return (n.getExpression().accept(this, arg)) * 31 + (n.getType().accept(this, arg)) * 31 + (n.getComment().isPresent() ? n.getComment().get().accept(this, arg) : 0);
+        return (n.getExpression().accept(this, arg)) * 31 + (n.getPattern().isPresent() ? n.getPattern().get().accept(this, arg) : 0) * 31 + (n.getType().accept(this, arg)) * 31 + (n.getComment().isPresent() ? n.getComment().get().accept(this, arg) : 0);
     }
 
     public Integer visit(final IntegerLiteralExpr n, final Void arg) {
@@ -449,5 +449,10 @@ public class HashCodeVisitor implements GenericVisitor<Integer, Void> {
     @Override
     public Integer visit(final TextBlockLiteralExpr n, final Void arg) {
         return (n.getValue().hashCode()) * 31 + (n.getComment().isPresent() ? n.getComment().get().accept(this, arg) : 0);
+    }
+
+    @Override
+    public Integer visit(final PatternExpr n, final Void arg) {
+        return (n.getName().accept(this, arg)) * 31 + (n.getType().accept(this, arg)) * 31 + (n.getComment().isPresent() ? n.getComment().get().accept(this, arg) : 0);
     }
 }

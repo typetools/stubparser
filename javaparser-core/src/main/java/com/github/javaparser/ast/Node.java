@@ -21,6 +21,29 @@
 package com.github.javaparser.ast;
 
 import com.github.javaparser.HasParentNode;
+import static com.github.javaparser.ast.Node.Parsedness.PARSED;
+import static com.github.javaparser.ast.Node.TreeTraversal.PREORDER;
+import static java.util.Collections.emptySet;
+import static java.util.Collections.unmodifiableList;
+import static java.util.Spliterator.DISTINCT;
+import static java.util.Spliterator.NONNULL;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashSet;
+import java.util.IdentityHashMap;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Optional;
+import java.util.Queue;
+import java.util.Set;
+import java.util.Spliterators;
+import java.util.Stack;
+import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 import com.github.javaparser.Position;
 import com.github.javaparser.Range;
 import com.github.javaparser.TokenRange;
@@ -45,20 +68,6 @@ import com.github.javaparser.printer.PrettyPrinter;
 import com.github.javaparser.printer.PrettyPrinterConfiguration;
 import com.github.javaparser.resolution.SymbolResolver;
 import com.github.javaparser.utils.LineSeparator;
-
-import java.util.*;
-import java.util.function.Consumer;
-import java.util.function.Function;
-import java.util.function.Predicate;
-import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
-
-import static com.github.javaparser.ast.Node.Parsedness.PARSED;
-import static com.github.javaparser.ast.Node.TreeTraversal.PREORDER;
-import static java.util.Collections.emptySet;
-import static java.util.Collections.unmodifiableList;
-import static java.util.Spliterator.DISTINCT;
-import static java.util.Spliterator.NONNULL;
 
 /**
  * Base class for all nodes of the abstract syntax tree.
@@ -136,11 +145,11 @@ public abstract class Node implements Cloneable, HasParentNode<Node>, Visitable,
      * This can be used to sort nodes on position.
      */
     public static Comparator<NodeWithRange<?>> NODE_BY_BEGIN_POSITION = (a, b) -> {
-        if (a.getRange().isPresent() && b.getRange().isPresent()) {
+        if (a.hasRange() && b.hasRange()) {
             return a.getRange().get().begin.compareTo(b.getRange().get().begin);
         }
-        if (a.getRange().isPresent() || b.getRange().isPresent()) {
-            if (a.getRange().isPresent()) {
+        if (a.hasRange() || b.hasRange()) {
+            if (a.hasRange()) {
                 return 1;
             }
             return -1;
@@ -217,7 +226,7 @@ public abstract class Node implements Cloneable, HasParentNode<Node>, Visitable,
 
     public Node setTokenRange(TokenRange tokenRange) {
         this.tokenRange = tokenRange;
-        if (tokenRange == null || !(tokenRange.getBegin().getRange().isPresent() && tokenRange.getEnd().getRange().isPresent())) {
+        if (tokenRange == null || !(tokenRange.getBegin().hasRange() && tokenRange.getEnd().hasRange())) {
             range = null;
         } else {
             range = new Range(tokenRange.getBegin().getRange().get().begin, tokenRange.getEnd().getRange().get().end);
@@ -733,21 +742,18 @@ public abstract class Node implements Cloneable, HasParentNode<Node>, Visitable,
 
     public LineSeparator getLineEndingStyle() {
         Node current = this;
-
         // First check this node
-        if(current.containsData(Node.LINE_SEPARATOR_KEY)) {
+        if (current.containsData(Node.LINE_SEPARATOR_KEY)) {
             LineSeparator lineSeparator = current.getData(Node.LINE_SEPARATOR_KEY);
             return lineSeparator;
         }
-
         // Then check parent/ancestor nodes
-        while(current.getParentNode().isPresent()) {
+        while (current.getParentNode().isPresent()) {
             current = current.getParentNode().get();
-            if(current.containsData(Node.LINE_SEPARATOR_KEY)) {
+            if (current.containsData(Node.LINE_SEPARATOR_KEY)) {
                 return current.getData(Node.LINE_SEPARATOR_KEY);
             }
         }
-
         // Default to the system line separator if it's not already set within the parsed node/code.
         return LineSeparator.SYSTEM;
     }
