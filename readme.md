@@ -64,7 +64,7 @@ git push
 ```
 GitHub Actions CI will not run for your branch.
 9. Create a [pull request to `typetools/stubparser`](https://github.com/typetools/stubparser).
-When merging the pull request, give it a commit message like "Update to JavaParser 3.10.2".
+Give it a title like "Update to JavaParser 3.10.2".
 Do *not* squash-and-merge the pull request;
 you want to keep a history of what upstream commits were merged in.
 
