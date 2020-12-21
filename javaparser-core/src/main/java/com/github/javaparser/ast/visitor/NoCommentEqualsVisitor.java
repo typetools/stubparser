@@ -103,6 +103,12 @@ public class NoCommentEqualsVisitor implements GenericVisitor<Boolean, Visitable
     }
 
     @Override
+    public Boolean visit(StubUnit n, Visitable arg) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
     public Boolean visit(final PackageDeclaration n, final Visitable arg) {
         final PackageDeclaration n2 = (PackageDeclaration) arg;
         if (!nodesEquals(n.getAnnotations(), n2.getAnnotations()))
@@ -525,6 +531,8 @@ public class NoCommentEqualsVisitor implements GenericVisitor<Boolean, Visitable
     public Boolean visit(final InstanceOfExpr n, final Visitable arg) {
         final InstanceOfExpr n2 = (InstanceOfExpr) arg;
         if (!nodeEquals(n.getExpression(), n2.getExpression()))
+            return false;
+        if (!nodeEquals(n.getPattern(), n2.getPattern()))
             return false;
         if (!nodeEquals(n.getType(), n2.getType()))
             return false;
@@ -1096,8 +1104,12 @@ public class NoCommentEqualsVisitor implements GenericVisitor<Boolean, Visitable
     }
 
     @Override
-    public Boolean visit(StubUnit n, Visitable arg) {
-        // TODO Auto-generated method stub
-        return null;
+    public Boolean visit(final PatternExpr n, final Visitable arg) {
+        final PatternExpr n2 = (PatternExpr) arg;
+        if (!nodeEquals(n.getName(), n2.getName()))
+            return false;
+        if (!nodeEquals(n.getType(), n2.getType()))
+            return false;
+        return true;
     }
 }

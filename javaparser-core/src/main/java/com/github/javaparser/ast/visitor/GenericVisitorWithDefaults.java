@@ -141,6 +141,11 @@ public abstract class GenericVisitorWithDefaults<R, A> implements GenericVisitor
     }
 
     @Override
+    public R visit(StubUnit n, A arg) {
+        return defaultAction(n, arg);
+    }
+
+    @Override
     public R visit(final ConditionalExpr n, final A arg) {
         return defaultAction(n, arg);
     }
@@ -531,7 +536,7 @@ public abstract class GenericVisitorWithDefaults<R, A> implements GenericVisitor
     }
 
     @Override
-    public R visit(StubUnit n, A arg) {
+    public R visit(final PatternExpr n, final A arg) {
         return defaultAction(n, arg);
     }
 }

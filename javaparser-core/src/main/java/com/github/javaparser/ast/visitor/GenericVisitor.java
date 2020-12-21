@@ -235,4 +235,6 @@ public interface GenericVisitor<R, A> {
     R visit(YieldStmt n, A arg);
 
     R visit(TextBlockLiteralExpr n, A arg);
+
+    R visit(PatternExpr n, A arg);
 }

@@ -230,4 +230,6 @@ public interface VoidVisitor<A> {
     void visit(TextBlockLiteralExpr n, A arg);
 
     void visit(YieldStmt yieldStmt, A arg);
+
+    void visit(PatternExpr n, A arg);
 }
