@@ -66,12 +66,15 @@ If any tests fail, fix them before continuing.
 git push
 ```
 GitHub Actions CI will not run for your branch.
+
 10. Create a [pull request to `typetools/stubparser`](https://github.com/typetools/stubparser).
 Give it a title like "Update to JavaParser 3.10.2".
-11. Create a [pull request to `typetools/checker-framework`](https://github.com/typetools/checkerframework).
-Give it a title like "Update to StubParser 3.10.2".
 Do *not* squash-and-merge the pull request;
 you want to keep a history of what upstream commits were merged in.
+
+11. Create a [pull request to `typetools/checker-framework`](https://github.com/typetools/checkerframework).
+Give it a title like "Update to StubParser 3.10.2".
+
 
 ## Changes to StubParser that break the Checker Framework
 
