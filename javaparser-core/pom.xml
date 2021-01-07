@@ -6,7 +6,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>javaparser-core</artifactId>
+    <artifactId>stubparser</artifactId>
     <packaging>jar</packaging>
     <description>The core parser functionality. This may be all you need.</description>
 
@@ -30,7 +30,6 @@
     </properties>
 
     <build>
-        <finalName>stubparser</finalName>
         <plugins>
             <plugin>
                 <groupId>com.helger.maven</groupId>
