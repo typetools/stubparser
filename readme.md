@@ -52,35 +52,36 @@ git checkout -b updating-TAG-NAME
 git pull https://github.com/javaparser/javaparser TAG-NAME
 ```
 5. Resolve conflicts if required and commit it.
-6. Run Maven tests in the root directory. If any tests fail, fix them before continuing.
+6. Update the stubparer version to the JavaParser version in the `<finalName>` block of `javaparser-core/pom.xml`
+7. Run Maven tests in the root directory. If any tests fail, fix them before continuing.
 ```bash
 mvn install test
 ```
-7. Update the stubparser version number in the Checker Framework.  In
+8. Update the stubparser version number in the Checker Framework.  In
 `checker-framework/build.gradle`, update the version of the `stubparserJar`.
 Commit and push this change to a branch with the same name as your StubParser branch.
-8. Run Checker Framework tests (`./gradlew build`), using your StubParser branch.
+9. Run Checker Framework tests (`./gradlew build`), using your StubParser branch.
 If any tests fail, fix them before continuing.
-9. Push commits to your fork of the StubParser.
+10. Push commits to your fork of the StubParser.
 ```bash
 git push
 ```
 GitHub Actions CI will not run for your branch.
 
-10. Create a [pull request to `typetools/stubparser`](https://github.com/typetools/stubparser).
+11. Create a [pull request to `typetools/stubparser`](https://github.com/typetools/stubparser).
 Give it a title like "Update to JavaParser 3.10.2".
 Do *not* squash-and-merge the pull request;
 you want to keep a history of what upstream commits were merged in.
 
-11. Create a [pull request to `typetools/checker-framework`](https://github.com/typetools/checkerframework).
+12. Create a [pull request to `typetools/checker-framework`](https://github.com/typetools/checkerframework).
 Give it a title like "Update to StubParser 3.10.2".
 
 
 ## Changes to StubParser that break the Checker Framework
 
 If you commit a change to the StubParser that breaks the Checker Framework,
-then update the stub parser version number.  In `javaparser-core/pom.xml`, add
-`<version>3.18.0b</version>` just under `<artifactId>stubparser</artifactId>`.
+then update the stub parser version number.  In `javaparser-core/pom.xml`, increment the 
+version number in the `<finalName>` block.
 Then update the Checker Framework to use this version of the stubparser.
 
 ## Original JavaParser README
