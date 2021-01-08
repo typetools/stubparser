@@ -52,11 +52,12 @@ git checkout -b updating-TAG-NAME
 git pull https://github.com/javaparser/javaparser TAG-NAME
 ```
 5. Resolve conflicts if required and commit it.
-6. Update the stubparer version to the JavaParser version in the `<finalName>` block of `javaparser-core/pom.xml`
-7. Run Maven tests in the root directory. If any tests fail, fix them before continuing.
+6. Update the StubParser version to the JavaParser version in the `<finalName>` block of `javaparser-core/pom.xml`
+7. Run Maven tests in the root directory:
 ```bash
 mvn install test
 ```
+If any tests fail, fix them before continuing.
 8. Update the stubparser version number in the Checker Framework.  In
 `checker-framework/build.gradle`, update the version of the `stubparserJar`.
 Commit and push this change to a branch with the same name as your StubParser branch.
@@ -80,8 +81,8 @@ Give it a title like "Update to StubParser 3.10.2".
 ## Changes to StubParser that break the Checker Framework
 
 If you commit a change to the StubParser that breaks the Checker Framework,
-then update the stub parser version number.  In `javaparser-core/pom.xml`, increment the 
-version number in the `<finalName>` block.
+then update the stub parser version number.  In `javaparser-core/pom.xml`,
+increment the version number in the `<finalName>` block.
 Then update the Checker Framework to use this version of the stubparser.
 
 ## Original JavaParser README
