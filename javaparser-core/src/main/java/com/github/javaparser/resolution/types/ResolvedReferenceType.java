@@ -22,6 +22,7 @@
 package com.github.javaparser.resolution.types;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -50,6 +51,9 @@ import com.github.javaparser.utils.Pair;
  */
 public abstract class ResolvedReferenceType implements ResolvedType,
         ResolvedTypeParametrized, ResolvedTypeParameterValueProvider {
+    
+    protected static String JAVA_LANG_ENUM = java.lang.Enum.class.getCanonicalName();
+    protected static String JAVA_LANG_OBJECT = java.lang.Object.class.getCanonicalName();
 
     //
     // Fields
@@ -548,7 +552,7 @@ public abstract class ResolvedReferenceType implements ResolvedType,
     public boolean isJavaLangObject() {
         return this.isReferenceType()
                 && hasName() // Consider anonymous classes
-                && getQualifiedName().equals(java.lang.Object.class.getCanonicalName());
+                && getQualifiedName().equals(JAVA_LANG_OBJECT);
     }
 
     /**
@@ -558,7 +562,35 @@ public abstract class ResolvedReferenceType implements ResolvedType,
     public boolean isJavaLangEnum() {
         return this.isReferenceType()
                 && hasName() // Consider anonymous classes
-                && getQualifiedName().equals(java.lang.Enum.class.getCanonicalName());
+                && getQualifiedName().equals(JAVA_LANG_ENUM);
+    }
+    
+    
+    ///
+    /// boxing/unboxing capability
+    ///
+    
+    /*
+     * Returns true if the reference type can be unboxed to the primitive type
+     * For example : Integer to int
+     */
+    public boolean isUnboxable() {
+        return Arrays.stream(ResolvedPrimitiveType.values()).anyMatch(pt -> getQualifiedName().equals(pt.getBoxTypeQName()));
+    }
+    
+    /*
+     * Returns true if the reference type can be unboxed to the specified primitive type
+     * For example : Integer to int
+     */
+    public boolean isUnboxableTo(ResolvedPrimitiveType primitiveType) {
+        return primitiveType.getBoxTypeQName().equals(this.asReferenceType().describe());
+    }
+    
+    /*
+     * Returns the optional corresponding primitive type 
+     */
+    public Optional<ResolvedPrimitiveType> toUnboxedType() {
+        return Arrays.stream(ResolvedPrimitiveType.values()).filter(pt -> this.asReferenceType().getQualifiedName().equals(pt.getBoxTypeQName())).findFirst();
     }
 
 }

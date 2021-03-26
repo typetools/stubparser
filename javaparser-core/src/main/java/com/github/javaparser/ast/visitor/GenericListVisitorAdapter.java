@@ -29,15 +29,16 @@ import com.github.javaparser.ast.expr.*;
 import com.github.javaparser.ast.modules.*;
 import com.github.javaparser.ast.stmt.*;
 import com.github.javaparser.ast.type.*;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
- * A visitor that has a return value of ({@link List List<R>}), and has a default implementation for all its visit
+ * A visitor that has a return value of {@link List List&lt;R&gt;}, and has a default implementation for all its visit
  * methods that visits their children in an unspecified order, and all visit methods
- * that returns a value be added to a flattened {@link List List<R>}.
+ * that returns a value be added to a flattened {@link List List&lt;R&gt;}.
  *
  * @author Enno Boland
  */

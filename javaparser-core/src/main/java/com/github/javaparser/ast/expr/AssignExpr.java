@@ -20,20 +20,22 @@
  */
 package com.github.javaparser.ast.expr;
 
+import com.github.javaparser.TokenRange;
 import com.github.javaparser.ast.AllFieldsConstructor;
+import com.github.javaparser.ast.Generated;
+import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.observer.ObservableProperty;
+import com.github.javaparser.ast.visitor.CloneVisitor;
 import com.github.javaparser.ast.visitor.GenericVisitor;
 import com.github.javaparser.ast.visitor.VoidVisitor;
-import static com.github.javaparser.utils.Utils.assertNotNull;
-import com.github.javaparser.ast.Node;
-import com.github.javaparser.ast.visitor.CloneVisitor;
 import com.github.javaparser.metamodel.AssignExprMetaModel;
 import com.github.javaparser.metamodel.JavaParserMetaModel;
 import com.github.javaparser.printer.Stringable;
-import com.github.javaparser.TokenRange;
-import java.util.function.Consumer;
+
 import java.util.Optional;
-import com.github.javaparser.ast.Generated;
+import java.util.function.Consumer;
+
+import static com.github.javaparser.utils.Utils.assertNotNull;
 
 /**
  * An assignment expression. It supports the operators that are found the the AssignExpr.Operator enum.
@@ -160,7 +162,7 @@ public class AssignExpr extends Expression {
     public AssignExpr setOperator(final Operator operator) {
         assertNotNull(operator);
         if (operator == this.operator) {
-            return (AssignExpr) this;
+            return this;
         }
         notifyPropertyChange(ObservableProperty.OPERATOR, this.operator, operator);
         this.operator = operator;
@@ -171,7 +173,7 @@ public class AssignExpr extends Expression {
     public AssignExpr setTarget(final Expression target) {
         assertNotNull(target);
         if (target == this.target) {
-            return (AssignExpr) this;
+            return this;
         }
         notifyPropertyChange(ObservableProperty.TARGET, this.target, target);
         if (this.target != null)
@@ -185,7 +187,7 @@ public class AssignExpr extends Expression {
     public AssignExpr setValue(final Expression value) {
         assertNotNull(value);
         if (value == this.value) {
-            return (AssignExpr) this;
+            return this;
         }
         notifyPropertyChange(ObservableProperty.VALUE, this.value, value);
         if (this.value != null)
@@ -243,6 +245,7 @@ public class AssignExpr extends Expression {
         return this;
     }
 
+    @Override
     @Generated("com.github.javaparser.generator.core.node.TypeCastingGenerator")
     public void ifAssignExpr(Consumer<AssignExpr> action) {
         action.accept(this);
@@ -252,5 +255,15 @@ public class AssignExpr extends Expression {
     @Generated("com.github.javaparser.generator.core.node.TypeCastingGenerator")
     public Optional<AssignExpr> toAssignExpr() {
         return Optional.of(this);
+    }
+
+    /*
+     * Returns true if the expression is an assignment context
+     * https://docs.oracle.com/javase/specs/jls/se8/html/jls-5.html#jls-5.2
+     * 5.2. Assignment Contexts: Assignment contexts allow the value of an expression to be assigned (§15.26) to a variable;...
+     */
+    @Override
+    protected boolean isAssignmentContext() {
+        return true;
     }
 }
