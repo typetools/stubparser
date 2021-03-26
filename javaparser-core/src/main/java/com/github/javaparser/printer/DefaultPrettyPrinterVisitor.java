@@ -28,6 +28,7 @@ import static com.github.javaparser.utils.Utils.trimTrailingSpaces;
 import static java.util.Comparator.comparingInt;
 import static java.util.stream.Collectors.joining;
 
+import com.github.javaparser.ast.StubUnit;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -330,6 +331,11 @@ public class DefaultPrettyPrinterVisitor implements VoidVisitor<Void> {
         n.getModule().ifPresent(m -> m.accept(this, arg));
 
         printOrphanCommentsEnding(n);
+    }
+
+    @Override
+    public void visit(final StubUnit n, final Void arg) {
+        n.getCompilationUnits().forEach(cu -> cu.accept(this, arg));
     }
 
     @Override
