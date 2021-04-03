@@ -21,35 +21,13 @@
 package com.github.javaparser.ast;
 
 import com.github.javaparser.HasParentNode;
-import static com.github.javaparser.ast.Node.Parsedness.PARSED;
-import static com.github.javaparser.ast.Node.TreeTraversal.PREORDER;
-import static java.util.Collections.emptySet;
-import static java.util.Collections.unmodifiableList;
-import static java.util.Spliterator.DISTINCT;
-import static java.util.Spliterator.NONNULL;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.HashSet;
-import java.util.IdentityHashMap;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Optional;
-import java.util.Queue;
-import java.util.Set;
-import java.util.Spliterators;
-import java.util.Stack;
-import java.util.function.Consumer;
-import java.util.function.Function;
-import java.util.function.Predicate;
-import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
 import com.github.javaparser.Position;
 import com.github.javaparser.Range;
 import com.github.javaparser.TokenRange;
 import com.github.javaparser.ast.comments.BlockComment;
 import com.github.javaparser.ast.comments.Comment;
 import com.github.javaparser.ast.comments.LineComment;
+import com.github.javaparser.ast.nodeTypes.NodeWithOptionalScope;
 import com.github.javaparser.ast.nodeTypes.NodeWithRange;
 import com.github.javaparser.ast.nodeTypes.NodeWithTokenRange;
 import com.github.javaparser.ast.observer.AstObserver;
@@ -59,15 +37,29 @@ import com.github.javaparser.ast.visitor.CloneVisitor;
 import com.github.javaparser.ast.visitor.EqualsVisitor;
 import com.github.javaparser.ast.visitor.HashCodeVisitor;
 import com.github.javaparser.ast.visitor.Visitable;
-import com.github.javaparser.metamodel.InternalProperty;
-import com.github.javaparser.metamodel.JavaParserMetaModel;
-import com.github.javaparser.metamodel.NodeMetaModel;
-import com.github.javaparser.metamodel.OptionalProperty;
-import com.github.javaparser.metamodel.PropertyMetaModel;
-import com.github.javaparser.printer.PrettyPrinter;
-import com.github.javaparser.printer.PrettyPrinterConfiguration;
+import com.github.javaparser.metamodel.*;
+import com.github.javaparser.printer.DefaultPrettyPrinter;
+import com.github.javaparser.printer.Printer;
+import com.github.javaparser.printer.configuration.DefaultConfigurationOption;
+import com.github.javaparser.printer.configuration.DefaultPrinterConfiguration;
+import com.github.javaparser.printer.configuration.DefaultPrinterConfiguration.ConfigOption;
+import com.github.javaparser.printer.configuration.PrinterConfiguration;
 import com.github.javaparser.resolution.SymbolResolver;
 import com.github.javaparser.utils.LineSeparator;
+
+import java.util.*;
+import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
+
+import static com.github.javaparser.ast.Node.Parsedness.PARSED;
+import static com.github.javaparser.ast.Node.TreeTraversal.PREORDER;
+import static java.util.Collections.emptySet;
+import static java.util.Collections.unmodifiableList;
+import static java.util.Spliterator.DISTINCT;
+import static java.util.Spliterator.NONNULL;
 
 /**
  * Base class for all nodes of the abstract syntax tree.
@@ -157,9 +149,10 @@ public abstract class Node implements Cloneable, HasParentNode<Node>, Visitable,
         return 0;
     };
 
-    private static PrettyPrinterConfiguration toStringPrettyPrinterConfiguration = new PrettyPrinterConfiguration();
+    // usefull to find if the node is a phantom node
+    private static final int LEVELS_TO_EXPLORE = 3;
 
-    protected static final PrettyPrinterConfiguration prettyPrinterNoCommentsConfiguration = new PrettyPrinterConfiguration().setPrintComments(false);
+    protected static final PrinterConfiguration prettyPrinterNoCommentsConfiguration = new DefaultPrinterConfiguration().removeOption(new DefaultConfigurationOption(ConfigOption.PRINT_COMMENTS));
 
     @InternalProperty
     private Range range;
@@ -198,6 +191,36 @@ public abstract class Node implements Cloneable, HasParentNode<Node>, Visitable,
      * be overwritten during code generation.
      */
     protected void customInitialization() {
+    }
+
+    /*
+     * If there is a printer defined in CompilationUnit, returns it
+     * else create a new DefaultPrettyPrinter with default parameters
+     */
+    protected Printer getPrinter() {
+        return findCompilationUnit().map(c -> c.getPrinter()).orElse(createDefaultPrinter());
+    }
+
+    /*
+     * Return the printer initialized with the specified configuration
+     */
+    protected Printer getPrinter(PrinterConfiguration configuration) {
+        return findCompilationUnit().map(c -> c.getPrinter(configuration)).orElse(createDefaultPrinter(configuration));
+    }
+
+    protected Printer createDefaultPrinter() {
+        return createDefaultPrinter(getDefaultPrinterConfiguration());
+    }
+
+    protected Printer createDefaultPrinter(PrinterConfiguration configuration) {
+        return new DefaultPrettyPrinter(configuration);
+    }
+
+    /*
+     * returns a default printer configuration
+     */
+    protected PrinterConfiguration getDefaultPrinterConfiguration() {
+        return new DefaultPrinterConfiguration();
     }
 
     /**
@@ -287,23 +310,26 @@ public abstract class Node implements Cloneable, HasParentNode<Node>, Visitable,
 
     /**
      * @return pretty printed source code for this node and its children.
-     * Formatting can be configured with Node.setToStringPrettyPrinterConfiguration.
      */
     @Override
     public final String toString() {
         if (containsData(LINE_SEPARATOR_KEY)) {
+            Printer printer = getPrinter();
             LineSeparator lineSeparator = getLineEndingStyleOrDefault(LineSeparator.SYSTEM);
-            toStringPrettyPrinterConfiguration.setEndOfLineCharacter(lineSeparator.asRawString());
+            PrinterConfiguration config = printer.getConfiguration();
+            config.addOption(new DefaultConfigurationOption(ConfigOption.END_OF_LINE_CHARACTER, lineSeparator.asRawString()));
+            printer.setConfiguration(config);
+            return printer.print(this);
         }
-        return new PrettyPrinter(toStringPrettyPrinterConfiguration).print(this);
+        return getPrinter().print(this);
     }
 
     /**
      * @return pretty printed source code for this node and its children.
-     * Formatting can be configured with parameter prettyPrinterConfiguration.
+     * Formatting can be configured with parameter PrinterConfiguration.
      */
-    public final String toString(PrettyPrinterConfiguration prettyPrinterConfiguration) {
-        return new PrettyPrinter(prettyPrinterConfiguration).print(this);
+    public final String toString(PrinterConfiguration configuration) {
+        return getPrinter(configuration).print(this);
     }
 
     @Override
@@ -690,14 +716,6 @@ public abstract class Node implements Cloneable, HasParentNode<Node>, Visitable,
         return this;
     }
 
-    public static PrettyPrinterConfiguration getToStringPrettyPrinterConfiguration() {
-        return toStringPrettyPrinterConfiguration;
-    }
-
-    public static void setToStringPrettyPrinterConfiguration(PrettyPrinterConfiguration toStringPrettyPrinterConfiguration) {
-        Node.toStringPrettyPrinterConfiguration = toStringPrettyPrinterConfiguration;
-    }
-
     @Generated("com.github.javaparser.generator.core.node.ReplaceMethodGenerator")
     public boolean replace(Node node, Node replacementNode) {
         if (node == null)
@@ -775,6 +793,12 @@ public abstract class Node implements Cloneable, HasParentNode<Node>, Visitable,
     public static final DataKey<LineSeparator> LINE_SEPARATOR_KEY = new DataKey<LineSeparator>() {
     };
 
+    protected static final DataKey<Printer> PRINTER_KEY = new DataKey<Printer>() {
+    };
+
+    protected static final DataKey<Boolean> PHANTOM_KEY = new DataKey<Boolean>() {
+    };
+
     public enum TreeTraversal {
 
         PREORDER, BREADTHFIRST, POSTORDER, PARENTS, DIRECT_CHILDREN
@@ -850,6 +874,19 @@ public abstract class Node implements Cloneable, HasParentNode<Node>, Visitable,
     public <T extends Node> List<T> findAll(Class<T> nodeType) {
         final List<T> found = new ArrayList<>();
         walk(nodeType, found::add);
+        return found;
+    }
+
+    /**
+     * Walks the AST with specified traversal order, returning all nodes of type "nodeType".
+     */
+    public <T extends Node> List<T> findAll(Class<T> nodeType, TreeTraversal traversal) {
+        final List<T> found = new ArrayList<>();
+        walk(traversal, node -> {
+            if (nodeType.isAssignableFrom(node.getClass())) {
+                found.add(nodeType.cast(node));
+            }
+        });
         return found;
     }
 
@@ -1083,5 +1120,34 @@ public abstract class Node implements Cloneable, HasParentNode<Node>, Visitable,
             cursorStack.push(cursor + 1);
             return nodes.get(cursor);
         }
+    }
+
+    /*
+     * returns true if the node defines a scope
+     */
+    public boolean hasScope() {
+        return NodeWithOptionalScope.class.isAssignableFrom(this.getClass()) && ((NodeWithOptionalScope) this).getScope().isPresent();
+    }
+
+    /*
+     * A "phantom" node, is a node that is not really an AST node (like the fake type of variable in FieldDeclaration or an UnknownType)
+     */
+    public boolean isPhantom() {
+        return isPhantom(this);
+    }
+
+    private boolean isPhantom(Node node) {
+        if (!node.containsData(PHANTOM_KEY)) {
+            boolean res = (node.getParentNode().isPresent() && node.getParentNode().get().hasRange() && node.hasRange() && !node.getParentNode().get().getRange().get().contains(node.getRange().get()) || inPhantomNode(node, LEVELS_TO_EXPLORE));
+            node.setData(PHANTOM_KEY, res);
+        }
+        return node.getData(PHANTOM_KEY);
+    }
+
+    /**
+     * A node contained in a phantom node is also a phantom node. We limit how many levels up we check just for performance reasons.
+     */
+    private boolean inPhantomNode(Node node, int levels) {
+        return node.getParentNode().isPresent() && (isPhantom(node.getParentNode().get()) || inPhantomNode(node.getParentNode().get(), levels - 1));
     }
 }

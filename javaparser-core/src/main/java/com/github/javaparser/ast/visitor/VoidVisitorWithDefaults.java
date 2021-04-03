@@ -144,6 +144,11 @@ public abstract class VoidVisitorWithDefaults<A> implements VoidVisitor<A> {
     }
 
     @Override
+    public void visit(final StubUnit n, final A arg) {
+        defaultAction(n, arg);
+    }
+
+    @Override
     public void visit(final ConditionalExpr n, final A arg) {
         defaultAction(n, arg);
     }
