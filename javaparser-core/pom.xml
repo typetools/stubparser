@@ -30,7 +30,7 @@
     </properties>
 
     <build>
-        <finalName>stubparser-3.20.2</finalName>
+        <finalName>stubparser-3.20.2.1</finalName>
         <plugins>
             <plugin>
                 <groupId>com.helger.maven</groupId>
