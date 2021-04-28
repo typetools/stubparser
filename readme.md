@@ -81,7 +81,8 @@ Give it a title like "Update to StubParser 3.10.2".
 ## Changes to StubParser that break the Checker Framework
 
 If you commit a change to the StubParser that breaks the Checker Framework,
-then change the StubParser version number.
+then change the StubParser version number.  Do this only if necessary (probably
+not for minor bug fixes), because it breaks the `mvn javadoc:javadoc` command.
  * In `javaparser-core/pom.xml`, in the `<finalName>` block.
  * In the Checker Framework's top-level `build.gradle` file, on the
    `stubparserJar =` line.
