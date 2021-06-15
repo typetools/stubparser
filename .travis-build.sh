@@ -1,16 +1,7 @@
 #!/bin/bash
 
-echo Entering "$(cd "$(dirname "$0")" && pwd -P)/$(basename "$0")" in `pwd`
+## TODO: Eliminate this script, which exists for backward compatibility.
 
-# Fail the whole script if any command fails
-set -e
+echo "Don't use .travis-build.sh; use .build.sh instead."
 
-export SHELLOPTS
-
-./.travis-build-without-test.sh
-
-## Test
-echo "running \"mvn test\" for stubparser"
-mvn -B test
-
-echo Exiting "$(cd "$(dirname "$0")" && pwd -P)/$(basename "$0")" in `pwd`
+source .build.sh

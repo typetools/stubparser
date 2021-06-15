@@ -1,18 +1,7 @@
 #!/bin/bash
 
-echo Entering "$(cd "$(dirname "$0")" && pwd -P)/$(basename "$0") in $(pwd)"
+## TODO: Eliminate this script, which exists for backward compatibility.
 
-# Fail the whole script if any command fails
-set -e
+echo "Don't use .travis-build-without-test.sh; use .build-without-test.sh instead."
 
-export SHELLOPTS
-
-## Compile
-echo "running \"mvn package\" for stubparser"
-mvn --version
-# Try twice in case of network lossage
-(cd javaparser-core && mvn -B -q package -Dmaven.test.skip=true) \
-    || (sleep 2m && (cd javaparser-core && mvn -B -q dependency:resolve || true) \
-        && sleep 2m && (cd javaparser-core && mvn -B -q package -Dmaven.test.skip=true))
-
-echo Exiting "$(cd "$(dirname "$0")" && pwd -P)/$(basename "$0") in $(pwd)"
+source .build-without-test.sh
