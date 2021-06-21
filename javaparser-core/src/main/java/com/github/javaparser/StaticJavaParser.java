@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2007-2010 Júlio Vilmar Gesser.
- * Copyright (C) 2011, 2013-2020 The JavaParser Team.
+ * Copyright (C) 2011, 2013-2021 The JavaParser Team.
  *
  * This file is part of JavaParser.
  *
@@ -29,11 +29,11 @@ import java.io.Reader;
 import java.nio.charset.Charset;
 import java.nio.file.Path;
 
-import com.github.javaparser.ast.StubUnit;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.ImportDeclaration;
 import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.PackageDeclaration;
+import com.github.javaparser.ast.StubUnit;
 import com.github.javaparser.ast.body.BodyDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.body.Parameter;
@@ -57,7 +57,7 @@ import com.github.javaparser.javadoc.Javadoc;
  * A simpler, static API than {@link JavaParser}.
  */
 public final class StaticJavaParser {
-
+    
     // use ThreadLocal to resolve possible concurrency issues.
     private static ThreadLocal<ParserConfiguration> localConfiguration = ThreadLocal.withInitial(() -> new ParserConfiguration());
 
