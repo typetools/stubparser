@@ -58,6 +58,7 @@ git pull https://github.com/javaparser/javaparser TAG-NAME
 mvn install test
 ```
 If any tests fail, fix them before continuing.
+
 8. Update the stubparser version number in the Checker Framework.  In
 `checker-framework/build.gradle`, update the version of the `stubparserJar`.
 Commit and push this change to a branch with the same name as your StubParser branch.
