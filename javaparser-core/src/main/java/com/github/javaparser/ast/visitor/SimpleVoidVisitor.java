@@ -84,6 +84,9 @@ public class SimpleVoidVisitor<A> implements VoidVisitor<A> {
     public void visit(ClassOrInterfaceType n, A arg) { defaultAction(n, arg); }
 
     @Override
+    public void visit(CompactConstructorDeclaration n, A arg) { defaultAction(n, arg); }
+
+    @Override
     public void visit(CompilationUnit n, A arg) { defaultAction(n, arg); }
 
     @Override
@@ -168,6 +171,9 @@ public class SimpleVoidVisitor<A> implements VoidVisitor<A> {
     public void visit(LocalClassDeclarationStmt n, A arg) { defaultAction(n, arg); }
 
     @Override
+    public void visit(LocalRecordDeclarationStmt n, A arg) { defaultAction(n, arg); }
+
+    @Override
     public void visit(LongLiteralExpr n, A arg) { defaultAction(n, arg); }
 
     @Override
@@ -208,6 +214,9 @@ public class SimpleVoidVisitor<A> implements VoidVisitor<A> {
 
     @Override
     public void visit(PrimitiveType n, A arg) { defaultAction(n, arg); }
+
+    @Override
+    public void visit(RecordDeclaration n, A arg) { defaultAction(n, arg); }
 
     @Override
     public void visit(ReturnStmt n, A arg) { defaultAction(n, arg); }
