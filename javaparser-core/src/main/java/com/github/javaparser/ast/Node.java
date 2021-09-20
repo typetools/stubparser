@@ -176,10 +176,10 @@ public abstract class Node implements Cloneable, HasParentNode<Node>, Visitable,
     private Node parentNode;
 
     @InternalProperty
-    private List<Node> childNodes = new LinkedList<>();
+    private ArrayList<Node> childNodes = new ArrayList<>(0);
 
     @InternalProperty
-    private List<Comment> orphanComments = new LinkedList<>();
+    private ArrayList<Comment> orphanComments = new ArrayList<>(0);
 
     @InternalProperty
     private IdentityHashMap<DataKey<?>, Object> data = null;
@@ -188,7 +188,7 @@ public abstract class Node implements Cloneable, HasParentNode<Node>, Visitable,
     private Comment comment;
 
     @InternalProperty
-    private Set<AstObserver> observers = new HashSet<>();
+    private ArrayList<AstObserver> observers = new ArrayList<>(0);
 
     @InternalProperty
     private Parsedness parsed = PARSED;
@@ -351,7 +351,7 @@ public abstract class Node implements Cloneable, HasParentNode<Node>, Visitable,
 
     @Override
     public boolean equals(final Object obj) {
-        if (obj == null || !(obj instanceof Node)) {
+        if (!(obj instanceof Node)) {
             return false;
         }
         return EqualsVisitor.equals(this, (Node) obj);
@@ -382,6 +382,7 @@ public abstract class Node implements Cloneable, HasParentNode<Node>, Visitable,
         if (removed) {
             notifyPropertyChange(ObservableProperty.COMMENT, comment, null);
             comment.setParentNode(null);
+            orphanComments.trimToSize();
         }
         return removed;
     }
@@ -401,7 +402,7 @@ public abstract class Node implements Cloneable, HasParentNode<Node>, Visitable,
      * @return all comments that cannot be attributed to a concept
      */
     public List<Comment> getOrphanComments() {
-        return new LinkedList<>(orphanComments);
+        return unmodifiableList(orphanComments);
     }
 
     /**
@@ -412,8 +413,7 @@ public abstract class Node implements Cloneable, HasParentNode<Node>, Visitable,
      * @return all Comments within the node as a list
      */
     public List<Comment> getAllContainedComments() {
-        List<Comment> comments = new LinkedList<>();
-        comments.addAll(getOrphanComments());
+        List<Comment> comments = new LinkedList<>(orphanComments);
         for (Node child : getChildNodes()) {
             child.getComment().ifPresent(comments::add);
             comments.addAll(child.getAllContainedComments());
@@ -435,12 +435,13 @@ public abstract class Node implements Cloneable, HasParentNode<Node>, Visitable,
         observers.forEach(o -> o.parentChange(this, parentNode, newParentNode));
         // remove from old parent, if any
         if (parentNode != null) {
-            final List<Node> parentChildNodes = parentNode.childNodes;
+            final ArrayList<Node> parentChildNodes = parentNode.childNodes;
             for (int i = 0; i < parentChildNodes.size(); i++) {
                 if (parentChildNodes.get(i) == this) {
                     parentChildNodes.remove(i);
                 }
             }
+            parentChildNodes.trimToSize();
         }
         parentNode = newParentNode;
         // add to new parent, if any
@@ -630,11 +631,16 @@ public abstract class Node implements Cloneable, HasParentNode<Node>, Visitable,
     @Override
     public void unregister(AstObserver observer) {
         this.observers.remove(observer);
+        this.observers.trimToSize();
     }
 
     @Override
     public void register(AstObserver observer) {
-        this.observers.add(observer);
+        // Check if the observer is not registered yet.
+        // In this case we use a List instead of Set to save on memory space.
+        if (!this.observers.contains(observer)) {
+            this.observers.add(observer);
+        }
     }
 
     /**
@@ -1002,7 +1008,7 @@ public abstract class Node implements Cloneable, HasParentNode<Node>, Visitable,
         private final Iterator<Node> childrenIterator;
 
         public DirectChildrenIterator(Node node) {
-            childrenIterator = new ArrayList<>(node.getChildNodes()).iterator();
+            childrenIterator = node.getChildNodes().iterator();
         }
 
         @Override
@@ -1091,7 +1097,7 @@ public abstract class Node implements Cloneable, HasParentNode<Node>, Visitable,
 
         private void fillStackToLeaf(Node node) {
             while (true) {
-                List<Node> childNodes = new ArrayList<>(node.getChildNodes());
+                List<Node> childNodes = node.getChildNodes();
                 if (childNodes.isEmpty()) {
                     break;
                 }
