@@ -14,7 +14,7 @@
     <groupId>com.github.javaparser</groupId>
     <artifactId>javaparser-parent</artifactId>
     <packaging>pom</packaging>
-    <version>3.24.1-SNAPSHOT</version>
+    <version>3.24.2</version>
 
     <name>javaparser-parent</name>
     <url>https://github.com/javaparser</url>
@@ -155,7 +155,7 @@
         <connection>scm:git:git://github.com/javaparser/javaparser.git</connection>
         <developerConnection>scm:git:git@github.com:javaparser/javaparser.git</developerConnection>
         <url>https://github.com/javaparser/javaparser.git</url>
-        <tag>HEAD</tag>
+        <tag>javaparser-parent-3.24.2</tag>
     </scm>
 
     <issueManagement>
@@ -205,7 +205,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-compiler-plugin</artifactId>
-                    <version>3.10.0</version>
+                    <version>3.10.1</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -299,7 +299,7 @@
                 <plugin>
                     <groupId>biz.aQute.bnd</groupId>
                     <artifactId>bnd-maven-plugin</artifactId>
-                    <version>6.1.0</version>
+                    <version>6.2.0</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -329,7 +329,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-dependency-plugin</artifactId>
-                    <version>3.2.0</version>
+                    <version>3.3.0</version>
                 </plugin>
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
