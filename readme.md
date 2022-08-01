@@ -41,42 +41,48 @@ git clone https://github.com/{user.name}/stubparser
 cd stubparser
 git pull --ff-only https://github.com/typetools/stubparser
 ```
-2. Find an appropriate [tag name](https://github.com/javaparser/javaparser/tags)
-such as `javaparser-parent-3.10.2`.
+2. Find an appropriate [tag name](https://github.com/javaparser/javaparser/tags):
+```bash
+export TAG_NAME=javaparser-parent-3.24.3
+```
 3. Create and checkout a new branch
 ```bash
-git checkout -b updating-TAG-NAME
+git checkout -b updating-${TAG_NAME}
 ```
 4. Pull the upstream of [the JavaParser project](https://github.com/javaparser/javaparser).
 ```bash
-git pull https://github.com/javaparser/javaparser TAG-NAME
+git pull https://github.com/javaparser/javaparser ${TAG_NAME}
 ```
-5. Resolve conflicts if required and commit it.
-6. Update the StubParser version to the JavaParser version in the `<finalName>` block of `javaparser-core/pom.xml`
+5. Resolve conflicts if required and commit it (but don't push yet).
+6. Update the StubParser version to the JavaParser version in the `<finalName>` block of `javaparser-core/pom.xml`.
+Remove "-SNAPSHOT" from `<version>` in `pom.xml`.
 7. Run Maven tests in the root directory:
 ```bash
-mvn install test
+./mvnw install test
 ```
 If any tests fail, fix them before continuing.
 
-8. Update the stubparser version number in the Checker Framework.  In
-`checker-framework/build.gradle`, update the version of the `stubparserJar`.
-Commit and push this change to a branch with the same name as your StubParser branch.
+8. Update the stubparser version number in the Checker Framework.  Create
+a branch with the same name as your StubParser branch.  In
+`checker-framework/build.gradle`, update `stubparserJar`.
 9. Run Checker Framework tests (`./gradlew build`), using your StubParser branch.
 If any tests fail, fix them before continuing.
-10. Push commits to your fork of the StubParser.
+10. Commit and push your changes to Checker Framework.
+11. Push commits to your fork of StubParser.
 ```bash
 git push
 ```
 GitHub Actions CI will not run for your branch.
 
-11. Create a [pull request to `typetools/stubparser`](https://github.com/typetools/stubparser).
+13. Create a [pull request to `typetools/checker-framework`](https://github.com/typetools/checkerframework).
+Give it a title like "Update to StubParser 3.10.2".
+Merge it and the StubParser pull request when the Checker Framework pull request passes.
+
+12. Create a [pull request to `typetools/stubparser`](https://github.com/typetools/stubparser).
 Give it a title like "Update to JavaParser 3.10.2".
 Do *not* squash-and-merge the pull request;
 you want to keep a history of what upstream commits were merged in.
 
-12. Create a [pull request to `typetools/checker-framework`](https://github.com/typetools/checkerframework).
-Give it a title like "Update to StubParser 3.10.2".
 
 
 ## Changes to StubParser that break the Checker Framework

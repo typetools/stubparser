@@ -59,20 +59,6 @@ import static java.util.Collections.unmodifiableList;
 import static java.util.Spliterator.DISTINCT;
 import static java.util.Spliterator.NONNULL;
 
-import java.util.*;
-import java.util.function.Consumer;
-import java.util.function.Function;
-import java.util.function.Predicate;
-import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
-
-import static com.github.javaparser.ast.Node.Parsedness.PARSED;
-import static com.github.javaparser.ast.Node.TreeTraversal.PREORDER;
-import static java.util.Collections.emptySet;
-import static java.util.Collections.unmodifiableList;
-import static java.util.Spliterator.DISTINCT;
-import static java.util.Spliterator.NONNULL;
-
 /**
  * Base class for all nodes of the abstract syntax tree.
  * <h2>Construction</h2>

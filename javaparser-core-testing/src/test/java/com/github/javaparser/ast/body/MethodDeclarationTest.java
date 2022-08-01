@@ -49,7 +49,7 @@ class MethodDeclarationTest {
         assertEquals("Source.Inner.this", method.getReceiverParameter().get().getNameAsString());
     }
 
-    // Disable this test as for the Checker Framework purposes receiver parameter should only pass receiver annotations
+    // Disable this test. For the Checker Framework, the receiver parameter should only have receiver annotations.
     @Disabled
     @Test
     void explicitReceiverParameters2() {
