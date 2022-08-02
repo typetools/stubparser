@@ -55,7 +55,7 @@ git pull https://github.com/javaparser/javaparser ${TAG_NAME}
 ```
 5. Resolve conflicts if required and commit it (but don't push yet).
 6. Update the StubParser version to the JavaParser version in the `<finalName>` block of `javaparser-core/pom.xml`.
-Remove "-SNAPSHOT" from `<version>` in `pom.xml`.
+[TODO: Do I need to remove "-SNAPSHOT" from `<version>` in `pom.xml`?  I suspect I do not.]
 7. Run Maven tests in the root directory:
 ```bash
 ./mvnw install test
@@ -74,15 +74,15 @@ git push
 ```
 GitHub Actions CI will not run for your branch.
 
-13. Create a [pull request to `typetools/checker-framework`](https://github.com/typetools/checkerframework).
-Give it a title like "Update to StubParser 3.10.2".
-Merge it and the StubParser pull request when the Checker Framework pull request passes.
-
 12. Create a [pull request to `typetools/stubparser`](https://github.com/typetools/stubparser).
-Give it a title like "Update to JavaParser 3.10.2".
+Give it a title like "Update to JavaParser 3.24.3".
 Do *not* squash-and-merge the pull request;
 you want to keep a history of what upstream commits were merged in.
 
+13. Create a [pull request to `typetools/checker-framework`](https://github.com/typetools/checkerframework).
+Give it a title like "Update to StubParser 3.24.3".
+
+14. Merge both pull requests when both pass.
 
 
 ## Changes to StubParser that break the Checker Framework
