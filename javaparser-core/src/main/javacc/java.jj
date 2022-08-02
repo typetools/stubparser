@@ -2519,7 +2519,7 @@ ConstructorDeclaration ConstructorDeclaration(ModifierHolder modifier):
         throwType = AnnotatedReferenceType() { throws_ = add(throws_, throwType); }
         ("," throwType = AnnotatedReferenceType() { throws_ = add(throws_, throwType); })*
     ]
-    ( ( ";" | // stub files may omit method and constructor bodies
+    ( ";" | // stub files may omit method and constructor bodies
     "{" { blockBegin=token(); }
     [
         LOOKAHEAD(ExplicitConstructorInvocation())
@@ -2527,7 +2527,7 @@ ConstructorDeclaration ConstructorDeclaration(ModifierHolder modifier):
     ]
     stmts = Statements()
     "}"
-    ) )
+    )
 
     {
         if (exConsInv != null) {
