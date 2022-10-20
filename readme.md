@@ -43,9 +43,9 @@ git pull --ff-only https://github.com/typetools/stubparser
 ```
 2. Find an appropriate [tag name](https://github.com/javaparser/javaparser/tags):
 ```bash
-export TAG_NAME=javaparser-parent-3.24.3
+export TAG_NAME=javaparser-parent-3.24.7
 ```
-3. Create and checkout a new branch
+3. Create and checkout a new branch, via the below or `gnb updating-${TAG_NAME}`:
 ```bash
 git checkout -b updating-${TAG_NAME}
 ```
@@ -55,7 +55,7 @@ git pull https://github.com/javaparser/javaparser ${TAG_NAME}
 ```
 5. Resolve conflicts if required and commit it (but don't push yet).
 6. Update the StubParser version to the JavaParser version in the `<finalName>` block of `javaparser-core/pom.xml`.
-[TODO: Do I need to remove "-SNAPSHOT" from `<version>` in `pom.xml`?  I suspect I do not.]
+(There should not be "-SNAPSHOT" there or in `<version>` in `pom.xml`.)
 7. Run Maven tests in the root directory:
 ```bash
 ./mvnw install test
@@ -138,14 +138,14 @@ Just add the following to your maven configuration or tailor to your own depende
 <dependency>
     <groupId>com.github.javaparser</groupId>
     <artifactId>javaparser-symbol-solver-core</artifactId>
-    <version>3.24.4</version>
+    <version>3.24.7</version>
 </dependency>
 ```
 
 **Gradle**:
 
 ```
-implementation 'com.github.javaparser:javaparser-symbol-solver-core:3.24.4'
+implementation 'com.github.javaparser:javaparser-symbol-solver-core:3.24.7'
 ```
 
 Since Version 3.5.10, the JavaParser project includes the JavaSymbolSolver.
@@ -160,14 +160,14 @@ Using the dependency above will add both JavaParser and JavaSymbolSolver to your
 <dependency>
     <groupId>com.github.javaparser</groupId>
     <artifactId>javaparser-core</artifactId>
-    <version>3.24.4</version>
+    <version>3.24.7</version>
 </dependency>
 ```
 
 **Gradle**:
 
 ```
-implementation 'com.github.javaparser:javaparser-core:3.24.4'
+implementation 'com.github.javaparser:javaparser-core:3.24.7'
 ```
 
 Since version 3.6.17 the AST can be serialized to JSON.
@@ -179,14 +179,14 @@ There is a separate module for this:
 <dependency>
     <groupId>com.github.javaparser</groupId>
     <artifactId>javaparser-core-serialization</artifactId>
-    <version>3.24.4</version>
+    <version>3.24.7</version>
 </dependency>
 ```
 
 **Gradle**:
 
 ```
-implementation 'com.github.javaparser:javaparser-core-serialization:3.24.4'
+implementation 'com.github.javaparser:javaparser-core-serialization:3.24.7'
 ```
 
 ## How To Compile Sources
