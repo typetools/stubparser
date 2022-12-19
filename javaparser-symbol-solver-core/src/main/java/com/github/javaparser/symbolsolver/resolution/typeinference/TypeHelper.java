@@ -31,18 +31,19 @@ import java.util.Set;
 import com.github.javaparser.ast.expr.Expression;
 import com.github.javaparser.ast.expr.LambdaExpr;
 import com.github.javaparser.resolution.MethodUsage;
+import com.github.javaparser.resolution.TypeSolver;
 import com.github.javaparser.resolution.declarations.ResolvedReferenceTypeDeclaration;
 import com.github.javaparser.resolution.declarations.ResolvedTypeParameterDeclaration;
+import com.github.javaparser.resolution.logic.FunctionalInterfaceLogic;
+import com.github.javaparser.resolution.model.SymbolReference;
+import com.github.javaparser.resolution.model.typesystem.LazyType;
+import com.github.javaparser.resolution.model.typesystem.ReferenceTypeImpl;
 import com.github.javaparser.resolution.types.ResolvedIntersectionType;
 import com.github.javaparser.resolution.types.ResolvedPrimitiveType;
 import com.github.javaparser.resolution.types.ResolvedReferenceType;
 import com.github.javaparser.resolution.types.ResolvedType;
 import com.github.javaparser.resolution.types.ResolvedWildcard;
 import com.github.javaparser.symbolsolver.javaparsermodel.JavaParserFacade;
-import com.github.javaparser.symbolsolver.logic.FunctionalInterfaceLogic;
-import com.github.javaparser.symbolsolver.model.resolution.SymbolReference;
-import com.github.javaparser.symbolsolver.model.resolution.TypeSolver;
-import com.github.javaparser.symbolsolver.model.typesystem.ReferenceTypeImpl;
 import com.github.javaparser.utils.Pair;
 
 /**
@@ -66,6 +67,9 @@ public class TypeHelper {
         if (type instanceof ResolvedReferenceType) {
             ResolvedReferenceType referenceType = (ResolvedReferenceType) type;
             return referenceType.typeParametersValues().stream().allMatch(it -> isProperType(it));
+        }
+        if (type instanceof LazyType) {
+            return type.asReferenceType().typeParametersValues().stream().allMatch(it -> isProperType(it));
         }
         if (type instanceof ResolvedWildcard) {
             ResolvedWildcard wildcard = (ResolvedWildcard)type;
@@ -172,7 +176,7 @@ public class TypeHelper {
     // get the resolved boxed type of the specified primitive type
     public static ResolvedType toBoxedType(ResolvedPrimitiveType primitiveType, TypeSolver typeSolver ) {
         SymbolReference<ResolvedReferenceTypeDeclaration> typeDeclaration =  typeSolver.tryToSolveType(primitiveType.getBoxTypeQName());
-        return new ReferenceTypeImpl(typeDeclaration.getCorrespondingDeclaration(), typeSolver);
+        return new ReferenceTypeImpl(typeDeclaration.getCorrespondingDeclaration());
     }
 
     public static boolean areCompatibleThroughWideningReferenceConversion(ResolvedType s, ResolvedType t) {
@@ -353,7 +357,7 @@ public class TypeHelper {
         // Let P1...Pn be the type parameters of I with corresponding bounds B1...Bn. For all i (1 ≤ i ≤ n),
         // Ti is derived according to the form of Ai:
 
-        ResolvedReferenceType object = new ReferenceTypeImpl(typeSolver.getSolvedJavaLangObject(), typeSolver);
+        ResolvedReferenceType object = new ReferenceTypeImpl(typeSolver.getSolvedJavaLangObject());
 
         for (int i=0;i<AIs.size();i++) {
             ResolvedType Ai = AIs.get(i);
@@ -405,7 +409,7 @@ public class TypeHelper {
             TIs.add(Ti);
         }
 
-        return new ReferenceTypeImpl(originalTypeDeclaration, TIs, typeSolver);
+        return new ReferenceTypeImpl(originalTypeDeclaration, TIs);
     }
 
     public static MethodType getFunctionType(ResolvedType type) {

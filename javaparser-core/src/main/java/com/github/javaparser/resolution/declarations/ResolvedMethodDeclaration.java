@@ -18,10 +18,8 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Lesser General Public License for more details.
  */
-
 package com.github.javaparser.resolution.declarations;
 
-import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.resolution.types.ResolvedType;
 
 /**
@@ -29,7 +27,7 @@ import com.github.javaparser.resolution.types.ResolvedType;
  *
  * @author Federico Tomassetti
  */
-public interface ResolvedMethodDeclaration extends ResolvedMethodLikeDeclaration, AssociableToAST<MethodDeclaration> {
+public interface ResolvedMethodDeclaration extends ResolvedMethodLikeDeclaration {
 
     /**
      * The type of the value returned by the current method. This method can also be invoked
@@ -51,5 +49,4 @@ public interface ResolvedMethodDeclaration extends ResolvedMethodLikeDeclaration
      * Is this method static?
      */
     boolean isStatic();
-
 }
