@@ -20,12 +20,6 @@
  */
 package com.github.javaparser.ast.type;
 
-import static com.github.javaparser.utils.CodeGenerationUtils.f;
-import static com.github.javaparser.utils.Utils.assertNotNull;
-
-import java.util.Optional;
-import java.util.function.Consumer;
-
 import com.github.javaparser.TokenRange;
 import com.github.javaparser.ast.AllFieldsConstructor;
 import com.github.javaparser.ast.Generated;
@@ -39,12 +33,18 @@ import com.github.javaparser.metamodel.TypeMetaModel;
 import com.github.javaparser.resolution.Resolvable;
 import com.github.javaparser.resolution.types.ResolvedType;
 
+import java.util.Optional;
+import java.util.function.Consumer;
+
+import static com.github.javaparser.utils.CodeGenerationUtils.f;
+import static com.github.javaparser.utils.Utils.assertNotNull;
+
 /**
  * Base class for types.
  *
  * @author Julio Vilmar Gesser
  */
-public abstract class Type extends Node implements Resolvable<ResolvedType> {
+public abstract class Type extends Node implements Resolvable<ResolvedType>, ConvertibleToUsage {
 
     private NodeList<AnnotationExpr> annotations;
 
