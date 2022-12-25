@@ -221,6 +221,9 @@
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-jar-plugin</artifactId>
                     <version>3.3.0</version>
+                    <configuration>
+                        <finalName>stubparser-${version}</finalName>
+                    </configuration>
                 </plugin>
                 <plugin>
                     <!-- See also: https://central.sonatype.org/pages/apache-maven.html#performing-a-release-deployment-with-the-maven-release-plugin -->
@@ -337,14 +340,6 @@
                     <version>2.13.0</version>
                     <configuration>
                         <generateBackupPoms>false</generateBackupPoms>
-                    </configuration>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-jar-plugin</artifactId>
-                    <version>3.2.2</version>
-                    <configuration>
-                        <finalName>stubparser-${version}</finalName>
                     </configuration>
                 </plugin>
             </plugins>
