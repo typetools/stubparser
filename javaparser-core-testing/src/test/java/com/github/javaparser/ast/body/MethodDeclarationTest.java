@@ -21,6 +21,7 @@
 
 package com.github.javaparser.ast.body;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import static com.github.javaparser.StaticJavaParser.parseBodyDeclaration;
