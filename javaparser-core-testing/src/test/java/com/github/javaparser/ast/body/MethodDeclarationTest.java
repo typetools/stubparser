@@ -21,16 +21,11 @@
 
 package com.github.javaparser.ast.body;
 
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 import static com.github.javaparser.StaticJavaParser.parseBodyDeclaration;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
-import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
 
 class MethodDeclarationTest {
     @Test
@@ -110,7 +105,7 @@ class MethodDeclarationTest {
         MethodDeclaration method1 = parseBodyDeclaration("int x(int z, String q);").asMethodDeclaration();
         assertEquals("x(int, String)", method1.getSignature().toString());
     }
-    
+
     @Test
     void isVariableArityMethod() {
         MethodDeclaration method1 = parseBodyDeclaration("int x(int... z);").asMethodDeclaration();
@@ -118,7 +113,7 @@ class MethodDeclarationTest {
         MethodDeclaration method2 = parseBodyDeclaration("int x(int i, int... z);").asMethodDeclaration();
         assertTrue(method2.isVariableArityMethod());
     }
-    
+
     @Test
     void isFixedArityMethod() {
         MethodDeclaration method1 = parseBodyDeclaration("int x(int z);").asMethodDeclaration();

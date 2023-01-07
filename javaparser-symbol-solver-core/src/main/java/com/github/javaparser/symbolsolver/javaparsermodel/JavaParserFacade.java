@@ -29,28 +29,20 @@ import com.github.javaparser.ast.body.*;
 import com.github.javaparser.ast.expr.*;
 import com.github.javaparser.ast.stmt.ExplicitConstructorInvocationStmt;
 import com.github.javaparser.ast.stmt.ForEachStmt;
-import com.github.javaparser.ast.type.*;
-import com.github.javaparser.resolution.Context;
-import com.github.javaparser.resolution.MethodAmbiguityException;
-import com.github.javaparser.resolution.MethodUsage;
-import com.github.javaparser.resolution.Solver;
-import com.github.javaparser.resolution.TypeSolver;
-import com.github.javaparser.resolution.UnsolvedSymbolException;
+import com.github.javaparser.ast.type.Type;
+import com.github.javaparser.resolution.*;
 import com.github.javaparser.resolution.declarations.*;
 import com.github.javaparser.resolution.logic.ConstructorResolutionLogic;
 import com.github.javaparser.resolution.logic.MethodResolutionLogic;
 import com.github.javaparser.resolution.model.LambdaArgumentTypePlaceholder;
 import com.github.javaparser.resolution.model.SymbolReference;
 import com.github.javaparser.resolution.model.typesystem.ReferenceTypeImpl;
-import com.github.javaparser.resolution.types.*;
-import com.github.javaparser.resolution.types.parametrization.ResolvedTypeParametersMap;
+import com.github.javaparser.resolution.types.ResolvedReferenceType;
+import com.github.javaparser.resolution.types.ResolvedType;
+import com.github.javaparser.symbolsolver.JavaSymbolSolver;
 import com.github.javaparser.symbolsolver.javaparsermodel.contexts.FieldAccessContext;
 import com.github.javaparser.symbolsolver.javaparsermodel.declarations.JavaParserAnonymousClassDeclaration;
 import com.github.javaparser.symbolsolver.javaparsermodel.declarations.JavaParserEnumDeclaration;
-import com.github.javaparser.symbolsolver.reflectionmodel.ReflectionAnnotationDeclaration;
-import com.github.javaparser.symbolsolver.reflectionmodel.ReflectionClassDeclaration;
-import com.github.javaparser.symbolsolver.reflectionmodel.ReflectionEnumDeclaration;
-import com.github.javaparser.symbolsolver.reflectionmodel.ReflectionInterfaceDeclaration;
 import com.github.javaparser.symbolsolver.resolution.SymbolSolver;
 import com.github.javaparser.symbolsolver.resolution.typesolvers.ReflectionTypeSolver;
 import com.github.javaparser.utils.Log;
@@ -91,7 +83,7 @@ public class JavaParserFacade {
      * @see <a href="https://github.com/javaparser/javaparser/issues/2671">https://github.com/javaparser/javaparser/issues/2671</a>
      */
     public static synchronized JavaParserFacade get(TypeSolver typeSolver) {
-        return instances.computeIfAbsent(typeSolver, JavaParserFacade::new);
+        return instances.computeIfAbsent(typeSolver.getRoot(), JavaParserFacade::new);
     }
 
     /**
@@ -106,6 +98,7 @@ public class JavaParserFacade {
     private final TypeSolver typeSolver;
     private final TypeExtractor typeExtractor;
     private final Solver symbolSolver;
+    private final SymbolResolver symbolResolver;
 
     private FailureHandler failureHandler;
 
@@ -114,6 +107,7 @@ public class JavaParserFacade {
         this.symbolSolver = new SymbolSolver(typeSolver);
         this.typeExtractor = new TypeExtractor(this.typeSolver, this);
         this.failureHandler = new FailureHandler();
+        this.symbolResolver = new JavaSymbolSolver(this.typeSolver);
     }
 
     public TypeSolver getTypeSolver() {
@@ -678,7 +672,7 @@ public class JavaParserFacade {
     }
 
     public ResolvedReferenceTypeDeclaration getTypeDeclaration(ClassOrInterfaceDeclaration classOrInterfaceDeclaration) {
-        return JavaParserFactory.toTypeDeclaration(classOrInterfaceDeclaration, typeSolver);
+        return symbolResolver.toTypeDeclaration(classOrInterfaceDeclaration);
     }
 
     /**
@@ -701,7 +695,7 @@ public class JavaParserFacade {
     }
 
     public ResolvedReferenceTypeDeclaration getTypeDeclaration(TypeDeclaration<?> typeDeclaration) {
-        return JavaParserFactory.toTypeDeclaration(typeDeclaration, typeSolver);
+        return symbolResolver.toTypeDeclaration(typeDeclaration);
     }
 
     /**

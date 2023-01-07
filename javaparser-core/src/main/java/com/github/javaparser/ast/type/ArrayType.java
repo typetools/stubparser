@@ -20,6 +20,7 @@
  */
 package com.github.javaparser.ast.type;
 
+import com.github.javaparser.JavaToken;
 import com.github.javaparser.TokenRange;
 import com.github.javaparser.ast.AllFieldsConstructor;
 import com.github.javaparser.ast.Generated;
@@ -39,6 +40,7 @@ import com.github.javaparser.resolution.types.ResolvedType;
 import com.github.javaparser.utils.Pair;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
@@ -152,7 +154,18 @@ public class ArrayType extends ReferenceType implements NodeWithAnnotations<Arra
         }
         return type;
     }
-
+    
+    /*
+     * Returns a {@code TokenRange} with the outermost ending token
+     */
+    private static TokenRange getOuterMostTokenRange(TokenRange tokenRange1, TokenRange tokenRange2) {
+    	if (tokenRange2 == null) return tokenRange1;
+    	if (tokenRange1.getEnd().getRange().get().isAfter(tokenRange2.getEnd().getRange().get())) {
+    		return tokenRange1;
+    	}
+    	return new TokenRange(tokenRange1.getBegin(), tokenRange2.getEnd());
+    }
+    
     /**
      * Takes a type that may be an ArrayType. Unwraps ArrayTypes until the element type is found.
      *
