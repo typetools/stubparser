@@ -13,11 +13,11 @@ These are the differences between JavaParser and StubParser:
 3. Methods for parsing the stub files in the `JavaParser` class.
 
 To see the [diffs between the forks](https://stackoverflow.com/questions/4927519/diff-a-git-fork),
-enter the root directory of the StubParser and perform following commands:
+enter the root directory of the StubParser and perform the following commands:
 ```bash
-git remote add original https://github.com/javaparser/javaparser
-git fetch original
-git diff HEAD original/master
+git remote add upstream https://github.com/javaparser/javaparser
+git fetch upstream
+git diff upstream/master HEAD
 ```
 
 ## Updating from upstream JavaParser
