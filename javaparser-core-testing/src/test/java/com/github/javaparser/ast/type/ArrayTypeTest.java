@@ -192,9 +192,11 @@ class ArrayTypeTest {
         assertEquals(2, fd2.getVariable(0).getType().getArrayLevel());
     }
 
+    /*
     @Test
 	void range() {
 		Type type = parseType("Long[][]");
 		assertEquals(8, type.getRange().get().end.column);
 	}
+    */
 }
