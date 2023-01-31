@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2015-2016 Federico Tomassetti
- * Copyright (C) 2017-2020 The JavaParser Team.
+ * Copyright (C) 2017-2023 The JavaParser Team.
  *
  * This file is part of JavaParser.
  *
@@ -169,5 +169,10 @@ public class JavaParserMethodDeclaration implements ResolvedMethodDeclaration, T
     @Override
     public Optional<Node> toAst() {
         return Optional.of(wrappedNode);
+    }
+
+    @Override
+    public String toDescriptor() {
+        return wrappedNode.toDescriptor();
     }
 }

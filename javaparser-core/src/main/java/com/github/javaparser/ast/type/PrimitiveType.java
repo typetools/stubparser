@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2007-2010 Júlio Vilmar Gesser.
- * Copyright (C) 2011, 2013-2021 The JavaParser Team.
+ * Copyright (C) 2011, 2013-2023 The JavaParser Team.
  *
  * This file is part of JavaParser.
  *
@@ -102,12 +102,37 @@ public class PrimitiveType extends Type implements NodeWithAnnotations<Primitive
 
         private String codeRepresentation;
 
+        /*
+        * Returns the Primitive constant corresponding to the specified type name (e.g. "boolean", "int",
+        * "long").
+        */
+        public static Optional<Primitive> byTypeName(String name) {
+            for (Primitive primitive : values()) {
+                if (primitive.name().toLowerCase().equals(name)) {
+                    return Optional.of(primitive);
+                }
+            }
+            return Optional.empty();
+        }
+
+        /*
+        * Returns the Primitive constant corresponding to the specified boxed type name (e.g. "Boolean", "Integer",
+        * "Long").
+        */
+        public static Optional<Primitive> byBoxedTypeName(String simpleName) {
+            return Optional.ofNullable(unboxMap.getOrDefault(simpleName, null));
+        }
+
         public ClassOrInterfaceType toBoxedType() {
             return parseClassOrInterfaceType(nameOfBoxedType);
         }
 
         public String asString() {
             return codeRepresentation;
+        }
+
+        public String toDescriptor() {
+            return descriptor;
         }
 
         Primitive(String nameOfBoxedType, String descriptor) {
@@ -173,7 +198,7 @@ public class PrimitiveType extends Type implements NodeWithAnnotations<Primitive
 
     @Override
     public String toDescriptor() {
-        return type.descriptor;
+        return type.toDescriptor();
     }
 
     @Generated("com.github.javaparser.generator.core.node.PropertyGenerator")

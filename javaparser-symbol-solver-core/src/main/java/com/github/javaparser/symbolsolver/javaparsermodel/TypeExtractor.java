@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2015-2016 Federico Tomassetti
- * Copyright (C) 2017-2020 The JavaParser Team.
+ * Copyright (C) 2017-2023 The JavaParser Team.
  *
  * This file is part of JavaParser.
  *
@@ -20,6 +20,11 @@
  */
 
 package com.github.javaparser.symbolsolver.javaparsermodel;
+
+import static com.github.javaparser.resolution.Navigator.demandParentNode;
+
+import java.util.List;
+import java.util.Optional;
 
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.Node;
@@ -42,29 +47,35 @@ import com.github.javaparser.resolution.model.typesystem.LazyType;
 import com.github.javaparser.resolution.model.typesystem.NullType;
 import com.github.javaparser.resolution.model.typesystem.ReferenceTypeImpl;
 import com.github.javaparser.resolution.promotion.ConditionalExprHandler;
-import com.github.javaparser.resolution.promotion.ConditionalExprResolver;
 import com.github.javaparser.resolution.types.ResolvedArrayType;
 import com.github.javaparser.resolution.types.ResolvedPrimitiveType;
 import com.github.javaparser.resolution.types.ResolvedType;
 import com.github.javaparser.resolution.types.ResolvedVoidType;
 import com.github.javaparser.symbolsolver.resolution.SymbolSolver;
+import com.github.javaparser.symbolsolver.resolution.promotion.ConditionalExprResolver;
 import com.github.javaparser.utils.Log;
 import com.github.javaparser.utils.Pair;
 import com.google.common.collect.ImmutableList;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Predicate;
 
 import static com.github.javaparser.resolution.Navigator.demandParentNode;
 
 public class TypeExtractor extends DefaultVisitorAdapter {
 
+    /**
+     * Returns {@code true} when the Node to be tested is not an
+     * {@link EnclosedExpr}, {@code false} otherwise.
+     */
+    private static final Predicate<Node> IS_NOT_ENCLOSED_EXPR = n -> !(n instanceof EnclosedExpr);
     private static final String JAVA_LANG_STRING = String.class.getCanonicalName();
     private final ResolvedType stringReferenceType;
 
     private TypeSolver typeSolver;
     private JavaParserFacade facade;
-    
+
 
     public TypeExtractor(TypeSolver typeSolver, JavaParserFacade facade) {
         this.typeSolver = typeSolver;
@@ -191,7 +202,7 @@ public class TypeExtractor extends DefaultVisitorAdapter {
         }
         return node.getThenExpr().accept(this, solveLambdas);
     }
-    
+
     private boolean isCompatible(ResolvedType resolvedType, ResolvedPrimitiveType primitiveType) {
         return (resolvedType.isPrimitive() && resolvedType.asPrimitive().equals(primitiveType))
         || (resolvedType.isReferenceType() && resolvedType.asReferenceType().isUnboxableTo(primitiveType));
@@ -449,12 +460,12 @@ public class TypeExtractor extends DefaultVisitorAdapter {
 
     @Override
     public ResolvedType visit(LambdaExpr node, Boolean solveLambdas) {
-        if (demandParentNode(node) instanceof MethodCallExpr) {
-            MethodCallExpr callExpr = (MethodCallExpr) demandParentNode(node);
+        if (demandParentNode(node, IS_NOT_ENCLOSED_EXPR) instanceof MethodCallExpr) {
+            MethodCallExpr callExpr = (MethodCallExpr) demandParentNode(node, IS_NOT_ENCLOSED_EXPR);
             int pos = getParamPos(node);
             SymbolReference<ResolvedMethodDeclaration> refMethod = facade.solve(callExpr);
             if (!refMethod.isSolved()) {
-                throw new UnsolvedSymbolException(demandParentNode(node).toString(), callExpr.getName().getId());
+                throw new UnsolvedSymbolException(demandParentNode(node, IS_NOT_ENCLOSED_EXPR).toString(), callExpr.getName().getId());
             }
             Log.trace("getType on lambda expr %s", ()-> refMethod.getCorrespondingDeclaration().getName());
 
@@ -579,6 +590,9 @@ public class TypeExtractor extends DefaultVisitorAdapter {
 
     @Override
     public ResolvedType visit(MethodReferenceExpr node, Boolean solveLambdas) {
+    	if ("new".equals(node.getIdentifier())) {
+			return node.getScope().calculateResolvedType();
+		}
         if (demandParentNode(node) instanceof MethodCallExpr) {
             MethodCallExpr callExpr = (MethodCallExpr) demandParentNode(node);
             int pos = getParamPos(node);
@@ -636,12 +650,16 @@ public class TypeExtractor extends DefaultVisitorAdapter {
         }
         throw new IllegalArgumentException("Cannot resolve the type of a field with multiple variable declarations. Pick one");
     }
-    
+
     private static int getParamPos(Node node) {
-        if (demandParentNode(node) instanceof MethodCallExpr) {
-            MethodCallExpr call = (MethodCallExpr) demandParentNode(node);
+        if (demandParentNode(node, IS_NOT_ENCLOSED_EXPR) instanceof MethodCallExpr) {
+            MethodCallExpr call = (MethodCallExpr) demandParentNode(node, IS_NOT_ENCLOSED_EXPR);
             for (int i = 0; i < call.getArguments().size(); i++) {
-                if (call.getArguments().get(i) == node) return i;
+                Expression expression = call.getArguments().get(i);
+                while (expression instanceof EnclosedExpr) {
+                    expression = ((EnclosedExpr) expression).getInner();
+                }
+                if (expression == node) return i;
             }
             throw new IllegalStateException();
         }
