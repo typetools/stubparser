@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2007-2010 Júlio Vilmar Gesser.
- * Copyright (C) 2011, 2013-2019 The JavaParser Team.
+ * Copyright (C) 2011, 2013-2023 The JavaParser Team.
  *
  * This file is part of JavaParser.
  *
@@ -21,6 +21,7 @@
 
 package com.github.javaparser.ast.type;
 
+import com.github.javaparser.StaticJavaParser;
 import com.github.javaparser.ast.body.FieldDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.body.Parameter;
@@ -182,7 +183,7 @@ class ArrayTypeTest {
         assertEquals("int[][]@X ... a", p.toString());
         assertEquals("int[][]@X... a", ConcreteSyntaxModel.genericPrettyPrint(p));
     }
-    
+
     @Test
     void arrayLevel() {
         FieldDeclaration fd1 = parseBodyDeclaration("int[] a;").asFieldDeclaration();
@@ -190,4 +191,12 @@ class ArrayTypeTest {
         FieldDeclaration fd2 = parseBodyDeclaration("int[][] a;").asFieldDeclaration();
         assertEquals(2, fd2.getVariable(0).getType().getArrayLevel());
     }
+
+    /*
+    @Test
+	void range() {
+		Type type = parseType("Long[][]");
+		assertEquals(8, type.getRange().get().end.column);
+	}
+    */
 }

@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2007-2010 Júlio Vilmar Gesser.
- * Copyright (C) 2011, 2013-2019 The JavaParser Team.
+ * Copyright (C) 2011, 2013-2023 The JavaParser Team.
  *
  * This file is part of JavaParser.
  *
@@ -25,6 +25,7 @@ import com.github.javaparser.GeneratedJavaParserConstants;
 import com.github.javaparser.JavaParser;
 import com.github.javaparser.ParserConfiguration;
 import com.github.javaparser.StaticJavaParser;
+import com.github.javaparser.ParserConfiguration.LanguageLevel;
 import com.github.javaparser.ast.*;
 import com.github.javaparser.ast.body.*;
 import com.github.javaparser.ast.comments.LineComment;
@@ -274,18 +275,18 @@ class LexicalPreservingPrinterTest extends AbstractLexicalPreservingTest {
     void findIndentationForAnnotationMemberDeclarationWithoutComment() throws IOException {
         considerExample("AnnotationDeclaration_Example3_original");
         Node node = cu.getAnnotationDeclarationByName("ClassPreamble").get().getMember(4);
-        List<TokenTextElement> indentation = LexicalPreservingPrinter.findIndentation(node);
+        List<TextElement> indentation = LexicalPreservingPrinter.findIndentation(node);
         assertEquals(Arrays.asList(" ", " ", " "),
-                indentation.stream().map(TokenTextElement::expand).collect(Collectors.toList()));
+                indentation.stream().map(TextElement::expand).collect(Collectors.toList()));
     }
 
     @Test
     void findIndentationForAnnotationMemberDeclarationWithComment() throws IOException {
         considerExample("AnnotationDeclaration_Example3_original");
         Node node = cu.getAnnotationDeclarationByName("ClassPreamble").get().getMember(5);
-        List<TokenTextElement> indentation = LexicalPreservingPrinter.findIndentation(node);
+        List<TextElement> indentation = LexicalPreservingPrinter.findIndentation(node);
         assertEquals(Arrays.asList(" ", " ", " "),
-                indentation.stream().map(TokenTextElement::expand).collect(Collectors.toList()));
+                indentation.stream().map(TextElement::expand).collect(Collectors.toList()));
     }
 
     //
@@ -633,7 +634,7 @@ class LexicalPreservingPrinterTest extends AbstractLexicalPreservingTest {
                         }));
         assertEquals("public class TestPage extends Page {" + SYSTEM_EOL +
                 SYSTEM_EOL +
-                "   @Override()" + SYSTEM_EOL +
+                "   @Override" + SYSTEM_EOL +
                 "   protected void test() {}" + SYSTEM_EOL +
                 SYSTEM_EOL +
                 "   @Override" + SYSTEM_EOL +
@@ -1012,10 +1013,10 @@ class LexicalPreservingPrinterTest extends AbstractLexicalPreservingTest {
                                 methodDeclaration -> methodDeclaration.addAnnotation("Override"))));
         assertEquals("public class TestPage extends Page {" + SYSTEM_EOL +
                 SYSTEM_EOL +
-                "   @Override()" + SYSTEM_EOL +
+                "   @Override" + SYSTEM_EOL +
                 "   protected void test() {}" + SYSTEM_EOL +
                 SYSTEM_EOL +
-                "   @Override()" + SYSTEM_EOL +
+                "   @Override" + SYSTEM_EOL +
                 "   protected void initializePage() {}" + SYSTEM_EOL +
                 "}", LexicalPreservingPrinter.print(cu));
     }
@@ -1036,7 +1037,7 @@ class LexicalPreservingPrinterTest extends AbstractLexicalPreservingTest {
 
         cu.getTypes().forEach(type -> type.addAndGetAnnotation(Deprecated.class));
 
-        assertEquals("@Deprecated()" + SYSTEM_EOL +
+        assertEquals("@Deprecated" + SYSTEM_EOL +
                 "public final class A {}", LexicalPreservingPrinter.print(cu));
 
     }
@@ -1047,7 +1048,7 @@ class LexicalPreservingPrinterTest extends AbstractLexicalPreservingTest {
 
         cu.getTypes().forEach(type -> type.addAndGetAnnotation(Deprecated.class));
 
-        assertEquals("@Deprecated()" + SYSTEM_EOL +
+        assertEquals("@Deprecated" + SYSTEM_EOL +
                 "public abstract class A {}", LexicalPreservingPrinter.print(cu));
     }
 
@@ -1402,6 +1403,34 @@ class LexicalPreservingPrinterTest extends AbstractLexicalPreservingTest {
     }
 
     @Test
+	void testTextBlockSupport() {
+		String code =
+				"String html = \"\"\"\n" +
+                "  <html>\n" +
+                "    <body>\n" +
+                "      <p>Hello, world</p>\n" +
+                "    </body>\n" +
+                "  </html>\n" +
+                "\"\"\";";
+		String expected =
+				"String html = \"\"\"\r\n"
+				+ "  <html>\r\n"
+				+ "    <body>\r\n"
+				+ "      <p>Hello, world</p>\r\n"
+				+ "    </body>\r\n"
+				+ "  </html>\r\n"
+				+ "\"\"\";";
+		final JavaParser javaParser = new JavaParser(
+                new ParserConfiguration()
+                        .setLexicalPreservationEnabled(true)
+                        .setLanguageLevel(ParserConfiguration.LanguageLevel.JAVA_15)
+        );
+		Statement stmt = javaParser.parseStatement(code).getResult().orElseThrow(AssertionError::new);
+		LexicalPreservingPrinter.setup(stmt);
+		assertEqualsStringIgnoringEol(expected, LexicalPreservingPrinter.print(stmt));
+	}
+
+    @Test
     void testArrayPreservation_WithSingleLanguageStyle() {
 
         // Given
@@ -1527,7 +1556,7 @@ class LexicalPreservingPrinterTest extends AbstractLexicalPreservingTest {
                                 "}";
         assertTransformedToString(expectedCode, cu);
     }
-    
+
     @Test
     void testClassOrInterfacePreservationWithFullyQualifiedName_SingleType() {
         // Given
@@ -1548,7 +1577,7 @@ class LexicalPreservingPrinterTest extends AbstractLexicalPreservingTest {
         assertTransformedToString(expectedCode, cu);
 
     }
-    
+
     @Test
     void testClassOrInterfacePreservationWithFullyQualifiedName_ArrayType() {
         // Given
@@ -1569,7 +1598,7 @@ class LexicalPreservingPrinterTest extends AbstractLexicalPreservingTest {
         assertTransformedToString(expectedCode, cu);
 
     }
-    
+
     @Test
     void testClassOrInterfacePreservationWithFullyQualifiedName_MultipleVariablesDeclarationWithSameType() {
         // Given
@@ -1590,7 +1619,7 @@ class LexicalPreservingPrinterTest extends AbstractLexicalPreservingTest {
         assertTransformedToString(expectedCode, cu);
 
     }
-    
+
     @Test
     void testClassOrInterfacePreservationWithFullyQualifiedName_MultipleVariablesDeclarationwithDifferentType() {
         // Given
@@ -1611,8 +1640,8 @@ class LexicalPreservingPrinterTest extends AbstractLexicalPreservingTest {
         assertTransformedToString(expectedCode, cu);
 
     }
-    
-    // issue 3588 Modifier is removed when removing an annotation. 
+
+    // issue 3588 Modifier is removed when removing an annotation.
     @Test
     void testRemovingInlinedAnnotation() {
         // Given
@@ -1633,8 +1662,8 @@ class LexicalPreservingPrinterTest extends AbstractLexicalPreservingTest {
         assertTransformedToString(expectedCode, cu);
 
     }
-    
-    // issue 3588 Modifier is removed when removing an annotation. 
+
+    // issue 3588 Modifier is removed when removing an annotation.
     @Test
     void testRemovingInlinedAnnotation_alternate_case() {
         // Given
@@ -1655,7 +1684,7 @@ class LexicalPreservingPrinterTest extends AbstractLexicalPreservingTest {
         assertTransformedToString(expectedCode, cu);
 
     }
-    
+
     // issue 3216 LexicalPreservingPrinter add Wrong indentation when removing comments
     @Test
     void removedIndentationLineCommentsPrinted() {
@@ -1665,14 +1694,14 @@ class LexicalPreservingPrinterTest extends AbstractLexicalPreservingTest {
     			"  }\n" +
     			"}");
 		String expected =
-				"public class Foo {\n" + 
+				"public class Foo {\n" +
 		    	"  void mymethod() {\n" +
 		    	"  }\n" +
 		    	"}";
     	cu.getAllContainedComments().get(0).remove();
     	assertEqualsStringIgnoringEol(expected, LexicalPreservingPrinter.print(cu));
     }
-    
+
     // issue 3216 LexicalPreservingPrinter add Wrong indentation when removing comments
     @Test
     void removedIndentationBlockCommentsPrinted() {
@@ -1689,10 +1718,10 @@ class LexicalPreservingPrinterTest extends AbstractLexicalPreservingTest {
     	    	"  }\n" +
     	    	"}";
     	cu.getAllContainedComments().get(0).remove();
-    	
+
     	assertEqualsStringIgnoringEol(expected, LexicalPreservingPrinter.print(cu));
     }
-    
+
  // issue 3216 LexicalPreservingPrinter add Wrong indentation when removing comments
     @Test
     void removedIndentationJavaDocCommentsPrinted() {
@@ -1712,7 +1741,7 @@ class LexicalPreservingPrinterTest extends AbstractLexicalPreservingTest {
 
         assertEqualsStringIgnoringEol(expected, LexicalPreservingPrinter.print(cu));
     }
-    
+
     // issue 3800 determine whether active
     @Test
     void checkLPPIsAvailableOnNode() {
@@ -1720,7 +1749,7 @@ class LexicalPreservingPrinterTest extends AbstractLexicalPreservingTest {
         CompilationUnit cu = StaticJavaParser.parse(code);
         MethodDeclaration md = cu.findFirst(MethodDeclaration.class).get();
         LexicalPreservingPrinter.setup(md);
-        
+
         assertTrue(LexicalPreservingPrinter.isAvailableOn(md));
         assertFalse(LexicalPreservingPrinter.isAvailableOn(cu));
     }

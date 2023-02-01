@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2015-2016 Federico Tomassetti
- * Copyright (C) 2017-2020 The JavaParser Team.
+ * Copyright (C) 2017-2023 The JavaParser Team.
  *
  * This file is part of JavaParser.
  *
@@ -143,4 +143,8 @@ public class JavassistMethodDeclaration implements ResolvedMethodDeclaration, Ty
         return methodLikeAdaper.getSpecifiedException(index);
     }
 
+    @Override
+    public String toDescriptor() {
+        return ctMethod.getMethodInfo().getDescriptor();
+    }
 }

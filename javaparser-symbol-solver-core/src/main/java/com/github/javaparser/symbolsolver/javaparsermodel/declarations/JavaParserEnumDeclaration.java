@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2015-2016 Federico Tomassetti
- * Copyright (C) 2017-2020 The JavaParser Team.
+ * Copyright (C) 2017-2023 The JavaParser Team.
  *
  * This file is part of JavaParser.
  *
@@ -428,8 +428,12 @@ public class JavaParserEnumDeclaration extends AbstractTypeDeclaration
         public Optional<Node> toAst() {
             return enumDeclaration.toAst();
         }
-    }
 
+        @Override
+        public String toDescriptor() {
+            return String.format("()%s", getReturnType().toDescriptor());
+        }
+    }
 
     /**
      * Needed by ContextHelper
@@ -548,6 +552,11 @@ public class JavaParserEnumDeclaration extends AbstractTypeDeclaration
         @Override
         public Optional<Node> toAst() {
             return enumDeclaration.toAst();
+        }
+
+        @Override
+        public String toDescriptor() {
+            return String.format("(Ljava/lang/String;)%s", getReturnType().toDescriptor());
         }
     }
 
