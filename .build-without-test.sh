@@ -10,7 +10,7 @@ export SHELLOPTS
 ## Compile
 echo "running \"mvn package\" for stubparser"
 mvn --version
-# Try twice in case of network lossage
+# Try a second time if there is network lossage.
 (cd javaparser-core && ../mvnw -B -q package -Dmaven.test.skip=true) \
     || (sleep 2m && (cd javaparser-core && ../mvnw -B -q dependency:resolve || true) \
         && sleep 2m && (cd javaparser-core && ../mvnw -B -q package -Dmaven.test.skip=true))
