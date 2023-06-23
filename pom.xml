@@ -14,7 +14,7 @@
     <groupId>com.github.javaparser</groupId>
     <artifactId>javaparser-parent</artifactId>
     <packaging>pom</packaging>
-    <version>3.25.2</version>
+    <version>3.25.3</version>
 
     <name>javaparser-parent</name>
     <url>https://github.com/javaparser</url>
@@ -215,7 +215,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-install-plugin</artifactId>
-                    <version>3.1.0</version>
+                    <version>3.1.1</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -231,7 +231,7 @@
                     <!-- TODO: Consider switching to using `mvn versions:set` and org.sonatype.plugins:nexus-staging-maven-plugin -->
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-release-plugin</artifactId>
-                    <version>2.5.3</version>
+                    <version>3.0.0</version>
                     <configuration>
                         <!-- When updating versions during release, synchronise versions of sub-modules with the parent-pom. -->
                         <autoVersionSubmodules>true</autoVersionSubmodules>
@@ -246,7 +246,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-resources-plugin</artifactId>
-                    <version>3.3.0</version>
+                    <version>3.3.1</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -273,7 +273,7 @@
                 <plugin>
                     <groupId>org.jacoco</groupId>
                     <artifactId>jacoco-maven-plugin</artifactId>
-                    <version>0.8.8</version>
+                    <version>0.8.10</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -317,7 +317,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-deploy-plugin</artifactId>
-                    <version>3.1.0</version>
+                    <version>3.1.1</version>
                 </plugin>
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
@@ -345,7 +345,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-checkstyle-plugin</artifactId>
-                    <version>3.2.1</version>
+                    <version>3.2.2</version>
                     <configuration>
                         <configLocation>dev-files/JavaParser-CheckStyle.xml</configLocation>
                         <logViolationsToConsole>true</logViolationsToConsole>
@@ -355,7 +355,7 @@
                         <dependency>
                             <groupId>com.puppycrawl.tools</groupId>
                             <artifactId>checkstyle</artifactId>
-                            <version>10.9.1</version>
+                            <version>10.10.0</version>
                         </dependency>
                     </dependencies>
                 </plugin>
@@ -391,19 +391,19 @@
             <dependency>
                 <groupId>org.junit.jupiter</groupId>
                 <artifactId>junit-jupiter-engine</artifactId>
-                <version>5.9.2</version>
+                <version>5.9.3</version>
                 <scope>test</scope>
             </dependency>
             <dependency>
                 <groupId>org.junit.jupiter</groupId>
                 <artifactId>junit-jupiter-params</artifactId>
-                <version>5.9.2</version>
+                <version>5.9.3</version>
                 <scope>test</scope>
             </dependency>
             <dependency>
                 <groupId>org.junit.vintage</groupId>
                 <artifactId>junit-vintage-engine</artifactId>
-                <version>5.9.2</version>
+                <version>5.9.3</version>
                 <scope>test</scope>
             </dependency>
             <dependency>
