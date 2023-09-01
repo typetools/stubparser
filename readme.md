@@ -115,7 +115,7 @@ The remainder of this README file is the original JavaParser README.
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.2667378.svg)](https://doi.org/10.5281/zenodo.2667378)
 
 
-This project contains a set of libraries implementing a Java 1.0 - Java 15 Parser with advanced analysis functionalities. This includes preview features to Java 13, with Java 14 preview features work-in-progress.
+This project contains a set of libraries implementing a Java 1.0 - Java 17 Parser with advanced analysis functionalities.
 
 Our main site is at [JavaParser.org](http://javaparser.org)
 
@@ -138,14 +138,14 @@ Just add the following to your maven configuration or tailor to your own depende
 <dependency>
     <groupId>com.github.javaparser</groupId>
     <artifactId>javaparser-symbol-solver-core</artifactId>
-    <version>3.25.3</version>
+    <version>3.25.5</version>
 </dependency>
 ```
 
 **Gradle**:
 
 ```
-implementation 'com.github.javaparser:javaparser-symbol-solver-core:3.25.3'
+implementation 'com.github.javaparser:javaparser-symbol-solver-core:3.25.5'
 ```
 
 Since Version 3.5.10, the JavaParser project includes the JavaSymbolSolver.
@@ -160,14 +160,14 @@ Using the dependency above will add both JavaParser and JavaSymbolSolver to your
 <dependency>
     <groupId>com.github.javaparser</groupId>
     <artifactId>javaparser-core</artifactId>
-    <version>3.25.3</version>
+    <version>3.25.5</version>
 </dependency>
 ```
 
 **Gradle**:
 
 ```
-implementation 'com.github.javaparser:javaparser-core:3.25.3'
+implementation 'com.github.javaparser:javaparser-core:3.25.5'
 ```
 
 Since version 3.6.17 the AST can be serialized to JSON.
@@ -179,14 +179,14 @@ There is a separate module for this:
 <dependency>
     <groupId>com.github.javaparser</groupId>
     <artifactId>javaparser-core-serialization</artifactId>
-    <version>3.25.3</version>
+    <version>3.25.5</version>
 </dependency>
 ```
 
 **Gradle**:
 
 ```
-implementation 'com.github.javaparser:javaparser-core-serialization:3.25.3'
+implementation 'com.github.javaparser:javaparser-core-serialization:3.25.5'
 ```
 
 ## How To Compile Sources
@@ -222,7 +222,7 @@ Make sure that `javaparser-core` at least compiles before you run these.
 
 ## More information
 
-#### [JavaParser.org](https://javaparser.org) is the main information site.
+#### [JavaParser.org](https://javaparser.org) is the main information site or see the wiki page https://github.com/javaparser/javaparser/wiki.
 
 ## License
 
