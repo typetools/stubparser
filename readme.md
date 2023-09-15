@@ -54,7 +54,7 @@ git checkout -b updating-${TAG_NAME}
 git pull https://github.com/javaparser/javaparser ${TAG_NAME}
 ```
 5. Resolve conflicts if required and commit it (but don't push yet).
-6. Update the StubParser version to the JavaParser version in the `<finalName>` block of `javaparser-core/pom.xml`.
+6. Update the StubParser version to the JavaParser version adding "-SNAPSHOT" to the version number in the `<finalName>` block of `javaparser-core/pom.xml`.
 (There should not be "-SNAPSHOT" there or in `<version>` in `pom.xml`.)
 7. Run Maven tests in the root directory:
 ```bash
@@ -62,7 +62,18 @@ git pull https://github.com/javaparser/javaparser ${TAG_NAME}
 ```
 If any tests fail, fix them before continuing.
 
-8. Update the stubparser version number in the Checker Framework.  Create
+8. Deploy the snapshot.
+ ```
+HOSTING_INFO_DIR=/projects/swlab1/checker-framework/hosting-info
+ mvn gpg:sign-and-deploy-file -Durl=https://oss.sonatype.org/content/repositories/snapshots/  \
+    -DpomFile=cfMavenCentral.xml -Dfile=target/stubparser-3.25.5-SNAPSHOT.jar \
+    -Dgpg.keyname=checker-framework-dev@googlegroups.com \
+    -Dgpg.passphrase="`cat $HOSTING_INFO_DIR/release-private.password`" \
+    -DrepositoryId=sonatype-nexus-staging
+```
+(You must have a file at `~/.m2/settings.xml` that lists a username and password for Sonatypes.)
+
+9. Update the stubparser version number in the Checker Framework.  Create
 a branch with the same name as your StubParser branch.  In
 `checker-framework/build.gradle`, update `stubparserJar`.
 9. Run Checker Framework tests (`./gradlew build`), using your StubParser branch.
