@@ -66,10 +66,10 @@ If any tests fail, fix them before continuing.
 Update the `version` block in `javaparser-core/cfMavenCentral.xml` to be the same as the
 JavaParser version plus `-SNAPSHOT`.  Run the following in `javaparser-core` 
  ```
-export STUBPARSER_JAR=target/stubparser-3.25.5.jar 
+export STUBPARSER=stubparser-3.25.5
 export HOSTING_INFO_DIR=/projects/swlab1/checker-framework/hosting-info
  mvn gpg:sign-and-deploy-file -Durl=https://oss.sonatype.org/content/repositories/snapshots/  \
-    -DpomFile=cfMavenCentral.xml -Dfile=$STUBPARSER_JAR\
+    -DpomFile=cfMavenCentral.xml -Dfile=target/$STUBPARSER_JAR.jar\
     -Dgpg.keyname=checker-framework-dev@googlegroups.com \
     -Dgpg.passphrase="`cat $HOSTING_INFO_DIR/release-private.password`" \
     -DrepositoryId=sonatype-nexus-staging
@@ -82,21 +82,55 @@ a branch with the same name as your StubParser branch.  In
 10. Run Checker Framework tests (`./gradlew build`), using your StubParser branch.
 If any tests fail, fix them before continuing.
 11. Commit and push your changes to Checker Framework.
-12. Push commits to your fork of StubParser.
+12. Once the Azure tests pass, release the Stubparser:
+
+Delete `-SNAPSHOT` from the version in `javaparser-core/cfMavenCentral.xml`.
+
+```
+mvn source:jar && \
+mvn javadoc:javadoc && (cd target/site/apidocs && jar -c -f target/$STUBPARSER-javadoc.jar com)
+mvn gpg:sign-and-deploy-file -Durl=https://oss.sonatype.org/service/local/staging/deploy/maven2/  \
+    -DpomFile=cfMavenCentral.xml -Dfile=target/$STUBPARSER.jar \
+    -Dgpg.keyname=checker-framework-dev@googlegroups.com \
+    -Dgpg.passphrase="`cat $HOSTING_INFO_DIR/release-private.password`" \
+    -DrepositoryId=sonatype-nexus-staging
+
+mvn gpg:sign-and-deploy-file -Durl=https://oss.sonatype.org/service/local/staging/deploy/maven2/  \
+    -DpomFile=cfMavenCentral.xml \
+    -Dgpg.keyname=checker-framework-dev@googlegroups.com \
+    -Dgpg.passphrase="`cat $HOSTING_INFO_DIR/release-private.password`" \
+    -DrepositoryId=sonatype-nexus-staging \
+    -Dclassifier=javadoc -Dfile=target/$STUBPARSER-javadoc.jar
+
+mvn gpg:sign-and-deploy-file -Durl=https://oss.sonatype.org/service/local/staging/deploy/maven2/  \
+    -DpomFile=cfMavenCentral.xml \
+    -Dgpg.keyname=checker-framework-dev@googlegroups.com \
+    -Dgpg.passphrase="`cat $HOSTING_INFO_DIR/release-private.password`" \
+    -DrepositoryId=sonatype-nexus-staging \
+    -Dclassifier=sources -Dfile=target/$STUBPARSER-sources.jar
+
+```
+
+Complete the release at https://oss.sonatype.org/#stagingRepositories.
+
+13. In the Checker Framework, remove `SNAPSHOT` in the StubParser version numbers. 
+Commit and push your changes to Checker Framework.
+
+14. Push commits to your fork of StubParser.
 ```bash
 git push
 ```
 GitHub Actions CI will not run for your branch.
 
-13. Create a [pull request to `typetools/stubparser`](https://github.com/typetools/stubparser).
+15. Create a [pull request to `typetools/stubparser`](https://github.com/typetools/stubparser).
 Give it a title like "Update to JavaParser 3.24.3".
 Do *not* squash-and-merge the pull request;
 you want to keep a history of what upstream commits were merged in.
 
-14. Create a [pull request to `typetools/checker-framework`](https://github.com/typetools/checkerframework).
+16. Create a [pull request to `typetools/checker-framework`](https://github.com/typetools/checkerframework).
 Give it a title like "Update to StubParser 3.24.3".
 
-15. Merge both pull requests when both pass.
+17. Merge both pull requests when both pass.
 
 
 ## Changes to StubParser that break the Checker Framework
