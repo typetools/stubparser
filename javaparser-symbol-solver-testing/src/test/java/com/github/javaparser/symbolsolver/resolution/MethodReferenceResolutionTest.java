@@ -52,7 +52,7 @@ class MethodReferenceResolutionTest extends AbstractResolutionTest {
     @Test
     void classMethod() {
         // configure symbol solver before parsing
-        StaticJavaParser.getConfiguration().setSymbolResolver(new JavaSymbolSolver(new ReflectionTypeSolver()));
+        StaticJavaParser.getParserConfiguration().setSymbolResolver(new JavaSymbolSolver(new ReflectionTypeSolver()));
 
         // parse compilation unit and get method reference expression
         CompilationUnit cu = parseSample("MethodReferences");
@@ -71,7 +71,7 @@ class MethodReferenceResolutionTest extends AbstractResolutionTest {
     @Test
     void superclassMethodNotOverridden() {
         // configure symbol solver before parsing
-        StaticJavaParser.getConfiguration().setSymbolResolver(new JavaSymbolSolver(new ReflectionTypeSolver()));
+        StaticJavaParser.getParserConfiguration().setSymbolResolver(new JavaSymbolSolver(new ReflectionTypeSolver()));
 
         // parse compilation unit and get method reference expression
         CompilationUnit cu = parseSample("MethodReferences");
@@ -90,7 +90,7 @@ class MethodReferenceResolutionTest extends AbstractResolutionTest {
     @Test
     void superclassMethodOverridden() {
         // configure symbol solver before parsing
-        StaticJavaParser.getConfiguration().setSymbolResolver(new JavaSymbolSolver(new ReflectionTypeSolver()));
+        StaticJavaParser.getParserConfiguration().setSymbolResolver(new JavaSymbolSolver(new ReflectionTypeSolver()));
 
         // parse compilation unit and get method reference expression
         CompilationUnit cu = parseSample("MethodReferences");
@@ -109,7 +109,7 @@ class MethodReferenceResolutionTest extends AbstractResolutionTest {
     @Test
     void superclassMethodWithSubclassType() {
         // configure symbol solver before parsing
-        StaticJavaParser.getConfiguration().setSymbolResolver(new JavaSymbolSolver(new ReflectionTypeSolver()));
+        StaticJavaParser.getParserConfiguration().setSymbolResolver(new JavaSymbolSolver(new ReflectionTypeSolver()));
 
         // parse compilation unit and get method reference expression
         CompilationUnit cu = parseSample("MethodReferences");
@@ -128,7 +128,7 @@ class MethodReferenceResolutionTest extends AbstractResolutionTest {
     @Test
     void fieldAccessMethod() {
         // configure symbol solver before parsing
-        StaticJavaParser.getConfiguration().setSymbolResolver(new JavaSymbolSolver(new ReflectionTypeSolver()));
+        StaticJavaParser.getParserConfiguration().setSymbolResolver(new JavaSymbolSolver(new ReflectionTypeSolver()));
 
         // parse compilation unit and get method reference expression
         CompilationUnit cu = parseSample("MethodReferences");
@@ -147,7 +147,7 @@ class MethodReferenceResolutionTest extends AbstractResolutionTest {
     @Test
     void thisClassMethod() {
         // configure symbol solver before parsing
-        StaticJavaParser.getConfiguration().setSymbolResolver(new JavaSymbolSolver(new ReflectionTypeSolver()));
+        StaticJavaParser.getParserConfiguration().setSymbolResolver(new JavaSymbolSolver(new ReflectionTypeSolver()));
 
         // parse compilation unit and get method reference expression
         CompilationUnit cu = parseSample("MethodReferences");
@@ -166,7 +166,7 @@ class MethodReferenceResolutionTest extends AbstractResolutionTest {
     @Test
     void superclassMethod() {
         // configure symbol solver before parsing
-        StaticJavaParser.getConfiguration().setSymbolResolver(new JavaSymbolSolver(new ReflectionTypeSolver()));
+        StaticJavaParser.getParserConfiguration().setSymbolResolver(new JavaSymbolSolver(new ReflectionTypeSolver()));
 
         // parse compilation unit and get method reference expression
         CompilationUnit cu = parseSample("MethodReferences");
@@ -185,7 +185,7 @@ class MethodReferenceResolutionTest extends AbstractResolutionTest {
     @Test
     void instanceMethod() {
         // configure symbol solver before parsing
-        StaticJavaParser.getConfiguration().setSymbolResolver(new JavaSymbolSolver(new ReflectionTypeSolver()));
+        StaticJavaParser.getParserConfiguration().setSymbolResolver(new JavaSymbolSolver(new ReflectionTypeSolver()));
 
         // parse compilation unit and get method reference expression
         CompilationUnit cu = parseSample("MethodReferences");
@@ -204,7 +204,7 @@ class MethodReferenceResolutionTest extends AbstractResolutionTest {
     @Test
     void staticMethod() {
         // configure symbol solver before parsing
-        StaticJavaParser.getConfiguration().setSymbolResolver(new JavaSymbolSolver(new ReflectionTypeSolver()));
+        StaticJavaParser.getParserConfiguration().setSymbolResolver(new JavaSymbolSolver(new ReflectionTypeSolver()));
 
         // parse compilation unit and get method reference expression
         CompilationUnit cu = parseSample("MethodReferences");
@@ -223,7 +223,7 @@ class MethodReferenceResolutionTest extends AbstractResolutionTest {
     @Test
     void biFunction() {
         // configure symbol solver before parsing
-        StaticJavaParser.getConfiguration().setSymbolResolver(new JavaSymbolSolver(new ReflectionTypeSolver()));
+        StaticJavaParser.getParserConfiguration().setSymbolResolver(new JavaSymbolSolver(new ReflectionTypeSolver()));
 
         // parse compilation unit and get method reference expression
         CompilationUnit cu = parseSample("MethodReferences");
@@ -242,7 +242,7 @@ class MethodReferenceResolutionTest extends AbstractResolutionTest {
     @Test
     void customTriFunction() {
         // configure symbol solver before parsing
-        StaticJavaParser.getConfiguration().setSymbolResolver(new JavaSymbolSolver(new ReflectionTypeSolver()));
+        StaticJavaParser.getParserConfiguration().setSymbolResolver(new JavaSymbolSolver(new ReflectionTypeSolver()));
 
         // parse compilation unit and get method reference expression
         CompilationUnit cu = parseSample("MethodReferences");
@@ -261,7 +261,7 @@ class MethodReferenceResolutionTest extends AbstractResolutionTest {
     @Test
     void consumerDeclaredInMethod() {
         // configure symbol solver before parsing
-        StaticJavaParser.getConfiguration().setSymbolResolver(new JavaSymbolSolver(new ReflectionTypeSolver()));
+        StaticJavaParser.getParserConfiguration().setSymbolResolver(new JavaSymbolSolver(new ReflectionTypeSolver()));
 
         // parse compilation unit and get method reference expression
         CompilationUnit cu = parseSample("MethodReferences");
@@ -279,7 +279,7 @@ class MethodReferenceResolutionTest extends AbstractResolutionTest {
     @Test
     void functionDeclaredInMethod() {
         // configure symbol solver before parsing
-        StaticJavaParser.getConfiguration().setSymbolResolver(new JavaSymbolSolver(new ReflectionTypeSolver()));
+        StaticJavaParser.getParserConfiguration().setSymbolResolver(new JavaSymbolSolver(new ReflectionTypeSolver()));
 
         // parse compilation unit and get method reference expression
         CompilationUnit cu = parseSample("MethodReferences");
@@ -297,7 +297,7 @@ class MethodReferenceResolutionTest extends AbstractResolutionTest {
     @Test
     void biFunctionDeclaredInMethod() {
         // configure symbol solver before parsing
-        StaticJavaParser.getConfiguration().setSymbolResolver(new JavaSymbolSolver(new ReflectionTypeSolver()));
+        StaticJavaParser.getParserConfiguration().setSymbolResolver(new JavaSymbolSolver(new ReflectionTypeSolver()));
 
         // parse compilation unit and get method reference expression
         CompilationUnit cu = parseSample("MethodReferences");
@@ -315,7 +315,7 @@ class MethodReferenceResolutionTest extends AbstractResolutionTest {
     @Test
     void consumerUsedInStream() {
         // configure symbol solver before parsing
-        StaticJavaParser.getConfiguration().setSymbolResolver(new JavaSymbolSolver(new ReflectionTypeSolver()));
+        StaticJavaParser.getParserConfiguration().setSymbolResolver(new JavaSymbolSolver(new ReflectionTypeSolver()));
 
         // parse compilation unit and get method reference expression
         CompilationUnit cu = parseSample("MethodReferences");
@@ -333,7 +333,7 @@ class MethodReferenceResolutionTest extends AbstractResolutionTest {
     @Test
     void functionUsedInStream() {
         // configure symbol solver before parsing
-        StaticJavaParser.getConfiguration().setSymbolResolver(new JavaSymbolSolver(new ReflectionTypeSolver()));
+        StaticJavaParser.getParserConfiguration().setSymbolResolver(new JavaSymbolSolver(new ReflectionTypeSolver()));
 
         // parse compilation unit and get method reference expression
         CompilationUnit cu = parseSample("MethodReferences");
@@ -351,7 +351,7 @@ class MethodReferenceResolutionTest extends AbstractResolutionTest {
     @Test
     void biFunctionUsedInStream() {
         // configure symbol solver before parsing
-        StaticJavaParser.getConfiguration().setSymbolResolver(new JavaSymbolSolver(new ReflectionTypeSolver()));
+        StaticJavaParser.getParserConfiguration().setSymbolResolver(new JavaSymbolSolver(new ReflectionTypeSolver()));
 
         // parse compilation unit and get method reference expression
         CompilationUnit cu = parseSample("MethodReferences");
@@ -369,7 +369,7 @@ class MethodReferenceResolutionTest extends AbstractResolutionTest {
     @Test
     void biFunctionInMethodCall() {
         // configure symbol solver before parsing
-        StaticJavaParser.getConfiguration().setSymbolResolver(new JavaSymbolSolver(new ReflectionTypeSolver()));
+        StaticJavaParser.getParserConfiguration().setSymbolResolver(new JavaSymbolSolver(new ReflectionTypeSolver()));
 
         // parse compilation unit and get method reference expression
         CompilationUnit cu = parseSample("MethodReferences");
@@ -402,7 +402,7 @@ class MethodReferenceResolutionTest extends AbstractResolutionTest {
                 "    }\n" +
                 "}";
         TypeSolver typeSolver = new ReflectionTypeSolver();
-        StaticJavaParser.getConfiguration().setSymbolResolver(new JavaSymbolSolver(typeSolver));
+        StaticJavaParser.getParserConfiguration().setSymbolResolver(new JavaSymbolSolver(typeSolver));
         CompilationUnit cu = StaticJavaParser.parse(s);
 
         ClassOrInterfaceDeclaration clazz = Navigator.demandClass(cu, "StreamTest");
@@ -440,7 +440,7 @@ class MethodReferenceResolutionTest extends AbstractResolutionTest {
                         "}";
 
         TypeSolver typeSolver = new ReflectionTypeSolver();
-        StaticJavaParser.getConfiguration().setSymbolResolver(new JavaSymbolSolver(typeSolver));
+        StaticJavaParser.getParserConfiguration().setSymbolResolver(new JavaSymbolSolver(typeSolver));
         CompilationUnit cu = StaticJavaParser.parse(s);
 
         int errorCount = 0;
@@ -477,7 +477,7 @@ class MethodReferenceResolutionTest extends AbstractResolutionTest {
                 "    }\n" +
                 "}\n";
         TypeSolver typeSolver = new ReflectionTypeSolver(false);
-        StaticJavaParser.getConfiguration().setSymbolResolver(new JavaSymbolSolver(typeSolver));
+        StaticJavaParser.getParserConfiguration().setSymbolResolver(new JavaSymbolSolver(typeSolver));
         CompilationUnit cu = StaticJavaParser.parse(s);
         Set<MethodCallExpr> methodCallExpr = new HashSet<>(cu.findAll(MethodCallExpr.class));
 
@@ -519,7 +519,7 @@ class MethodReferenceResolutionTest extends AbstractResolutionTest {
                 "}";
 
         TypeSolver typeSolver = new ReflectionTypeSolver(false);
-        StaticJavaParser.getConfiguration().setSymbolResolver(new JavaSymbolSolver(typeSolver));
+        StaticJavaParser.getParserConfiguration().setSymbolResolver(new JavaSymbolSolver(typeSolver));
         CompilationUnit cu = StaticJavaParser.parse(s);
         Set<MethodCallExpr> methodCallExpr = new HashSet<>(cu.findAll(MethodCallExpr.class));
 
@@ -552,7 +552,7 @@ class MethodReferenceResolutionTest extends AbstractResolutionTest {
                         "}\n";
         TypeSolver typeSolver =
                 new ReflectionTypeSolver();
-        StaticJavaParser.getConfiguration().setSymbolResolver(new JavaSymbolSolver(typeSolver));
+        StaticJavaParser.getParserConfiguration().setSymbolResolver(new JavaSymbolSolver(typeSolver));
         CompilationUnit cu = StaticJavaParser.parse(code);
 
         int errorCount = 0;
@@ -573,7 +573,7 @@ class MethodReferenceResolutionTest extends AbstractResolutionTest {
     @Disabled(value = "Waiting for constructor calls to be resolvable")
     void zeroArgumentConstructor_resolveToDeclaration() {
         // configure symbol solver before parsing
-        StaticJavaParser.getConfiguration().setSymbolResolver(new JavaSymbolSolver(new ReflectionTypeSolver()));
+        StaticJavaParser.getParserConfiguration().setSymbolResolver(new JavaSymbolSolver(new ReflectionTypeSolver()));
 
         // parse compilation unit and get method reference expression
         CompilationUnit cu = parseSample("MethodReferences");
@@ -592,7 +592,7 @@ class MethodReferenceResolutionTest extends AbstractResolutionTest {
     @Test
     void zeroArgumentConstructor() {
         // configure symbol solver before parsing
-        StaticJavaParser.getConfiguration().setSymbolResolver(new JavaSymbolSolver(new ReflectionTypeSolver()));
+        StaticJavaParser.getParserConfiguration().setSymbolResolver(new JavaSymbolSolver(new ReflectionTypeSolver()));
 
         // parse compilation unit and get method reference expression
         CompilationUnit cu = parseSample("MethodReferences");
@@ -610,7 +610,7 @@ class MethodReferenceResolutionTest extends AbstractResolutionTest {
     @Test
     void singleArgumentConstructor() {
         // configure symbol solver before parsing
-        StaticJavaParser.getConfiguration().setSymbolResolver(new JavaSymbolSolver(new ReflectionTypeSolver()));
+        StaticJavaParser.getParserConfiguration().setSymbolResolver(new JavaSymbolSolver(new ReflectionTypeSolver()));
 
         // parse compilation unit and get method reference expression
         CompilationUnit cu = parseSample("MethodReferences");
