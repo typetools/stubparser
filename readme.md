@@ -69,7 +69,7 @@ JavaParser version plus `-SNAPSHOT`.  Run the following in `javaparser-core`
 export STUBPARSER=stubparser-3.25.5
 export HOSTING_INFO_DIR=/projects/swlab1/checker-framework/hosting-info
  mvn gpg:sign-and-deploy-file -Durl=https://oss.sonatype.org/content/repositories/snapshots/  \
-    -DpomFile=cfMavenCentral.xml -Dfile=target/$STUBPARSER_JAR.jar\
+    -DpomFile=cfMavenCentral.xml -Dfile=target/$STUBPARSER.jar\
     -Dgpg.keyname=checker-framework-dev@googlegroups.com \
     -Dgpg.passphrase="`cat $HOSTING_INFO_DIR/release-private.password`" \
     -DrepositoryId=sonatype-nexus-staging
@@ -88,7 +88,7 @@ Delete `-SNAPSHOT` from the version in `javaparser-core/cfMavenCentral.xml`.
 
 ```
 mvn source:jar && \
-mvn javadoc:javadoc && (cd target/site/apidocs && jar -c -f target/$STUBPARSER-javadoc.jar com)
+mvn javadoc:javadoc && (cd target/site/apidocs && jar -c -f ../../$STUBPARSER-javadoc.jar com)
 mvn gpg:sign-and-deploy-file -Durl=https://oss.sonatype.org/service/local/staging/deploy/maven2/  \
     -DpomFile=cfMavenCentral.xml -Dfile=target/$STUBPARSER.jar \
     -Dgpg.keyname=checker-framework-dev@googlegroups.com \
@@ -186,14 +186,14 @@ Just add the following to your maven configuration or tailor to your own depende
 <dependency>
     <groupId>com.github.javaparser</groupId>
     <artifactId>javaparser-symbol-solver-core</artifactId>
-    <version>3.25.5</version>
+    <version>3.25.6</version>
 </dependency>
 ```
 
 **Gradle**:
 
 ```
-implementation 'com.github.javaparser:javaparser-symbol-solver-core:3.25.5'
+implementation 'com.github.javaparser:javaparser-symbol-solver-core:3.25.6'
 ```
 
 Since Version 3.5.10, the JavaParser project includes the JavaSymbolSolver.
@@ -208,14 +208,14 @@ Using the dependency above will add both JavaParser and JavaSymbolSolver to your
 <dependency>
     <groupId>com.github.javaparser</groupId>
     <artifactId>javaparser-core</artifactId>
-    <version>3.25.5</version>
+    <version>3.25.6</version>
 </dependency>
 ```
 
 **Gradle**:
 
 ```
-implementation 'com.github.javaparser:javaparser-core:3.25.5'
+implementation 'com.github.javaparser:javaparser-core:3.25.6'
 ```
 
 Since version 3.6.17 the AST can be serialized to JSON.
@@ -227,14 +227,14 @@ There is a separate module for this:
 <dependency>
     <groupId>com.github.javaparser</groupId>
     <artifactId>javaparser-core-serialization</artifactId>
-    <version>3.25.5</version>
+    <version>3.25.6</version>
 </dependency>
 ```
 
 **Gradle**:
 
 ```
-implementation 'com.github.javaparser:javaparser-core-serialization:3.25.5'
+implementation 'com.github.javaparser:javaparser-core-serialization:3.25.6'
 ```
 
 ## How To Compile Sources
