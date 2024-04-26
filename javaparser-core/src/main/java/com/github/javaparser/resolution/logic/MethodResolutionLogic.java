@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2015-2016 Federico Tomassetti
- * Copyright (C) 2017-2023 The JavaParser Team.
+ * Copyright (C) 2017-2024 The JavaParser Team.
  *
  * This file is part of JavaParser.
  *
@@ -130,7 +130,6 @@ public class MethodResolutionLogic {
 
         // The index of the final argument passed (on the method usage).
         int countOfNeedleArgumentsPassedAfterGrouping = needleArgumentTypes.size();
-        int lastNeedleArgumentIndexAfterGrouping = getLastParameterIndex(countOfNeedleArgumentsPassed);
 
         // If variadic parameters are possible then they will have been "grouped" into a single argument.
         // At this point, therefore, the number of arguments must be equal -- if they're not, then there is no match.
@@ -428,7 +427,6 @@ public class MethodResolutionLogic {
 
         // The index of the final argument passed (on the method usage).
         int needleParameterCount = needleParameterTypes.size();
-        int lastNeedleParameterIndex = getLastParameterIndex(needleParameterCount);
 
         // TODO: Does the method usage have a declaration at this point..?
         boolean methodIsDeclaredWithVariadicParameter = methodUsage.getDeclaration().hasVariadicParameter();

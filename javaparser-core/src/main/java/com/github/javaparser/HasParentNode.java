@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2007-2010 Júlio Vilmar Gesser.
- * Copyright (C) 2011, 2013-2023 The JavaParser Team.
+ * Copyright (C) 2011, 2013-2024 The JavaParser Team.
  *
  * This file is part of JavaParser.
  *
@@ -20,12 +20,11 @@
  */
 package com.github.javaparser;
 
-import com.github.javaparser.ast.Node;
-import com.github.javaparser.ast.observer.Observable;
-
-import java.util.Arrays;
 import java.util.Optional;
 import java.util.function.Predicate;
+
+import com.github.javaparser.ast.Node;
+import com.github.javaparser.ast.observer.Observable;
 
 /**
  * An object that can have a parent node.
@@ -92,9 +91,10 @@ public interface HasParentNode<T> extends Observable {
         if (!hasParentNode())
             return Optional.empty();
         Node parent = getParentNode().get();
-        Optional<Class<N>> oType = Arrays.stream(types).filter(type -> type.isAssignableFrom(parent.getClass()) && predicate.test(type.cast(parent))).findFirst();
-        if (oType.isPresent()) {
-            return Optional.of(oType.get().cast(parent));
+        for (Class<N> type : types) {
+            if (type.isAssignableFrom(parent.getClass()) && predicate.test(type.cast(parent))) {
+                return Optional.of(type.cast(parent));
+            }
         }
         return parent.findAncestor(predicate, types);
     }

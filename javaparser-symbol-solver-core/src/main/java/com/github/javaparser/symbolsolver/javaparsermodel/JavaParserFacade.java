@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2015-2016 Federico Tomassetti
- * Copyright (C) 2017-2023 The JavaParser Team.
+ * Copyright (C) 2017-2024 The JavaParser Team.
  *
  * This file is part of JavaParser.
  *
@@ -343,53 +343,45 @@ public class JavaParserFacade {
         }
     }
 
+	/*
+	 * Returns the resolved Type of the {@code Node}. If the node is a method call
+	 * expression and and the flag activates lambda expression resolution, the type
+	 * of the arguments to the expression are looked up beforehand so that the type
+	 * resolution is as relevant as possible.
+	 */
     public ResolvedType getType(Node node, boolean solveLambdas) {
         if (solveLambdas) {
             if (!node.containsData(TYPE_WITH_LAMBDAS_RESOLVED)) {
-                ResolvedType res = getTypeConcrete(node, solveLambdas);
 
-                node.setData(TYPE_WITH_LAMBDAS_RESOLVED, res);
-
-                boolean secondPassNecessary = false;
-                if (node instanceof MethodCallExpr) {
+            	if (node instanceof MethodCallExpr) {
                     MethodCallExpr methodCallExpr = (MethodCallExpr) node;
                     for (Node arg : methodCallExpr.getArguments()) {
                         if (!arg.containsData(TYPE_WITH_LAMBDAS_RESOLVED)) {
                             getType(arg, true);
-                            secondPassNecessary = true;
                         }
                     }
                 }
-                if (secondPassNecessary) {
-                    node.removeData(TYPE_WITH_LAMBDAS_RESOLVED);
-                    ResolvedType type = getType(node, true);
-                    node.setData(TYPE_WITH_LAMBDAS_RESOLVED, type);
-
-                }
+                ResolvedType res = getTypeConcrete(node, solveLambdas);
+                node.setData(TYPE_WITH_LAMBDAS_RESOLVED, res);
                 Log.trace("getType on %s  -> %s", () -> node, () -> res);
             }
             return node.getData(TYPE_WITH_LAMBDAS_RESOLVED);
         }
-        Optional<ResolvedType> res = find(TYPE_WITH_LAMBDAS_RESOLVED, node);
+
+        // Try to return a value from the cache of resolved types using lambda expressions
+        Optional<ResolvedType> res = node.findData(TYPE_WITH_LAMBDAS_RESOLVED);
         if (res.isPresent()) {
                 return res.get();
-            }
-        res = find(TYPE_WITHOUT_LAMBDAS_RESOLVED, node);
-        if (!res.isPresent()) {
-                ResolvedType resType = getTypeConcrete(node, solveLambdas);
-                node.setData(TYPE_WITHOUT_LAMBDAS_RESOLVED, resType);
-                Optional<ResolvedType> finalRes = res;
-                Log.trace("getType on %s (no solveLambdas) -> %s", () -> node, () -> finalRes);
-                return resType;
-            }
-        return res.get();
-    }
-
-    private Optional<ResolvedType> find(DataKey<ResolvedType> dataKey, Node node) {
-        if (node.containsData(dataKey)) {
-            return Optional.of(node.getData(dataKey));
         }
-        return Optional.empty();
+
+        // else try to return a value from the cache of resolved types without lambda expressions
+        // Or resolves the node type without resolving the lambda expressions
+		return node.findData(TYPE_WITHOUT_LAMBDAS_RESOLVED).orElseGet(() -> {
+			ResolvedType resType = getTypeConcrete(node, solveLambdas);
+			node.setData(TYPE_WITHOUT_LAMBDAS_RESOLVED, resType);
+			Log.trace("getType on %s (no solveLambdas) -> %s", () -> node, () -> res);
+			return resType;
+		});
     }
 
     protected MethodUsage toMethodUsage(MethodReferenceExpr methodReferenceExpr, List<ResolvedType> paramTypes) {
@@ -655,7 +647,7 @@ public class JavaParserFacade {
         Context context = JavaParserFactory.getContext(call, typeSolver);
         Optional<MethodUsage> methodUsage = context.solveMethodAsUsage(call.getName().getId(), params);
         if (!methodUsage.isPresent()) {
-            throw new RuntimeException("Method '" + call.getName() + "' cannot be resolved in context "
+            throw new UnsolvedSymbolException("Method '" + call.getName() + "' cannot be resolved in context "
                     + call + " (line: " + call.getRange().map(r -> "" + r.begin.line).orElse("??") + ") " + context + ". Parameter types: " + params);
         }
         return methodUsage.get();

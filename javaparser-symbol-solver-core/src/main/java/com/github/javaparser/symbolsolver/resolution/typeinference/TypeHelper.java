@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2015-2016 Federico Tomassetti
- * Copyright (C) 2017-2023 The JavaParser Team.
+ * Copyright (C) 2017-2024 The JavaParser Team.
  *
  * This file is part of JavaParser.
  *
@@ -223,7 +223,7 @@ public class TypeHelper {
             // - If T is a wildcard-parameterized functional interface type and the lambda expression is explicitly typed,
             //   then the ground target type is inferred as described in §18.5.3.
 
-            if (ExpressionHelper.isExplicitlyTyped(lambdaExpr)) {
+            if (lambdaExpr.isExplicitlyTyped()) {
                 used18_5_3 = true;
                 throw new UnsupportedOperationException();
             }

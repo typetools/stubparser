@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2007-2010 Júlio Vilmar Gesser.
- * Copyright (C) 2011, 2013-2023 The JavaParser Team.
+ * Copyright (C) 2011, 2013-2024 The JavaParser Team.
  *
  * This file is part of JavaParser.
  *
@@ -20,15 +20,15 @@
  */
 package com.github.javaparser.utils;
 
-import com.github.javaparser.ast.Node;
-import com.github.javaparser.ast.expr.UnaryExpr;
+import static java.util.Arrays.asList;
 
 import java.io.IOException;
 import java.io.Reader;
 import java.util.*;
 import java.util.function.Function;
 
-import static java.util.Arrays.asList;
+import com.github.javaparser.ast.Node;
+import com.github.javaparser.ast.expr.UnaryExpr;
 
 /**
  * Any kind of utility.
@@ -220,17 +220,20 @@ public class Utils {
     }
 
     public static boolean valueIsNullOrEmptyStringOrOptional(Object value) {
+    	// is null?
         if (value == null) {
             return true;
         }
-        if (value instanceof Optional) {
-            if (((Optional) value).isPresent()) {
-                value = ((Optional) value).get();
-            } else {
-                return true;
-            }
-        }
-        return false;
+//        // is not Optional?
+//        if (!(value instanceof Optional)) {
+//        	return false;
+//        }
+//        // is an empty Optional?
+//		if (!((Optional) value).isPresent()) {
+//			return true;
+//		}
+//        return false;
+        return value instanceof Optional ? !((Optional) value).isPresent() : false;
     }
 
     /**

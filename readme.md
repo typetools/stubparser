@@ -163,9 +163,18 @@ The remainder of this README file is the original JavaParser README.
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.2667378.svg)](https://doi.org/10.5281/zenodo.2667378)
 
 
-This project contains a set of libraries implementing a Java 1.0 - Java 17 Parser with advanced analysis functionalities.
+This project contains a set of libraries implementing a Java 1.0 - Java 18 Parser with advanced analysis functionalities.
 
 Our main site is at [JavaParser.org](http://javaparser.org)
+
+## Sponsors
+
+Support this project by becoming a sponsor! [Become a sponsor](https://opencollective.com/javaparser). Your donation will help the project live and grow successfully.
+
+Javaparser uses [OpenCollective](https://opencollective.com/javaparser) to gather money.
+
+**Thank you to our sponsors!**
+
 
 ## Setup
 
@@ -186,14 +195,14 @@ Just add the following to your maven configuration or tailor to your own depende
 <dependency>
     <groupId>com.github.javaparser</groupId>
     <artifactId>javaparser-symbol-solver-core</artifactId>
-    <version>3.25.6</version>
+    <version>3.25.10</version>
 </dependency>
 ```
 
 **Gradle**:
 
 ```
-implementation 'com.github.javaparser:javaparser-symbol-solver-core:3.25.6'
+implementation 'com.github.javaparser:javaparser-symbol-solver-core:3.25.10'
 ```
 
 Since Version 3.5.10, the JavaParser project includes the JavaSymbolSolver.
@@ -208,14 +217,14 @@ Using the dependency above will add both JavaParser and JavaSymbolSolver to your
 <dependency>
     <groupId>com.github.javaparser</groupId>
     <artifactId>javaparser-core</artifactId>
-    <version>3.25.6</version>
+    <version>3.25.10</version>
 </dependency>
 ```
 
 **Gradle**:
 
 ```
-implementation 'com.github.javaparser:javaparser-core:3.25.6'
+implementation 'com.github.javaparser:javaparser-core:3.25.10'
 ```
 
 Since version 3.6.17 the AST can be serialized to JSON.
@@ -227,14 +236,14 @@ There is a separate module for this:
 <dependency>
     <groupId>com.github.javaparser</groupId>
     <artifactId>javaparser-core-serialization</artifactId>
-    <version>3.25.6</version>
+    <version>3.25.10</version>
 </dependency>
 ```
 
 **Gradle**:
 
 ```
-implementation 'com.github.javaparser:javaparser-core-serialization:3.25.6'
+implementation 'com.github.javaparser:javaparser-core-serialization:3.25.10'
 ```
 
 ## How To Compile Sources
@@ -276,6 +285,6 @@ Make sure that `javaparser-core` at least compiles before you run these.
 
 JavaParser is available either under the terms of the LGPL License or the Apache License. You as the user are entitled to choose the terms under which adopt JavaParser.
 
-For details about the LGPL License please refer to [LICENSE.LGPL](ttps://github.com/javaparser/javaparser/blob/master/LICENSE.LGPL).
+For details about the LGPL License please refer to [LICENSE.LGPL](https://github.com/javaparser/javaparser/blob/master/LICENSE.LGPL).
 
-For details about the Apache License please refer to [LICENSE.APACHE](ttps://github.com/javaparser/javaparser/blob/master/LICENSE.APACHE).
+For details about the Apache License please refer to [LICENSE.APACHE](https://github.com/javaparser/javaparser/blob/master/LICENSE.APACHE).
