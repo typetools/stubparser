@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2015-2016 Federico Tomassetti
- * Copyright (C) 2017-2023 The JavaParser Team.
+ * Copyright (C) 2017-2024 The JavaParser Team.
  *
  * This file is part of JavaParser.
  *
@@ -127,7 +127,7 @@ public class JavassistEnumDeclaration extends AbstractTypeDeclaration
         if (otherName.equals(this.getQualifiedName())) {
             return true;
         }
-        if (otherName.equals(JAVA_LANG_ENUM)) {
+        if (JAVA_LANG_ENUM.equals(otherName)) {
             return true;
         }
         // Enum implements Comparable and Serializable
@@ -137,10 +137,7 @@ public class JavassistEnumDeclaration extends AbstractTypeDeclaration
         if (otherName.equals(JAVA_IO_SERIALIZABLE)) {
             return true;
         }
-        if (other.isJavaLangObject()) {
-            return true;
-        }
-        return false;
+        return other.isJavaLangObject();
     }
 
     @Override

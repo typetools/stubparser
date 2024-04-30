@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2007-2010 Júlio Vilmar Gesser.
- * Copyright (C) 2011, 2013-2023 The JavaParser Team.
+ * Copyright (C) 2011, 2013-2024 The JavaParser Team.
  *
  * This file is part of JavaParser.
  *
@@ -20,13 +20,16 @@
  */
 package com.github.javaparser.ast.body;
 
+import static com.github.javaparser.ast.Modifier.Keyword.PUBLIC;
 import static com.github.javaparser.utils.Utils.assertNotNull;
 
+import java.util.Arrays;
 import java.util.Optional;
 import java.util.function.Consumer;
 
 import com.github.javaparser.TokenRange;
 import com.github.javaparser.ast.*;
+import com.github.javaparser.ast.Modifier.Keyword;
 import com.github.javaparser.ast.expr.AnnotationExpr;
 import com.github.javaparser.ast.expr.SimpleName;
 import com.github.javaparser.ast.nodeTypes.*;
@@ -250,6 +253,41 @@ public class MethodDeclaration extends CallableDeclaration<MethodDeclaration> im
         sb.append(getType().toDescriptor());
         return sb.toString();
     }
+
+	/*
+	 * A method in the body of an interface may be declared public or private
+	 * (§6.6). If no access modifier is given, the method is implicitly public.
+	 * https://docs.oracle.com/javase/specs/jls/se9/html/jls-9.html#jls-9.4
+	 */
+    @Override
+    public boolean isPublic() {
+        return hasModifier(PUBLIC) || isImplicitlyPublic();
+    }
+
+    private boolean isImplicitlyPublic() {
+    	return getAccessSpecifier() == AccessSpecifier.NONE
+    			&& hasParentNode()
+    			&& getParentNode().get() instanceof ClassOrInterfaceDeclaration
+    			&& ((ClassOrInterfaceDeclaration)getParentNode().get()).isInterface();
+    }
+
+    /*
+     * An interface method lacking a private, default, or static modifier is implicitly abstract.
+     * https://docs.oracle.com/javase/specs/jls/se9/html/jls-9.html#jls-9.4
+     */
+    @Override
+	public boolean isAbstract() {
+		return super.isAbstract() || isImplicitlyAbstract();
+	}
+
+	private boolean isImplicitlyAbstract() {
+		return hasParentNode() && getParentNode().get() instanceof ClassOrInterfaceDeclaration
+				&& ((ClassOrInterfaceDeclaration) getParentNode().get()).isInterface()
+				&& Arrays.asList(Keyword.STATIC, Keyword.DEFAULT, Keyword.PRIVATE).stream()
+						.noneMatch(modifier -> hasModifier(modifier));
+	}
+
+
 
     public boolean isNative() {
         return hasModifier(Modifier.Keyword.NATIVE);

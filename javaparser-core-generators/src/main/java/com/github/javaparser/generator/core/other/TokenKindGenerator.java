@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2007-2010 Júlio Vilmar Gesser.
- * Copyright (C) 2011, 2013-2023 The JavaParser Team.
+ * Copyright (C) 2011, 2013-2024 The JavaParser Team.
  *
  * This file is part of JavaParser.
  *
@@ -53,7 +53,7 @@ public class TokenKindGenerator extends Generator {
         
         final CompilationUnit javaTokenCu = sourceRoot.parse("com.github.javaparser", "JavaToken.java");
         final ClassOrInterfaceDeclaration javaToken = javaTokenCu.getClassByName("JavaToken").orElseThrow(() -> new AssertionError("Can't find class in java file."));
-        final EnumDeclaration kindEnum = javaToken.findFirst(EnumDeclaration.class, e -> e.getNameAsString().equals("Kind")).orElseThrow(() -> new AssertionError("Can't find class in java file."));
+        final EnumDeclaration kindEnum = javaToken.findFirst(EnumDeclaration.class, e -> "Kind".equals(e.getNameAsString())).orElseThrow(() -> new AssertionError("Can't find class in java file."));
 
         kindEnum.getEntries().clear();
         annotateGenerated(kindEnum);

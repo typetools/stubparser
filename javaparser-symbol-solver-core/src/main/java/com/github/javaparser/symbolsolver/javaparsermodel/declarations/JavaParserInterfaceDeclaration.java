@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2015-2016 Federico Tomassetti
- * Copyright (C) 2017-2023 The JavaParser Team.
+ * Copyright (C) 2017-2024 The JavaParser Team.
  *
  * This file is part of JavaParser.
  *
@@ -93,9 +93,7 @@ public class JavaParserInterfaceDeclaration extends AbstractTypeDeclaration
 
         JavaParserInterfaceDeclaration that = (JavaParserInterfaceDeclaration) o;
 
-        if (!wrappedNode.equals(that.wrappedNode)) return false;
-
-        return true;
+        return wrappedNode.equals(that.wrappedNode);
     }
 
     @Override

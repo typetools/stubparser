@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2007-2010 Júlio Vilmar Gesser.
- * Copyright (C) 2011, 2013-2023 The JavaParser Team.
+ * Copyright (C) 2011, 2013-2024 The JavaParser Team.
  *
  * This file is part of JavaParser.
  *
@@ -41,7 +41,7 @@ public class UnderscoreKeywordValidator extends VisitorValidator {
     }
 
     private static void validateIdentifier(Node n, String id, ProblemReporter arg) {
-        if (id.equals("_")) {
+        if ("_".equals(id)) {
             arg.report(n, "'_' is a reserved keyword.");
         }
     }

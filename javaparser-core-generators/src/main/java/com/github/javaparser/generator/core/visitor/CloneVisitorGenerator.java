@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2007-2010 Júlio Vilmar Gesser.
- * Copyright (C) 2011, 2013-2023 The JavaParser Team.
+ * Copyright (C) 2011, 2013-2024 The JavaParser Team.
  *
  * This file is part of JavaParser.
  *
@@ -64,7 +64,7 @@ public class CloneVisitorGenerator extends VisitorGenerator {
         SeparatedItemStringBuilder builder = new SeparatedItemStringBuilder(f("%s r = new %s(", node.getTypeNameGenerified(), node.getTypeNameGenerified()), ",", ");");
         builder.append("n.getTokenRange().orElse(null)");
         for (PropertyMetaModel field : node.getConstructorParameters()) {
-            if (field.getName().equals("comment")) {
+            if ("comment".equals(field.getName())) {
                 continue;
             }
             if (field.getNodeReference().isPresent()) {
