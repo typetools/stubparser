@@ -320,6 +320,9 @@ public class SimpleVoidVisitor<A> implements VoidVisitor<A> {
     @Override
     public void visit(YieldStmt yieldStmt, A arg) { defaultAction(yieldStmt, arg); }
 
-    @Override
-    public void visit(PatternExpr patternExpr, A arg) { defaultAction(patternExpr, arg); }
+  @Override
+  public void visit(TypePatternExpr n, A arg) { defaultAction(n,arg); }
+
+  @Override
+  public void visit(RecordPatternExpr n, A arg) { defaultAction(n,arg); }
 }
