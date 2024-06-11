@@ -22,9 +22,9 @@
 package com.github.javaparser.symbolsolver.javaparsermodel.declarations;
 
 import com.github.javaparser.ast.Node;
-import com.github.javaparser.ast.expr.PatternExpr;
+import com.github.javaparser.ast.expr.TypePatternExpr;
 import com.github.javaparser.resolution.TypeSolver;
-import com.github.javaparser.resolution.declarations.ResolvedPatternDeclaration;
+import com.github.javaparser.resolution.declarations.ResolvedTypePatternDeclaration;
 import com.github.javaparser.resolution.types.ResolvedType;
 import com.github.javaparser.symbolsolver.javaparsermodel.JavaParserFacade;
 
@@ -35,12 +35,12 @@ import java.util.Optional;
  *
  * @author Roger Howell
  */
-public class JavaParserPatternDeclaration implements ResolvedPatternDeclaration {
+public class JavaParserTypePatternDeclaration implements ResolvedTypePatternDeclaration {
 
-    private final PatternExpr wrappedNode;
+    private final TypePatternExpr wrappedNode;
     private final TypeSolver typeSolver;
 
-    public JavaParserPatternDeclaration(PatternExpr wrappedNode, TypeSolver typeSolver) {
+    public JavaParserTypePatternDeclaration(TypePatternExpr wrappedNode, TypeSolver typeSolver) {
         this.wrappedNode = wrappedNode;
         this.typeSolver = typeSolver;
     }
@@ -60,7 +60,7 @@ public class JavaParserPatternDeclaration implements ResolvedPatternDeclaration 
      *
      * @return A visitable JavaParser node wrapped by this object.
      */
-    public PatternExpr getWrappedNode() {
+    public TypePatternExpr getWrappedNode() {
         return wrappedNode;
     }
 

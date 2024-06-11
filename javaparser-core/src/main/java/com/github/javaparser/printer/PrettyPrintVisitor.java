@@ -151,15 +151,15 @@ public class PrettyPrintVisitor implements VoidVisitor<Void> {
         }
     }
 
-    protected void printArguments(final NodeList<Expression> args, final Void arg) {
+    protected <T extends Expression> void printArguments(final NodeList<T> args, final Void arg) {
         printer.print("(");
         if (!isNullOrEmpty(args)) {
             boolean columnAlignParameters = (args.size() > 1) && configuration.isColumnAlignParameters();
             if (columnAlignParameters) {
                 printer.indentWithAlignTo(printer.getCursor().column);
             }
-            for (final Iterator<Expression> i = args.iterator(); i.hasNext(); ) {
-                final Expression e = i.next();
+            for (final Iterator<T> i = args.iterator(); i.hasNext(); ) {
+                final T e = i.next();
                 e.accept(this, arg);
                 if (i.hasNext()) {
                     printer.print(",");
@@ -742,11 +742,20 @@ public class PrettyPrintVisitor implements VoidVisitor<Void> {
     }
 
     @Override
-    public void visit(final PatternExpr n, final Void arg) {
+    public void visit(final TypePatternExpr n, final Void arg) {
         printModifiers(n.getModifiers());
         n.getType().accept(this, arg);
         printer.print(" ");
         n.getName().accept(this, arg);
+    }
+
+
+    @Override
+    public void visit(final RecordPatternExpr n, final Void arg) {
+        printOrphanCommentsBeforeThisChildNode(n);
+        printComment(n.getComment(), arg);
+        n.getType().accept(this, arg);
+        printArguments(n.getPatternList(), arg);
     }
 
     @Override
@@ -1250,6 +1259,16 @@ public class PrettyPrintVisitor implements VoidVisitor<Void> {
                     printer.print(", ");
                 }
             }
+            // `case null, default -> ...` added in JEP 441
+            if (n.getLabels().isNonEmpty() && n.isDefault()) {
+                printer.print(", default");
+            }
+
+            if (n.getGuard().isPresent()) {
+                printer.print(" when ");
+                n.getGuard().get().accept(this, arg);
+            }
+
             printer.print(separator);
         }
         printer.println();

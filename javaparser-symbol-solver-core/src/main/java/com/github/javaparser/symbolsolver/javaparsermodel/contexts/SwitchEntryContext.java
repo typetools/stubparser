@@ -21,6 +21,8 @@
 
 package com.github.javaparser.symbolsolver.javaparsermodel.contexts;
 
+import com.github.javaparser.ast.Node;
+import com.github.javaparser.ast.expr.TypePatternExpr;
 import com.github.javaparser.ast.nodeTypes.SwitchNode;
 import com.github.javaparser.ast.stmt.Statement;
 import com.github.javaparser.ast.stmt.SwitchEntry;
@@ -36,6 +38,7 @@ import com.github.javaparser.symbolsolver.javaparsermodel.JavaParserFacade;
 import com.github.javaparser.symbolsolver.javaparsermodel.JavaParserFactory;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static com.github.javaparser.resolution.Navigator.demandParentNode;
 
@@ -96,5 +99,15 @@ public class SwitchEntryContext extends AbstractJavaParserContext<SwitchEntry> {
     public SymbolReference<ResolvedMethodDeclaration> solveMethod(String name, List<ResolvedType> argumentsTypes, boolean staticOnly) {
         // TODO: Document why staticOnly is forced to be false.
         return solveMethodInParentContext(name, argumentsTypes, false);
+    }
+
+    @Override
+    public List<TypePatternExpr> typePatternExprsExposedToChild(Node child) {
+        return wrappedNode
+                .getLabels()
+                .stream()
+                .filter(label -> label.isPatternExpr())
+                .flatMap(label -> typePatternExprsDiscoveredInPattern(label.asPatternExpr()).stream())
+                .collect(Collectors.toList());
     }
 }

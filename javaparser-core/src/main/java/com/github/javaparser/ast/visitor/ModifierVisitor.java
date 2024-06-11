@@ -31,11 +31,9 @@ import com.github.javaparser.ast.modules.*;
 import com.github.javaparser.ast.stmt.*;
 import com.github.javaparser.ast.type.*;
 import com.github.javaparser.utils.Pair;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-
 import static com.github.javaparser.utils.Utils.removeElementByObjectIdentity;
 import static com.github.javaparser.utils.Utils.replaceElementByObjectIdentity;
 
@@ -908,9 +906,11 @@ public class ModifierVisitor<A> implements GenericVisitor<Visitable, A> {
 
     @Override
     public Visitable visit(final SwitchEntry n, final A arg) {
+        Expression guard = n.getGuard().map(s -> (Expression) s.accept(this, arg)).orElse(null);
         NodeList<Expression> labels = modifyList(n.getLabels(), arg);
         NodeList<Statement> statements = modifyList(n.getStatements(), arg);
         Comment comment = n.getComment().map(s -> (Comment) s.accept(this, arg)).orElse(null);
+        n.setGuard(guard);
         n.setLabels(labels);
         n.setStatements(statements);
         n.setComment(comment);
@@ -1339,7 +1339,7 @@ public class ModifierVisitor<A> implements GenericVisitor<Visitable, A> {
     }
 
     @Override
-    public Visitable visit(final PatternExpr n, final A arg) {
+    public Visitable visit(final TypePatternExpr n, final A arg) {
         NodeList<Modifier> modifiers = modifyList(n.getModifiers(), arg);
         SimpleName name = (SimpleName) n.getName().accept(this, arg);
         ReferenceType type = (ReferenceType) n.getType().accept(this, arg);
@@ -1348,6 +1348,21 @@ public class ModifierVisitor<A> implements GenericVisitor<Visitable, A> {
             return null;
         n.setModifiers(modifiers);
         n.setName(name);
+        n.setType(type);
+        n.setComment(comment);
+        return n;
+    }
+
+    @Override
+    public Visitable visit(final RecordPatternExpr n, final A arg) {
+        NodeList<Modifier> modifiers = modifyList(n.getModifiers(), arg);
+        NodeList<PatternExpr> patternList = modifyList(n.getPatternList(), arg);
+        ReferenceType type = (ReferenceType) n.getType().accept(this, arg);
+        Comment comment = n.getComment().map(s -> (Comment) s.accept(this, arg)).orElse(null);
+        if (type == null)
+            return null;
+        n.setModifiers(modifiers);
+        n.setPatternList(patternList);
         n.setType(type);
         n.setComment(comment);
         return n;

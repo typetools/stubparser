@@ -19,25 +19,16 @@
  * GNU Lesser General Public License for more details.
  */
 
-package com.github.javaparser.resolution.declarations;
+package com.github.javaparser.ast.validator;
 
-import org.junit.jupiter.api.Test;
+import com.github.javaparser.JavaParser;
+import com.github.javaparser.ParserConfiguration;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static com.github.javaparser.ParserConfiguration.LanguageLevel.JAVA_20;
 
-public interface ResolvedPatternDeclarationTest extends ResolvedValueDeclarationTest {
+class Java20ValidatorTest {
 
-    @Override
-    ResolvedPatternDeclaration createValue();
+    private final JavaParser javaParser = new JavaParser(new ParserConfiguration().setLanguageLevel(JAVA_20));
 
-    @Test
-    default void resolvedPatternShouldBeMarkedAsPattern() {
-        assertTrue(createValue().isPattern());
-    }
-
-    @Test
-    default void resolvedPatternShouldHaveAName() {
-        assertTrue(createValue().hasName());
-    }
 
 }

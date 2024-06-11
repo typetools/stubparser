@@ -1064,7 +1064,7 @@ class GenericListVisitorAdapterTest {
 
         // When
         Mockito.when(node.getExpression()).thenReturn(mock(Expression.class));
-        Mockito.when(node.getPattern()).thenReturn(Optional.of(mock(PatternExpr.class)));
+        Mockito.when(node.getPattern()).thenReturn(Optional.of(mock(TypePatternExpr.class)));
         Mockito.when(node.getType()).thenReturn(mock(ReferenceType.class));
         Mockito.when(node.getComment()).thenReturn(Optional.of(mock(Comment.class)));
 
@@ -2454,10 +2454,10 @@ class GenericListVisitorAdapterTest {
     }
 
     @Test
-    void visit_GivenPatternExpr() {
+    void visit_GivenTypePatternExpr() {
         // Given
         Object argument = mock(Object.class);
-        PatternExpr node = mock(PatternExpr.class);
+        TypePatternExpr node = mock(TypePatternExpr.class);
 
         // When
         Mockito.when(node.getModifiers()).thenReturn(mock(NodeList.class));
@@ -2475,6 +2475,33 @@ class GenericListVisitorAdapterTest {
         InOrder order = Mockito.inOrder(node);
         order.verify(node).getModifiers();
         order.verify(node).getName();
+        order.verify(node).getType();
+        order.verify(node, times(2)).getComment();
+        order.verifyNoMoreInteractions();
+    }
+
+    @Test
+    void visit_GivenRecordPatternExpr() {
+        // Given
+        Object argument = mock(Object.class);
+        RecordPatternExpr node = mock(RecordPatternExpr.class);
+
+        // When
+        Mockito.when(node.getModifiers()).thenReturn(mock(NodeList.class));
+        Mockito.when(node.getType()).thenReturn(mock(ReferenceType.class));
+        Mockito.when(node.getPatternList()).thenReturn(mock(NodeList.class));
+        Mockito.when(node.getComment()).thenReturn(Optional.of(mock(Comment.class)));
+
+        // Then
+        List<Object> result = visitor.visit(node, argument);
+
+        // Assert
+        assertNotNull(result);
+
+        // Verify
+        InOrder order = Mockito.inOrder(node);
+        order.verify(node).getModifiers();
+        order.verify(node).getPatternList();
         order.verify(node).getType();
         order.verify(node, times(2)).getComment();
         order.verifyNoMoreInteractions();

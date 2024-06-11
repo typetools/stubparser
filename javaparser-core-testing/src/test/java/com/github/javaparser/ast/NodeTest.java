@@ -21,6 +21,18 @@
 
 package com.github.javaparser.ast;
 
+import static com.github.javaparser.StaticJavaParser.parse;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import java.util.Optional;
+
+import org.junit.jupiter.api.Test;
+
+import com.github.javaparser.Position;
+import com.github.javaparser.Range;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.github.javaparser.ast.body.FieldDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
@@ -31,11 +43,7 @@ import com.github.javaparser.ast.comments.JavadocComment;
 import com.github.javaparser.ast.comments.LineComment;
 import com.github.javaparser.ast.stmt.ExpressionStmt;
 import com.github.javaparser.ast.type.PrimitiveType;
-import org.junit.jupiter.api.Test;
-
-import static com.github.javaparser.StaticJavaParser.parse;
-import static com.github.javaparser.utils.Utils.SYSTEM_EOL;
-import static org.junit.jupiter.api.Assertions.*;
+import com.github.javaparser.utils.LineSeparator;
 
 class NodeTest {
     @Test
@@ -134,7 +142,7 @@ class NodeTest {
         MethodDeclaration methodDeclaration = cu.getType(0).getMethods().get(0);
         methodDeclaration.getName().removeForced();
         // Name is required, so to remove it the whole method is removed.
-        assertEquals(String.format("class X {%1$s}%1$s", SYSTEM_EOL), cu.toString());
+        assertEquals(String.format("class X {%1$s}%1$s", LineSeparator.SYSTEM), cu.toString());
     }
 
     @Test
@@ -145,11 +153,49 @@ class NodeTest {
                 "    swapped=false;%1$s" +
                 "    swapped=false;%1$s" +
                 "  }%1$s" +
-                "}%1$s", SYSTEM_EOL));
+                "}%1$s", LineSeparator.SYSTEM));
         // remove the second swapped=false
         ExpressionStmt target = unit.findAll(ExpressionStmt.class).get(2);
         target.remove();
         // This will throw an exception if the parents are bad.
         unit.toString();
+    }
+
+    @Test
+    void findNodeByRange() {
+        CompilationUnit cu = parse("class X {\n" +
+                "  void x() {\n" +
+                "  }\n" +
+                "}\n");
+        ClassOrInterfaceDeclaration coid = cu.findFirst(ClassOrInterfaceDeclaration.class).get();
+        MethodDeclaration md = cu.findFirst(MethodDeclaration.class).get();
+
+        // The range corresponds to the compilation unit
+        Optional<Node> node = cu.findByRange(new Range(new Position(1,1), new Position(4,2)));
+        assertTrue(node.isPresent());
+        assertEquals(cu, node.get());
+
+        // The range corresponds to the class declaration
+        node = cu.findByRange(new Range(new Position(1,1), new Position(4,1)));
+        assertTrue(node.isPresent());
+        assertEquals(coid, node.get());
+
+        // The range corresponds to the method declaration
+        node = cu.findByRange(new Range(new Position(2,3), new Position(3,3)));
+        assertTrue(node.isPresent());
+        assertEquals(md, node.get());
+
+        // The range is included in the class declaration
+        node = cu.findByRange(new Range(new Position(1,1), new Position(1,1)));
+        assertTrue(node.isPresent());
+        assertEquals(coid, node.get());
+
+        // The range is not included in the compilation unit
+        node = cu.findByRange(new Range(new Position(5,1), new Position(5,1)));
+        assertFalse(node.isPresent());
+
+        // Search based on the method declaration, but the range corresponds to a parent node.
+        node = md.findByRange(new Range(new Position(1,1), new Position(1,1)));
+        assertFalse(node.isPresent());
     }
 }

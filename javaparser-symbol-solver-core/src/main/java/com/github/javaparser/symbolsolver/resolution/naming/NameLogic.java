@@ -178,10 +178,10 @@ public class NameLogic {
         if (whenParentIs(Parameter.class, name, (p, c) -> p.getType() == c)) {
             return NameRole.REFERENCE;
         }
-        if (whenParentIs(PatternExpr.class, name, (p, c) -> p.getName() == c)) {
+        if (whenParentIs(TypePatternExpr.class, name, (p, c) -> p.getName() == c)) {
             return NameRole.DECLARATION;
         }
-        if (whenParentIs(PatternExpr.class, name, (p, c) -> p.getType() == c)) {
+        if (whenParentIs(TypePatternExpr.class, name, (p, c) -> p.getType() == c)) {
             return NameRole.REFERENCE;
         }
         if (whenParentIs(ReceiverParameter.class, name, (p, c) -> p.getType() == c)) {
@@ -464,7 +464,7 @@ public class NameLogic {
 
         String name = nameAsString(nameNode);
         Context context = JavaParserFactory.getContext(nameNode, typeSolver);
-        if (context.patternExprInScope(name).isPresent()) {
+        if (context.typePatternExprInScope(name).isPresent()) {
             return NameCategory.EXPRESSION_NAME;
         }
         if (context.localVariableDeclarationInScope(name).isPresent()) {

@@ -26,6 +26,7 @@ import com.github.javaparser.ast.body.ConstructorDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.expr.LambdaExpr;
 import com.github.javaparser.ast.expr.PatternExpr;
+import com.github.javaparser.ast.expr.TypePatternExpr;
 import com.github.javaparser.ast.nodeTypes.NodeWithStatements;
 import com.github.javaparser.ast.stmt.Statement;
 import com.github.javaparser.resolution.Context;
@@ -217,11 +218,14 @@ public class StatementContext<N extends Statement> extends AbstractJavaParserCon
          * If we're in a statement that contains a pattern expression.
          * Example: {@code double x = a instanceof String s;}
          */
-        List<PatternExpr> patternExprs = patternExprsExposedFromChildren();
+        List<TypePatternExpr> patternExprs = typePatternExprsExposedFromChildren();
         for (int i = 0; i < patternExprs.size(); i++) {
             PatternExpr patternExpr = patternExprs.get(i);
-            if(patternExpr.getNameAsString().equals(name)) {
-                return SymbolReference.solved(JavaParserSymbolDeclaration.patternVar(patternExpr, typeSolver));
+            if (patternExpr.isTypePatternExpr()) {
+                TypePatternExpr typePatternExpr = patternExpr.asTypePatternExpr();
+                if(typePatternExpr.getNameAsString().equals(name)) {
+                    return SymbolReference.solved(JavaParserSymbolDeclaration.patternVar(typePatternExpr, typeSolver));
+                }
             }
         }
 
@@ -320,14 +324,14 @@ public class StatementContext<N extends Statement> extends AbstractJavaParserCon
 
 
     @Override
-    public List<PatternExpr> patternExprsExposedFromChildren() {
+    public List<TypePatternExpr> typePatternExprsExposedFromChildren() {
         // Statements never make pattern expressions available.
         return Collections.emptyList();
 
     }
 
     @Override
-    public List<PatternExpr> negatedPatternExprsExposedFromChildren() {
+    public List<TypePatternExpr> negatedTypePatternExprsExposedFromChildren() {
         // Statements never make pattern expressions available.
         return Collections.emptyList();
     }

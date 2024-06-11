@@ -1424,6 +1424,11 @@ public abstract class GenericVisitorAdapter<R, A> implements GenericVisitor<R, A
     @Override
     public R visit(final SwitchEntry n, final A arg) {
         R result;
+        if (n.getGuard().isPresent()) {
+            result = n.getGuard().get().accept(this, arg);
+            if (result != null)
+                return result;
+        }
         {
             result = n.getLabels().accept(this, arg);
             if (result != null)
@@ -2098,7 +2103,7 @@ public abstract class GenericVisitorAdapter<R, A> implements GenericVisitor<R, A
     }
 
     @Override
-    public R visit(final PatternExpr n, final A arg) {
+    public R visit(final TypePatternExpr n, final A arg) {
         R result;
         {
             result = n.getModifiers().accept(this, arg);
@@ -2204,6 +2209,32 @@ public abstract class GenericVisitorAdapter<R, A> implements GenericVisitor<R, A
         }
         {
             result = n.getAnnotations().accept(this, arg);
+            if (result != null)
+                return result;
+        }
+        if (n.getComment().isPresent()) {
+            result = n.getComment().get().accept(this, arg);
+            if (result != null)
+                return result;
+        }
+        return null;
+    }
+
+    @Override
+    public R visit(final RecordPatternExpr n, final A arg) {
+        R result;
+        {
+            result = n.getModifiers().accept(this, arg);
+            if (result != null)
+                return result;
+        }
+        {
+            result = n.getPatternList().accept(this, arg);
+            if (result != null)
+                return result;
+        }
+        {
+            result = n.getType().accept(this, arg);
             if (result != null)
                 return result;
         }

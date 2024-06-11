@@ -20,6 +20,15 @@
  */
 package com.github.javaparser;
 
+import static com.github.javaparser.ParserConfiguration.LanguageLevel.POPULAR;
+
+import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
+import java.util.function.Supplier;
+
 import com.github.javaparser.UnicodeEscapeProcessingProvider.PositionMapping;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.Node;
@@ -30,15 +39,6 @@ import com.github.javaparser.ast.validator.postprocessors.*;
 import com.github.javaparser.printer.lexicalpreservation.LexicalPreservingPrinter;
 import com.github.javaparser.resolution.SymbolResolver;
 import com.github.javaparser.utils.LineSeparator;
-
-import java.nio.charset.Charset;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
-import java.util.function.Supplier;
-
-import static com.github.javaparser.ParserConfiguration.LanguageLevel.POPULAR;
 
 /**
  * The configuration that is used by the parser.
@@ -170,7 +170,22 @@ public class ParserConfiguration {
         /**
          * Java 18
          */
-        JAVA_18(new Java18Validator(), new Java18PostProcessor());
+        JAVA_18(new Java18Validator(), new Java18PostProcessor()),
+
+        /**
+         * Java 19
+         */
+        JAVA_19(new Java19Validator(), new Java19PostProcessor()),
+
+        /**
+         * Java 20
+         */
+        JAVA_20(new Java20Validator(), new Java20PostProcessor()),
+
+        /**
+         * Java 21
+         */
+        JAVA_21(new Java21Validator(), new Java21PostProcessor());
 
         /**
          * Does no post processing or validation. Only for people wanting the fastest parsing.
@@ -185,18 +200,18 @@ public class ParserConfiguration {
         /**
          * The latest Java version that is available.
          */
-        public static LanguageLevel CURRENT = JAVA_16;
+        public static LanguageLevel CURRENT = JAVA_18;
 
         /**
          * The newest Java features supported.
          */
-        public static LanguageLevel BLEEDING_EDGE = JAVA_17_PREVIEW;
+        public static LanguageLevel BLEEDING_EDGE = JAVA_21;
 
         final Validator validator;
 
         final PostProcessors postProcessor;
 
-        private static final LanguageLevel[] yieldSupport = new LanguageLevel[] { JAVA_13, JAVA_13_PREVIEW, JAVA_14, JAVA_14_PREVIEW, JAVA_15, JAVA_15_PREVIEW, JAVA_16, JAVA_16_PREVIEW, JAVA_17, JAVA_17_PREVIEW, JAVA_18 };
+        private static final LanguageLevel[] yieldSupport = new LanguageLevel[] { JAVA_13, JAVA_13_PREVIEW, JAVA_14, JAVA_14_PREVIEW, JAVA_15, JAVA_15_PREVIEW, JAVA_16, JAVA_16_PREVIEW, JAVA_17, JAVA_17_PREVIEW, JAVA_18, JAVA_19, JAVA_20, JAVA_21};
 
         LanguageLevel(Validator validator, PostProcessors postProcessor) {
             this.validator = validator;

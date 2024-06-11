@@ -29,7 +29,6 @@ import com.github.javaparser.ast.expr.*;
 import com.github.javaparser.ast.modules.*;
 import com.github.javaparser.ast.stmt.*;
 import com.github.javaparser.ast.type.*;
-
 import java.util.List;
 import java.util.Optional;
 
@@ -996,6 +995,10 @@ public class EqualsVisitor implements GenericVisitor<Boolean, Visitable> {
     @Override
     public Boolean visit(final SwitchEntry n, final Visitable arg) {
         final SwitchEntry n2 = (SwitchEntry) arg;
+        if (!nodeEquals(n.getGuard(), n2.getGuard()))
+            return false;
+        if (!objEquals(n.isDefault(), n2.isDefault()))
+            return false;
         if (!nodesEquals(n.getLabels(), n2.getLabels()))
             return false;
         if (!nodesEquals(n.getStatements(), n2.getStatements()))
@@ -1361,8 +1364,8 @@ public class EqualsVisitor implements GenericVisitor<Boolean, Visitable> {
     }
 
     @Override
-    public Boolean visit(final PatternExpr n, final Visitable arg) {
-        final PatternExpr n2 = (PatternExpr) arg;
+    public Boolean visit(final TypePatternExpr n, final Visitable arg) {
+        final TypePatternExpr n2 = (TypePatternExpr) arg;
         if (!nodesEquals(n.getModifiers(), n2.getModifiers()))
             return false;
         if (!nodeEquals(n.getName(), n2.getName()))
@@ -1412,6 +1415,20 @@ public class EqualsVisitor implements GenericVisitor<Boolean, Visitable> {
         if (!nodesEquals(n.getTypeParameters(), n2.getTypeParameters()))
             return false;
         if (!nodesEquals(n.getAnnotations(), n2.getAnnotations()))
+            return false;
+        if (!nodeEquals(n.getComment(), n2.getComment()))
+            return false;
+        return true;
+    }
+
+    @Override
+    public Boolean visit(final RecordPatternExpr n, final Visitable arg) {
+        final RecordPatternExpr n2 = (RecordPatternExpr) arg;
+        if (!nodesEquals(n.getModifiers(), n2.getModifiers()))
+            return false;
+        if (!nodesEquals(n.getPatternList(), n2.getPatternList()))
+            return false;
+        if (!nodeEquals(n.getType(), n2.getType()))
             return false;
         if (!nodeEquals(n.getComment(), n2.getComment()))
             return false;
