@@ -4792,7 +4792,7 @@ SwitchEntry SwitchEntry():
             * This lookahead is necessary to avoid ambiguity with the ConditionalExpression branch
             * below.
             */
-            LOOKAHEAD(3)
+            LOOKAHEAD(PatternExpression())
             label = PatternExpression() { labels = add(labels, label); }
             [
               "when"
@@ -4819,7 +4819,8 @@ SwitchEntry SwitchEntry():
                 expr = Expression()
                 {
                     TokenRange r=range(begin, token());
-                    stmts.add(new ExpressionStmt(expr.getTokenRange().get(), expr));
+                    // expr.getTokenRange() will not be present if storeTokens is false
+                    stmts.add(new ExpressionStmt(expr.getTokenRange().orElse(null), expr));
                     ret = new SwitchEntry(r, labels, EXPRESSION, stmts, isDefault, guard);
                 }
                 ";"
@@ -5702,6 +5703,10 @@ NodeList<BodyDeclaration<?>> AnnotationTypeBody():
  *         (one of)
  *         Annotation public
  *         abstract
+ *     ClassDeclaration:
+ *         NormalClassDeclaration
+ *         EnumDeclaration
+ *         RecordDeclaration
  * }<pre>
  * For Convenience:
  * <pre>{@code
@@ -5717,6 +5722,10 @@ BodyDeclaration<?> AnnotationBodyDeclaration():
 {
     modifier = Modifiers()
     (
+        // This case must be checked before AnnotationTypeMemberDeclaration since the prefixes are the same
+        LOOKAHEAD(RecordDeclaration())
+        ret = RecordDeclaration(modifier)
+     |
         LOOKAHEAD(Type() Identifier() "(")
         ret = AnnotationTypeMemberDeclaration(modifier)
      |

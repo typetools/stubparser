@@ -14,7 +14,7 @@
     <groupId>com.github.javaparser</groupId>
     <artifactId>javaparser-parent</artifactId>
     <packaging>pom</packaging>
-    <version>3.26.0</version>
+    <version>3.26.1</version>
 
     <name>javaparser-parent</name>
     <url>https://github.com/javaparser</url>
@@ -149,7 +149,7 @@
         <java.version>1.8</java.version>
         <byte-buddy.version>1.14.17</byte-buddy.version>
         <argLine>-javaagent:'${settings.localRepository}/net/bytebuddy/byte-buddy-agent/${byte-buddy.version}/byte-buddy-agent-${byte-buddy.version}.jar'</argLine>
-        <build.timestamp>2024-06-02T00:00:00Z</build.timestamp>
+        <build.timestamp>2024-06-21T00:00:00Z</build.timestamp>
         <!-- Maven Plugins -->
     </properties>
 
@@ -202,7 +202,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-clean-plugin</artifactId>
-                    <version>3.3.2</version>
+                    <version>3.4.0</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -222,7 +222,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-jar-plugin</artifactId>
-                    <version>3.4.1</version>
+                    <version>3.4.2</version>
                     <configuration>
                         <finalName>stubparser-${version}</finalName>
                     </configuration>
@@ -233,7 +233,7 @@
                     <!-- TODO: Consider switching to using `mvn versions:set` and org.sonatype.plugins:nexus-staging-maven-plugin -->
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-release-plugin</artifactId>
-                    <version>3.0.1</version>
+                    <version>3.1.0</version>
                     <configuration>
                         <!-- When updating versions during release, synchronise versions of sub-modules with the parent-pom. -->
                         <autoVersionSubmodules>true</autoVersionSubmodules>
@@ -291,7 +291,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-surefire-plugin</artifactId>
-                    <version>3.2.5</version>
+                    <version>3.3.0</version>
                 </plugin>
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
@@ -316,7 +316,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-dependency-plugin</artifactId>
-                    <version>3.6.1</version>
+                    <version>3.7.0</version>
                 </plugin>
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
@@ -329,7 +329,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-checkstyle-plugin</artifactId>
-                    <version>3.3.1</version>
+                    <version>3.4.0</version>
                     <configuration>
                         <configLocation>dev-files/JavaParser-CheckStyle.xml</configLocation>
                         <logViolationsToConsole>true</logViolationsToConsole>
@@ -342,6 +342,18 @@
                             <version>10.17.0</version>
                         </dependency>
                     </dependencies>
+                </plugin>
+                <plugin>
+                    <groupId>com.diffplug.spotless</groupId>
+                    <artifactId>spotless-maven-plugin</artifactId>
+                    <!-- This is the last version with Java 8 support -->
+                    <version>2.43.0</version>
+                    <configuration>
+                        <java>
+                            <!-- google-java-format, but better: see https://github.com/palantir/palantir-java-format -->
+                            <palantirJavaFormat/>
+                        </java>
+                    </configuration>
                 </plugin>
             </plugins>
         </pluginManagement>
