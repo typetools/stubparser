@@ -74,7 +74,7 @@ export HOSTING_INFO_DIR=/projects/swlab1/checker-framework/hosting-info
     -Dgpg.passphrase="`cat $HOSTING_INFO_DIR/release-private.password`" \
     -DrepositoryId=sonatype-nexus-staging
 ```
-(You must have a file at `~/.m2/settings.xml` that lists a username and password for Sonatypes.)
+(You must have a file at `~/.m2/settings.xml` that lists [a user token](https://central.sonatype.org/publish/generate-token/) and password for server `sonatype-nexus-staging`. )
 
 9. Update the stubparser version number in the Checker Framework.  Create
 a branch with the same name as your StubParser branch.  In
