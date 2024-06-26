@@ -100,7 +100,6 @@ public class ConcreteSyntaxModel {
                         comment(),
                         list(ObservableProperty.COMPILATION_UNITS, none(), none(), newline()),
                         orphanCommentsEnding()));
-
         // /
         // / Body
         // /
