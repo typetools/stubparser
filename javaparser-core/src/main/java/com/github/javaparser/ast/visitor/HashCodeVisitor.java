@@ -190,7 +190,10 @@ public class HashCodeVisitor implements GenericVisitor<Integer, Void> {
 
     // TODO Implement HashCodeVisitor # visit on StubUnit
     public Integer visit(StubUnit n, Void arg) {
-        //return (n.getImports().accept(this, arg)) * 31 + (n.getModule().isPresent() ? n.getModule().get().accept(this, arg) : 0) * 31 + (n.getPackageDeclaration().isPresent() ? n.getPackageDeclaration().get().accept(this, arg) : 0) * 31 + (n.getTypes().accept(this, arg)) * 31 + (n.getComment().isPresent() ? n.getComment().get().accept(this, arg) : 0);
+        // return (n.getImports().accept(this, arg)) * 31 + (n.getModule().isPresent() ?
+        // n.getModule().get().accept(this, arg) : 0) * 31 + (n.getPackageDeclaration().isPresent() ?
+        // n.getPackageDeclaration().get().accept(this, arg) : 0) * 31 + (n.getTypes().accept(this, arg)) * 31 +
+        // (n.getComment().isPresent() ? n.getComment().get().accept(this, arg) : 0);
         throw new RuntimeException("The method is not implemented!");
     }
 

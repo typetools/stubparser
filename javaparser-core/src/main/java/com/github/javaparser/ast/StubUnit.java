@@ -1,5 +1,8 @@
 package com.github.javaparser.ast;
 
+import static com.github.javaparser.Providers.UTF8;
+import static com.github.javaparser.Providers.provider;
+
 import com.github.javaparser.JavaParser;
 import com.github.javaparser.ParseResult;
 import com.github.javaparser.ParseStart;
@@ -8,16 +11,12 @@ import com.github.javaparser.ast.visitor.GenericVisitor;
 import com.github.javaparser.ast.visitor.VoidVisitor;
 import com.github.javaparser.metamodel.InternalProperty;
 import com.github.javaparser.printer.PrettyPrinter;
-
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
-
-import static com.github.javaparser.Providers.UTF8;
-import static com.github.javaparser.Providers.provider;
 
 /**
  * <p>

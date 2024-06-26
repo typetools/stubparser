@@ -94,11 +94,12 @@ public class ConcreteSyntaxModel {
     }
 
     static {
-
-        concreteSyntaxModelByClass.put(StubUnit.class, sequence(
-                comment(),
-                list(ObservableProperty.COMPILATION_UNITS, none(), none(), newline()),
-                orphanCommentsEnding()));
+        concreteSyntaxModelByClass.put(
+                StubUnit.class,
+                sequence(
+                        comment(),
+                        list(ObservableProperty.COMPILATION_UNITS, none(), none(), newline()),
+                        orphanCommentsEnding()));
 
         // /
         // / Body

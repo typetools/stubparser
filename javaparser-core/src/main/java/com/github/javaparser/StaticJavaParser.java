@@ -355,7 +355,8 @@ public final class StaticJavaParser {
      * @throws ParseProblemException if the source code has parser errors
      * @throws IOException the path could not be accessed
      */
-    public static StubUnit parseResourceStubUnit(final ClassLoader classLoader, final String path, Charset encoding) throws IOException {
+    public static StubUnit parseResourceStubUnit(final ClassLoader classLoader, final String path, Charset encoding)
+            throws IOException {
         return handleResult(newParser().parseResourceStubUnit(classLoader, path, encoding));
     }
 

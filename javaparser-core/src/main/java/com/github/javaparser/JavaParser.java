@@ -22,17 +22,17 @@ package com.github.javaparser;
 
 import static com.github.javaparser.ParseStart.*;
 import static com.github.javaparser.Problem.PROBLEM_BY_BEGIN_POSITION;
+import static com.github.javaparser.Providers.UTF8;
 import static com.github.javaparser.Providers.provider;
 import static com.github.javaparser.Providers.resourceProvider;
-import static com.github.javaparser.Providers.UTF8;
 import static com.github.javaparser.utils.Utils.assertNotNull;
 import static java.util.stream.Collectors.toList;
 
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.ImportDeclaration;
-import com.github.javaparser.ast.StubUnit;
 import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.PackageDeclaration;
+import com.github.javaparser.ast.StubUnit;
 import com.github.javaparser.ast.body.BodyDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.body.Parameter;
@@ -224,7 +224,7 @@ public final class JavaParser {
      * @throws FileNotFoundException the file was not found.
      */
     public ParseResult<StubUnit> parseStubUnit(final File file, final Charset encoding) throws FileNotFoundException {
-        ParseResult<StubUnit> result =  parse(STUB_UNIT, provider(file, encoding));
+        ParseResult<StubUnit> result = parse(STUB_UNIT, provider(file, encoding));
         result.getResult().ifPresent(cu -> cu.setStorage(file.toPath()));
         return result;
     }
@@ -256,7 +256,7 @@ public final class JavaParser {
      * @throws FileNotFoundException the file was not found.
      */
     public ParseResult<StubUnit> parseStubUnit(final File file) throws FileNotFoundException {
-        ParseResult<StubUnit> result =         parse(STUB_UNIT, provider(file));
+        ParseResult<StubUnit> result = parse(STUB_UNIT, provider(file));
         result.getResult().ifPresent(cu -> cu.setStorage(file.toPath()));
         return result;
     }
@@ -417,7 +417,8 @@ public final class JavaParser {
      * @throws ParseProblemException if the source code has parser errors.
      * @throws IOException the path could not be accessed.
      */
-    public ParseResult<StubUnit> parseResourceStubUnit(final ClassLoader classLoader, final String path, Charset encoding) throws IOException {
+    public ParseResult<StubUnit> parseResourceStubUnit(
+            final ClassLoader classLoader, final String path, Charset encoding) throws IOException {
         return parse(STUB_UNIT, resourceProvider(classLoader, path, encoding));
     }
 
