@@ -20,12 +20,11 @@
 
 package com.github.javaparser.symbolsolver.javaparsermodel.contexts;
 
-import com.github.javaparser.ast.expr.PatternExpr;
+import com.github.javaparser.ast.expr.TypePatternExpr;
 import com.github.javaparser.ast.expr.UnaryExpr;
 import com.github.javaparser.resolution.Context;
 import com.github.javaparser.resolution.TypeSolver;
 import com.github.javaparser.symbolsolver.javaparsermodel.JavaParserFactory;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,18 +35,19 @@ public class UnaryExprContext extends AbstractJavaParserContext<UnaryExpr> {
     }
 
     @Override
-    public List<PatternExpr> patternExprsExposedFromChildren() {
-        List<PatternExpr> results = new ArrayList<>();
+    public List<TypePatternExpr> typePatternExprsExposedFromChildren() {
+        List<TypePatternExpr> results = new ArrayList<>();
 
         // Propagate any pattern expressions "up"
-        if(wrappedNode.getOperator() == UnaryExpr.Operator.LOGICAL_COMPLEMENT) {
+        if (wrappedNode.getOperator() == UnaryExpr.Operator.LOGICAL_COMPLEMENT) {
             Context innerContext = JavaParserFactory.getContext(wrappedNode.getExpression(), typeSolver);
 
             // Avoid infinite loop
-            if(!this.equals(innerContext)) {
+            if (!this.equals(innerContext)) {
                 // Note that `UnaryExpr.Operator.LOGICAL_COMPLEMENT` is `!`
-                // Previously negated pattern expressions are now available (double negatives) -- e.g. if(!!("a" instanceof String s)) {}
-                results.addAll(innerContext.negatedPatternExprsExposedFromChildren());
+                // Previously negated pattern expressions are now available (double negatives) -- e.g. if(!!("a"
+                // instanceof String s)) {}
+                results.addAll(innerContext.negatedTypePatternExprsExposedFromChildren());
             }
         }
 
@@ -55,21 +55,21 @@ public class UnaryExprContext extends AbstractJavaParserContext<UnaryExpr> {
     }
 
     @Override
-    public List<PatternExpr> negatedPatternExprsExposedFromChildren() {
-        List<PatternExpr> results = new ArrayList<>();
+    public List<TypePatternExpr> negatedTypePatternExprsExposedFromChildren() {
+        List<TypePatternExpr> results = new ArrayList<>();
 
         // Propagate any pattern expressions "up"
-        if(wrappedNode.getOperator() == UnaryExpr.Operator.LOGICAL_COMPLEMENT) {
+        if (wrappedNode.getOperator() == UnaryExpr.Operator.LOGICAL_COMPLEMENT) {
             Context innerContext = JavaParserFactory.getContext(wrappedNode.getExpression(), typeSolver);
 
-            if(!this.equals(innerContext)) {
+            if (!this.equals(innerContext)) {
                 // Note that `UnaryExpr.Operator.LOGICAL_COMPLEMENT` is `!`
-                // Previously available pattern expressions are now negated (double negatives) -- e.g. if(!("a" instanceof String s)) {}
-                results.addAll(innerContext.patternExprsExposedFromChildren());
+                // Previously available pattern expressions are now negated (double negatives) -- e.g. if(!("a"
+                // instanceof String s)) {}
+                results.addAll(innerContext.typePatternExprsExposedFromChildren());
             }
         }
 
         return results;
     }
-
 }

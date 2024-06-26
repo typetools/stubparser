@@ -237,5 +237,7 @@ public interface VoidVisitor<A> {
 
     void visit(YieldStmt yieldStmt, A arg);
 
-    void visit(PatternExpr n, A arg);
+    void visit(TypePatternExpr n, A arg);
+
+    void visit(RecordPatternExpr n, A arg);
 }

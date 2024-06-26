@@ -10,6 +10,7 @@ We noticed we get the best feedback from those.
 Here are [some fun project ideas](https://github.com/javaparser/javaparser/labels/fun%20project%20idea).
 - If you start working on an issue, please say so with a comment in the issue.
 - If you know how to fix a problem, please fix it and open a pull request instead of opening an issue.
+- If you would like to add new nodes, or new fields to existing nodes, check out the [Guide to Adding New Nodes and Fields](https://github.com/javaparser/javaparser/wiki/A-Detailed-Guide-to-Adding-New-Nodes-and-Fields).
 
 Thanks for helping!
 
@@ -28,3 +29,4 @@ Our development workflow is based on Pull Request. If you are not familiar with 
 - Pull requests often stay open for at least a few days to give people a chance to review it.
 - A pull request is merged when all comments on it have been resolved.
 - If you create a pull request for an issue, mention the issue in the format #123 to make github link it automatically.
+- Before submitting a pull request, please run `./mvnw spotless:apply` to format your code to avoid any formatting related issues during review.

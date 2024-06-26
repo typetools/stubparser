@@ -23,9 +23,8 @@ package com.github.javaparser.symbolsolver.javaparsermodel.contexts;
 
 import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.body.VariableDeclarator;
-import com.github.javaparser.ast.expr.PatternExpr;
+import com.github.javaparser.ast.expr.TypePatternExpr;
 import com.github.javaparser.resolution.TypeSolver;
-
 import java.util.Collections;
 import java.util.List;
 
@@ -40,7 +39,8 @@ public class VariableDeclaratorContext extends AbstractJavaParserContext<Variabl
 
     @Override
     public List<VariableDeclarator> localVariablesExposedToChild(Node child) {
-        if (wrappedNode.getInitializer().isPresent() && wrappedNode.getInitializer().get() == child) {
+        if (wrappedNode.getInitializer().isPresent()
+                && wrappedNode.getInitializer().get() == child) {
             return Collections.singletonList(wrappedNode);
         }
 
@@ -48,15 +48,14 @@ public class VariableDeclaratorContext extends AbstractJavaParserContext<Variabl
     }
 
     @Override
-    public List<PatternExpr> patternExprsExposedFromChildren() {
+    public List<TypePatternExpr> typePatternExprsExposedFromChildren() {
         // Variable declarators never make pattern expressions available.
         return Collections.emptyList();
     }
 
     @Override
-    public List<PatternExpr> negatedPatternExprsExposedFromChildren() {
+    public List<TypePatternExpr> negatedTypePatternExprsExposedFromChildren() {
         // Variable declarators never make pattern expressions available.
         return Collections.emptyList();
     }
-
 }

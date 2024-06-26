@@ -23,13 +23,12 @@ package com.github.javaparser.symbolsolver.javaparsermodel.contexts;
 
 import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.body.VariableDeclarator;
-import com.github.javaparser.ast.expr.PatternExpr;
+import com.github.javaparser.ast.expr.TypePatternExpr;
 import com.github.javaparser.ast.expr.VariableDeclarationExpr;
 import com.github.javaparser.resolution.TypeSolver;
 import com.github.javaparser.resolution.declarations.ResolvedValueDeclaration;
 import com.github.javaparser.resolution.model.SymbolReference;
 import com.github.javaparser.symbolsolver.javaparsermodel.declarations.JavaParserSymbolDeclaration;
-
 import java.util.Collections;
 import java.util.List;
 
@@ -43,11 +42,13 @@ public class VariableDeclarationExprContext extends AbstractJavaParserContext<Va
     }
 
     public SymbolReference<? extends ResolvedValueDeclaration> solveSymbol(String name) {
-        List<PatternExpr> patternExprs = patternExprsExposedFromChildren();
+        List<TypePatternExpr> patternExprs = typePatternExprsExposedFromChildren();
         for (int i = 0; i < patternExprs.size(); i++) {
-            PatternExpr patternExpr = patternExprs.get(i);
-            if(patternExpr.getNameAsString().equals(name)) {
-                return SymbolReference.solved(JavaParserSymbolDeclaration.patternVar(patternExpr, typeSolver));
+            if (patternExprs.get(i).isTypePatternExpr()) {
+                TypePatternExpr typePatternExpr = patternExprs.get(i).asTypePatternExpr();
+                if (typePatternExpr.getNameAsString().equals(name)) {
+                    return SymbolReference.solved(JavaParserSymbolDeclaration.patternVar(typePatternExpr, typeSolver));
+                }
             }
         }
 
@@ -66,18 +67,15 @@ public class VariableDeclarationExprContext extends AbstractJavaParserContext<Va
         return Collections.emptyList();
     }
 
-
-
     @Override
-    public List<PatternExpr> patternExprsExposedFromChildren() {
+    public List<TypePatternExpr> typePatternExprsExposedFromChildren() {
         // Variable declarations never make pattern expressions available.
         return Collections.emptyList();
     }
 
     @Override
-    public List<PatternExpr> negatedPatternExprsExposedFromChildren() {
+    public List<TypePatternExpr> negatedTypePatternExprsExposedFromChildren() {
         // Variable declarations never make pattern expressions available.
         return Collections.emptyList();
     }
-
 }

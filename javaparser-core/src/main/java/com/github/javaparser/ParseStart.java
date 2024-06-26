@@ -22,8 +22,8 @@ package com.github.javaparser;
 
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.ImportDeclaration;
-import com.github.javaparser.ast.StubUnit;
 import com.github.javaparser.ast.PackageDeclaration;
+import com.github.javaparser.ast.StubUnit;
 import com.github.javaparser.ast.body.BodyDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.body.Parameter;
@@ -74,9 +74,11 @@ public interface ParseStart<R> {
 
     ParseStart<TypeParameter> TYPE_PARAMETER = GeneratedJavaParser::TypeParameterParseStart;
 
-    ParseStart<VariableDeclarationExpr> VARIABLE_DECLARATION_EXPR = GeneratedJavaParser::VariableDeclarationExpressionParseStart;
+    ParseStart<VariableDeclarationExpr> VARIABLE_DECLARATION_EXPR =
+            GeneratedJavaParser::VariableDeclarationExpressionParseStart;
 
-    ParseStart<ExplicitConstructorInvocationStmt> EXPLICIT_CONSTRUCTOR_INVOCATION_STMT = GeneratedJavaParser::ExplicitConstructorInvocationParseStart;
+    ParseStart<ExplicitConstructorInvocationStmt> EXPLICIT_CONSTRUCTOR_INVOCATION_STMT =
+            GeneratedJavaParser::ExplicitConstructorInvocationParseStart;
 
     ParseStart<Name> NAME = GeneratedJavaParser::NameParseStart;
 

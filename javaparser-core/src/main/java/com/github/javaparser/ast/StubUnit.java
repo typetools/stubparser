@@ -1,5 +1,8 @@
 package com.github.javaparser.ast;
 
+import static com.github.javaparser.Providers.UTF8;
+import static com.github.javaparser.Providers.provider;
+
 import com.github.javaparser.JavaParser;
 import com.github.javaparser.ParseResult;
 import com.github.javaparser.ParseStart;
@@ -8,16 +11,12 @@ import com.github.javaparser.ast.visitor.GenericVisitor;
 import com.github.javaparser.ast.visitor.VoidVisitor;
 import com.github.javaparser.metamodel.InternalProperty;
 import com.github.javaparser.printer.PrettyPrinter;
-
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
-
-import static com.github.javaparser.Providers.UTF8;
-import static com.github.javaparser.Providers.provider;
 
 /**
  * <p>
@@ -39,7 +38,9 @@ public class StubUnit extends Node {
      */
     private NodeList<CompilationUnit> compilationUnits;
 
-    /** Contains the information about where this stub unit was loaded from, or empty if it wasn't loaded from a file.*/
+    /**
+     * Contains the information about where this stub unit was loaded from, or empty if it wasn't loaded from a file.
+     */
     @InternalProperty
     private StubUnit.Storage storage;
 
@@ -62,17 +63,23 @@ public class StubUnit extends Node {
         this.compilationUnits = compilationUnits;
     }
 
-    /** Gets the list of compilation units of the stub file. */
+    /**
+     * Gets the list of compilation units of the stub file.
+     */
     public List<CompilationUnit> getCompilationUnits() {
         return compilationUnits;
     }
 
-    /** Sets the list of compilation units of the stub file. */
+    /**
+     * Sets the list of compilation units of the stub file.
+     */
     public void setCompilationUnits(NodeList<CompilationUnit> compilationUnits) {
         this.compilationUnits = compilationUnits;
     }
 
-    /** @return information about where this stub unit was loaded from, or empty if it wasn't loaded from a file.*/
+    /**
+     * @return information about where this stub unit was loaded from, or empty if it wasn't loaded from a file.
+     */
     public Optional<StubUnit.Storage> getStorage() {
         return Optional.ofNullable(storage);
     }
@@ -99,10 +106,14 @@ public class StubUnit extends Node {
      */
     public static class Storage {
 
-        /** A stub unit that it represents. */
+        /**
+         * A stub unit that it represents.
+         */
         private final StubUnit stubUnit;
 
-        /** The path to the source for this stub unit. */
+        /**
+         * The path to the source for this stub unit.
+         */
         private final Path path;
 
         /**
@@ -116,27 +127,37 @@ public class StubUnit extends Node {
             this.path = path.toAbsolutePath();
         }
 
-        /** @return the path to the source for this StubUnit. */
+        /**
+         * @return the path to the source for this StubUnit.
+         */
         public Path getPath() {
             return path;
         }
 
-        /** @return the StubUnit this Storage is about. */
+        /**
+         * @return the StubUnit this Storage is about.
+         */
         public StubUnit getStubUnit() {
             return stubUnit;
         }
 
-        /** @return the file name of the stub file that represented by the StubUnit. */
+        /**
+         * @return the file name of the stub file that represented by the StubUnit.
+         */
         public String getFileName() {
             return path.getFileName().toString();
         }
 
-        /** @return the directory with the stub file that represented by the StubUnit. */
+        /**
+         * @return the directory with the stub file that represented by the StubUnit.
+         */
         public Path getDirectory() {
             return path.getParent();
         }
 
-        /** Saves the stub unit to its original location. */
+        /**
+         * Saves the stub unit to its original location.
+         */
         public void save() {
             save(stubUnit -> new PrettyPrinter().print(stubUnit));
         }

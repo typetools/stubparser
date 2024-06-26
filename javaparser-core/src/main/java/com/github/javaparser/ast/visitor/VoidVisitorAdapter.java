@@ -501,6 +501,7 @@ public abstract class VoidVisitorAdapter<A> implements VoidVisitor<A> {
 
     @Override
     public void visit(final SwitchEntry n, final A arg) {
+        n.getGuard().ifPresent(l -> l.accept(this, arg));
         n.getLabels().forEach(p -> p.accept(this, arg));
         n.getStatements().forEach(p -> p.accept(this, arg));
         n.getComment().ifPresent(l -> l.accept(this, arg));
@@ -726,7 +727,7 @@ public abstract class VoidVisitorAdapter<A> implements VoidVisitor<A> {
     }
 
     @Override
-    public void visit(final PatternExpr n, final A arg) {
+    public void visit(final TypePatternExpr n, final A arg) {
         n.getModifiers().forEach(p -> p.accept(this, arg));
         n.getName().accept(this, arg);
         n.getType().accept(this, arg);
@@ -754,6 +755,14 @@ public abstract class VoidVisitorAdapter<A> implements VoidVisitor<A> {
         n.getThrownExceptions().forEach(p -> p.accept(this, arg));
         n.getTypeParameters().forEach(p -> p.accept(this, arg));
         n.getAnnotations().forEach(p -> p.accept(this, arg));
+        n.getComment().ifPresent(l -> l.accept(this, arg));
+    }
+
+    @Override
+    public void visit(final RecordPatternExpr n, final A arg) {
+        n.getModifiers().forEach(p -> p.accept(this, arg));
+        n.getPatternList().forEach(p -> p.accept(this, arg));
+        n.getType().accept(this, arg);
         n.getComment().ifPresent(l -> l.accept(this, arg));
     }
 }
