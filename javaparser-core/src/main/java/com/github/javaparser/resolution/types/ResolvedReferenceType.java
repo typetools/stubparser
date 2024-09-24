@@ -49,6 +49,9 @@ public abstract class ResolvedReferenceType
 
     protected static String JAVA_LANG_OBJECT = java.lang.Object.class.getCanonicalName();
 
+    // Can't use java.lang.Record.class.getCanonicalName() since records were only added in Java 14.
+    protected static String JAVA_LANG_RECORD = "java.lang.Record";
+
     //
     // Fields
     //
@@ -496,13 +499,19 @@ public abstract class ResolvedReferenceType
                         }
                     } else {
                         if (thisParam instanceof ResolvedTypeVariable && otherParam instanceof ResolvedTypeVariable) {
+                            // Here we want to compare something like @{code C extends Comparable<C>} with @{code K
+                            // extends Comparable<K>}
+                            // we have to compare the type of the erased bound (in this example the type @{code
+                            // Comparable}).
                             List<ResolvedType> thisBounds =
                                     thisParam.asTypeVariable().asTypeParameter().getBounds().stream()
                                             .map(ResolvedTypeParameterDeclaration.Bound::getType)
+                                            .map(type -> type.erasure())
                                             .collect(Collectors.toList());
                             List<ResolvedType> otherBounds =
                                     otherParam.asTypeVariable().asTypeParameter().getBounds().stream()
                                             .map(ResolvedTypeParameterDeclaration.Bound::getType)
+                                            .map(type -> type.erasure())
                                             .collect(Collectors.toList());
                             return thisBounds.size() == otherBounds.size() && otherBounds.containsAll(thisBounds);
                         }
@@ -582,6 +591,17 @@ public abstract class ResolvedReferenceType
                 && // Consider anonymous classes
                 hasName()
                 && getQualifiedName().equals(JAVA_LANG_ENUM);
+    }
+
+    /**
+     * @return true, if this represents {@code java.lang.Record}
+     * @see ResolvedReferenceTypeDeclaration#isJavaLangRecord()
+     */
+    public boolean isJavaLangRecord() {
+        return this.isReferenceType()
+                && // Consider anonymous classes
+                hasName()
+                && getQualifiedName().equals(JAVA_LANG_RECORD);
     }
 
     // /

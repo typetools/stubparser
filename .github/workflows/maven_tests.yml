@@ -35,7 +35,21 @@ jobs:
         ## Different JDK versions have different implementations etc. -- test on all combinations (ideally 8 to latest).
         ### exclude pre-8 (min development version jdk8)
         # typetools: Exclude 10 because of crashes in the compiler, exclude others because they aren't found
-        jdk: [ 8,11,13,15,16,17 ]
+        jdk: [ 8,11,13,15,16,17,18 ]
+        # The below configurations are no longer available on github runners and is not supported by the
+        # setup-java action, nor are they available from the supported distributions.
+        # See https://github.com/actions/setup-java for details
+        exclude:
+          - os: macos-latest
+            jdk: 9
+          - os: macos-latest
+            jdk: 10
+          - os: macos-latest
+            jdk: 12
+          - os: macos-latest
+            jdk: 14
+
+>>>>>>> 0ed19322f8efcf13ca541673cbe3f60a605af32c
     env:
       OS: ${{ matrix.os }}
       JDK: ${{ matrix.jdk }}
@@ -102,40 +116,3 @@ jobs:
           verbose: false # optional (default = false):
           flags: javaparser-symbol-solver,AlsoSlowTests,${{ matrix.os }},jdk-${{ matrix.jdk }}
           env_vars: OS,JDK
-
-  # Run checkstyle validations for pipeline
-  checkstyle_check:
-    name: Validate checkstyle
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout latest code
-        uses: actions/checkout@v4.1.7
-        with:
-          fetch-depth: "0"
-      - name: Set up JDK 11
-        uses: actions/setup-java@v4
-        with:
-          java-version: '11'
-          distribution: 'zulu'
-      - name: Validate Project Checkstyle
-        run: ./mvnw -B checkstyle:check
-
-  spotless_check:
-    name: Validate code generation and formatting
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout latest code
-        uses: actions/checkout@v4.1.7
-        with:
-          fetch-depth: "0"
-      - name: Set up JDK 11
-        uses: actions/setup-java@v4
-        with:
-          java-version: '11'
-          distribution: 'zulu'
-      - name: Generate code and format
-        run: |
-          ./run_core_metamodel_generator.sh
-          # ./run_core_generators.sh automatically runs ./mvnw spotless:apply
-          ./run_core_generators.sh
-          git diff --exit-code
