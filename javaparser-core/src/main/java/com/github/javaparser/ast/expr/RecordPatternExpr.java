@@ -1,3 +1,22 @@
+/*
+ * Copyright (C) 2011, 2013-2024 The JavaParser Team.
+ *
+ * This file is part of JavaParser.
+ *
+ * JavaParser can be used either under the terms of
+ * a) the GNU Lesser General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     (at your option) any later version.
+ * b) the terms of the Apache License
+ *
+ * You should have received a copy of both licenses in LICENCE.LGPL and
+ * LICENCE.APACHE. Please refer to those files for details.
+ *
+ * JavaParser is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ */
 package com.github.javaparser.ast.expr;
 
 import static com.github.javaparser.utils.Utils.assertNotNull;
@@ -12,6 +31,7 @@ import com.github.javaparser.ast.nodeTypes.modifiers.NodeWithFinalModifier;
 import com.github.javaparser.ast.observer.ObservableProperty;
 import com.github.javaparser.ast.type.ClassOrInterfaceType;
 import com.github.javaparser.ast.type.ReferenceType;
+import com.github.javaparser.ast.type.Type;
 import com.github.javaparser.ast.visitor.CloneVisitor;
 import com.github.javaparser.ast.visitor.GenericVisitor;
 import com.github.javaparser.ast.visitor.VoidVisitor;
@@ -68,8 +88,17 @@ public class RecordPatternExpr extends PatternExpr implements NodeWithFinalModif
 
     @AllFieldsConstructor
     public RecordPatternExpr(
-            final NodeList<Modifier> modifiers, final ReferenceType type, final NodeList<PatternExpr> patternList) {
+            final NodeList<Modifier> modifiers, final Type type, final NodeList<PatternExpr> patternList) {
         this(null, modifiers, type, patternList);
+    }
+
+    /**
+     * The type of RecordPatternExpr must always be a reference type. Only nested TypePatternExprs may have primitive
+     * types.
+     */
+    @Override
+    public ReferenceType getType() {
+        return super.getType().asReferenceType();
     }
 
     @Override
@@ -203,10 +232,7 @@ public class RecordPatternExpr extends PatternExpr implements NodeWithFinalModif
      */
     @Generated("com.github.javaparser.generator.core.node.MainConstructorGenerator")
     public RecordPatternExpr(
-            TokenRange tokenRange,
-            NodeList<Modifier> modifiers,
-            ReferenceType type,
-            NodeList<PatternExpr> patternList) {
+            TokenRange tokenRange, NodeList<Modifier> modifiers, Type type, NodeList<PatternExpr> patternList) {
         super(tokenRange, type);
         setModifiers(modifiers);
         setPatternList(patternList);
