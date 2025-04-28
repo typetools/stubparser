@@ -78,7 +78,7 @@ export HOSTING_INFO_DIR=/projects/swlab1/checker-framework/hosting-info
 
 9. Update the stubparser version number in the Checker Framework.  Create
 a branch with the same name as your StubParser branch.  In
-`checker-framework/build.gradle`, update `stubparserJar`.
+`checker-framework/framework/build.gradle`, update `stubparserJar`.
 10. Run Checker Framework tests (`./gradlew build`), using your StubParser branch.
 If any tests fail, fix them before continuing.
 11. Commit and push your changes to Checker Framework.
