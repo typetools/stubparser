@@ -68,7 +68,7 @@ JavaParser version plus `-SNAPSHOT`.  Run the following in `javaparser-core`
  ```
 export STUBPARSER=stubparser-3.25.5
 export HOSTING_INFO_DIR=/projects/swlab1/checker-framework/hosting-info
- mvn gpg:sign-and-deploy-file -Durl=https://oss.sonatype.org/content/repositories/snapshots/  \
+ ../mvnw gpg:sign-and-deploy-file -Durl=https://oss.sonatype.org/content/repositories/snapshots/  \
     -DpomFile=cfMavenCentral.xml -Dfile=target/$STUBPARSER.jar\
     -Dgpg.keyname=checker-framework-dev@googlegroups.com \
     -Dgpg.passphrase="`cat $HOSTING_INFO_DIR/release-private.password`" \
@@ -78,7 +78,7 @@ export HOSTING_INFO_DIR=/projects/swlab1/checker-framework/hosting-info
 
 9. Update the stubparser version number in the Checker Framework.  Create
 a branch with the same name as your StubParser branch.  In
-`checker-framework/build.gradle`, update `stubparserJar`.
+`checker-framework/framework/build.gradle`, update `stubparserJar`.
 10. Run Checker Framework tests (`./gradlew build`), using your StubParser branch.
 If any tests fail, fix them before continuing.
 11. Commit and push your changes to Checker Framework.
@@ -87,22 +87,23 @@ If any tests fail, fix them before continuing.
 Delete `-SNAPSHOT` from the version in `javaparser-core/cfMavenCentral.xml`.
 
 ```
-mvn source:jar && \
-mvn javadoc:javadoc && (cd target/site/apidocs && jar -c -f ../../$STUBPARSER-javadoc.jar com)
-mvn gpg:sign-and-deploy-file -Durl=https://oss.sonatype.org/service/local/staging/deploy/maven2/  \
+../mvnw source:jar && \
+../mvnw javadoc:javadoc && (cd target/reports/apidocs && jar -c -f ../../$STUBPARSER-javadoc.jar com)
+
+../mvnw gpg:sign-and-deploy-file -Durl=https://oss.sonatype.org/service/local/staging/deploy/maven2/  \
     -DpomFile=cfMavenCentral.xml -Dfile=target/$STUBPARSER.jar \
     -Dgpg.keyname=checker-framework-dev@googlegroups.com \
     -Dgpg.passphrase="`cat $HOSTING_INFO_DIR/release-private.password`" \
     -DrepositoryId=sonatype-nexus-staging
 
-mvn gpg:sign-and-deploy-file -Durl=https://oss.sonatype.org/service/local/staging/deploy/maven2/  \
+../mvnw gpg:sign-and-deploy-file -Durl=https://oss.sonatype.org/service/local/staging/deploy/maven2/  \
     -DpomFile=cfMavenCentral.xml \
     -Dgpg.keyname=checker-framework-dev@googlegroups.com \
     -Dgpg.passphrase="`cat $HOSTING_INFO_DIR/release-private.password`" \
     -DrepositoryId=sonatype-nexus-staging \
     -Dclassifier=javadoc -Dfile=target/$STUBPARSER-javadoc.jar
 
-mvn gpg:sign-and-deploy-file -Durl=https://oss.sonatype.org/service/local/staging/deploy/maven2/  \
+../mvnw gpg:sign-and-deploy-file -Durl=https://oss.sonatype.org/service/local/staging/deploy/maven2/  \
     -DpomFile=cfMavenCentral.xml \
     -Dgpg.keyname=checker-framework-dev@googlegroups.com \
     -Dgpg.passphrase="`cat $HOSTING_INFO_DIR/release-private.password`" \
