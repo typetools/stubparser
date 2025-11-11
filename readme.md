@@ -30,21 +30,30 @@ StubParser.  Only developers, not users, of StubParser need to do this.
 1. Fork [the StubParser project](https://github.com/typetools/stubparser) to your GitHub account.
 2. Clone the repository, using *one* of the following two commands:
 
-```sh
-git clone git@github.com:{user.name}/stubparser.git
-git clone https://github.com/{user.name}/stubparser
-```
+   ```sh
+   git clone git@github.com:{user.name}/stubparser.git
+   git clone https://github.com/{user.name}/stubparser
+   ```
+
+   and then `cd`:
+   ```sh
+   cd stubparser
+   ```
+3. Use JDK 17.  For example:
+   ```sh
+   usejdk17
+   ```
 
 ### Updating
 
 1. Update from StubParser.
    ```sh
-   cd stubparser
    git pull --ff-only https://github.com/typetools/stubparser
    ```
 2. Find an appropriate [tag name](https://github.com/javaparser/javaparser/tags):
    ```sh
-   export TAG_NAME=javaparser-parent-3.24.7
+   export VER=3.27.1
+   export TAG_NAME=javaparser-parent-${VER}
    ```
 3. Create and checkout a new branch, via ONE of the below:
    ```sh
@@ -53,16 +62,18 @@ git clone https://github.com/{user.name}/stubparser
    or (alternate version):
    ```sh
    gnb updating-${TAG_NAME}
-   cd ../stubparser-branch-updating-${TAG_NAME}
+   cd ../stubparser-fork-${USER}-branch-updating-${TAG_NAME}
    ```
 4. Pull the upstream of [the JavaParser project](https://github.com/javaparser/javaparser).
    ```sh
-   git pull https://github.com/javaparser/javaparser ${TAG_NAME}
+   git remote add upstream https://github.com/javaparser/javaparser
+   git fetch upstream
+   git merge ${TAG_NAME}
    ```
 5. If there are conflicts, resolve them and commit (but don't push yet).
 6. Update the StubParser version number in the `<finalName>` block of `javaparser-core/pom.xml`.
    (There should not be "-SNAPSHOT" there or in `<version>` in the top-level `pom.xml`.)
-7. Run Maven tests in the root directory:
+7. Run Maven tests in the root directory, using JDK 17.  This takes about 2 minutes.
    ```sh
    ./mvnw install test
    ```
@@ -72,7 +83,7 @@ git clone https://github.com/{user.name}/stubparser
    Update the `version` block in `javaparser-core/cfMavenCentral.xml` to be the same as the
    JavaParser version plus `-SNAPSHOT`.  Run the following in `javaparser-core` 
    ```sh
-   export STUBPARSER=stubparser-3.25.5
+   export STUBPARSER=stubparser-${VER}
    export HOSTING_INFO_DIR=/projects/swlab1/checker-framework/hosting-info
     ../mvnw gpg:sign-and-deploy-file -Durl=https://oss.sonatype.org/content/repositories/snapshots/  \
        -DpomFile=cfMavenCentral.xml -Dfile=target/$STUBPARSER.jar\
@@ -138,7 +149,6 @@ If any tests fail, fix them before continuing.
 
 17. Merge both pull requests when both pass.
 
-
 ## Changes to StubParser that break the Checker Framework
 
 If you commit a change to the StubParser that breaks the Checker Framework,
@@ -147,7 +157,6 @@ not for minor bug fixes), because it breaks the `mvn javadoc:javadoc` command.
  * In `javaparser-core/pom.xml`, in the `<finalName>` block.
  * In the Checker Framework's top-level `build.gradle` file, on the
    `stubparserJar =` line.
-
 
 ## Original JavaParser README
 
