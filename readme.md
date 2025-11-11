@@ -14,10 +14,10 @@ These are the differences between JavaParser and StubParser:
 
 To see the [diffs between the forks](https://stackoverflow.com/questions/4927519/diff-a-git-fork),
 enter the root directory of the StubParser and perform the following commands:
-```bash
+```sh
 git remote add upstream https://github.com/javaparser/javaparser
 git fetch upstream
-git diff upstream/master HEAD
+git diff $(git merge-base upstream/master HEAD) HEAD
 ```
 
 ## Updating from upstream JavaParser
@@ -28,8 +28,9 @@ StubParser.  Only developers, not users, of StubParser need to do this.
 ### Preparation
 
 1. Fork [the StubParser project](https://github.com/typetools/stubparser) to your GitHub account.
-3. Clone the repository, using *one* of the following two commands:
-```bash
+2. Clone the repository, using *one* of the following two commands:
+
+```sh
 git clone git@github.com:{user.name}/stubparser.git
 git clone https://github.com/{user.name}/stubparser
 ```
@@ -37,27 +38,31 @@ git clone https://github.com/{user.name}/stubparser
 ### Updating
 
 1. Update from StubParser.
-```bash
+```sh
 cd stubparser
 git pull --ff-only https://github.com/typetools/stubparser
 ```
 2. Find an appropriate [tag name](https://github.com/javaparser/javaparser/tags):
-```bash
+```sh
 export TAG_NAME=javaparser-parent-3.24.7
 ```
-3. Create and checkout a new branch, via the below or `gnb updating-${TAG_NAME}`:
-```bash
+3. Create and checkout a new branch, via ONE of the below:
+```sh
 git checkout -b updating-${TAG_NAME}
 ```
+   ```sh
+   gnb updating-${TAG_NAME}
+   cd ../stubparser-branch-updating-${TAG_NAME}
+   ```
 4. Pull the upstream of [the JavaParser project](https://github.com/javaparser/javaparser).
-```bash
+```sh
 git pull https://github.com/javaparser/javaparser ${TAG_NAME}
 ```
-5. Resolve conflicts if required and commit it (but don't push yet).
-6. Update the StubParser version to the JavaParser version to the version number in the `<finalName>` block of `javaparser-core/pom.xml`.
-(There should not be "-SNAPSHOT" there or in `<version>` in `pom.xml`.)
+5. If there are conflicts, resolve them and commit (but don't push yet).
+6. Update the StubParser version number in the `<finalName>` block of `javaparser-core/pom.xml`.
+   (There should not be "-SNAPSHOT" there or in `<version>` in the top-level `pom.xml`.)
 7. Run Maven tests in the root directory:
-```bash
+```sh
 ./mvnw install test
 ```
 If any tests fail, fix them before continuing.
@@ -118,7 +123,7 @@ Complete the release at https://oss.sonatype.org/#stagingRepositories.
 Commit and push your changes to Checker Framework.
 
 14. Push commits to your fork of StubParser.
-```bash
+```sh
 git push
 ```
 GitHub Actions CI will not run for your branch.
@@ -144,15 +149,15 @@ not for minor bug fixes), because it breaks the `mvn javadoc:javadoc` command.
    `stubparserJar =` line.
 
 
-<!--
-    Note that edits to this readme should be done via `docs/readme.md`.
-    Modifying this file directly within the root directory risks it being overwritten. 
--->
-
 ## Original JavaParser README
 
 The remainder of this README file is the original JavaParser README.
 
+
+<!--
+    Note that edits to this readme should be done via `docs/readme.md`.
+    Modifying this file directly within the root directory risks it being overwritten. 
+-->
 
 # JavaParser
 
