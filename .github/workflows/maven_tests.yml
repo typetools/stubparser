@@ -49,7 +49,6 @@ jobs:
           - os: macos-latest
             jdk: 14
 
->>>>>>> 0ed19322f8efcf13ca541673cbe3f60a605af32c
     env:
       OS: ${{ matrix.os }}
       JDK: ${{ matrix.jdk }}
