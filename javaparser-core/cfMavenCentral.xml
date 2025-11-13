@@ -19,7 +19,7 @@
         </license>
     </licenses>
 
-    <version>3.26.2-SNAPSHOT</version>
+    <version>3.27.1</version>
 
     <scm>
         <url>https://github.com/typetools/stubparser.git</url>
