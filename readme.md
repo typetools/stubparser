@@ -85,7 +85,7 @@ StubParser.  Only developers, not users, of StubParser need to do this.
    ```sh
    export STUBPARSER=stubparser-${VER}
    export HOSTING_INFO_DIR=/projects/swlab1/checker-framework/hosting-info
-    ../mvnw gpg:sign-and-deploy-file -Durl=https://oss.sonatype.org/content/repositories/snapshots/  \
+    ../mvnw gpg:sign-and-deploy-file -Durl=https://central.sonatype.com/repository/maven-snapshots/  \
        -DpomFile=cfMavenCentral.xml -Dfile=target/$STUBPARSER.jar\
        -Dgpg.keyname=checker-framework-dev@googlegroups.com \
        -Dgpg.passphrase="`cat $HOSTING_INFO_DIR/release-private.password`" \
@@ -107,47 +107,61 @@ If any tests fail, fix them before continuing.
    ../mvnw source:jar && \
    ../mvnw javadoc:javadoc && (cd target/reports/apidocs && jar -c -f ../../$STUBPARSER-javadoc.jar com)
 
-   ../mvnw gpg:sign-and-deploy-file -Durl=https://oss.sonatype.org/service/local/staging/deploy/maven2/  \
+   ../mvnw gpg:sign-and-deploy-file -Durl=https://ossrh-staging-api.central.sonatype.com/service/local/staging/deploy/maven2/  \
        -DpomFile=cfMavenCentral.xml -Dfile=target/$STUBPARSER.jar \
        -Dgpg.keyname=checker-framework-dev@googlegroups.com \
        -Dgpg.passphrase="`cat $HOSTING_INFO_DIR/release-private.password`" \
        -DrepositoryId=sonatype-nexus-staging
 
-   ../mvnw gpg:sign-and-deploy-file -Durl=https://oss.sonatype.org/service/local/staging/deploy/maven2/  \
+   ../mvnw gpg:sign-and-deploy-file -Durl=https://ossrh-staging-api.central.sonatype.com/service/local/staging/deploy/maven2/  \
        -DpomFile=cfMavenCentral.xml \
        -Dgpg.keyname=checker-framework-dev@googlegroups.com \
        -Dgpg.passphrase="`cat $HOSTING_INFO_DIR/release-private.password`" \
        -DrepositoryId=sonatype-nexus-staging \
        -Dclassifier=javadoc -Dfile=target/$STUBPARSER-javadoc.jar
 
-   ../mvnw gpg:sign-and-deploy-file -Durl=https://oss.sonatype.org/service/local/staging/deploy/maven2/  \
+   ../mvnw gpg:sign-and-deploy-file -Durl=https://ossrh-staging-api.central.sonatype.com/service/local/staging/deploy/maven2/  \
        -DpomFile=cfMavenCentral.xml \
        -Dgpg.keyname=checker-framework-dev@googlegroups.com \
        -Dgpg.passphrase="`cat $HOSTING_INFO_DIR/release-private.password`" \
        -DrepositoryId=sonatype-nexus-staging \
        -Dclassifier=sources -Dfile=target/$STUBPARSER-sources.jar
    ```
+13. Close the artifacts:
+  * Browse to https://ossrh-staging-api.central.sonatype.com/swagger-ui/#/default/manual_search_repositories.
+  * Expand GET manual/search/repositories
+  * Click try it out.
+  * Type any in the IP field.
+  * Click Execute.
+  * Log in with user token/password.
+  * Scroll down until you see a JSON block that includes a key like this:
+     "key": "user/ip/org.checkerframework--default-repository",`
+  * Copy the key field.
+  * Expand POST manual/upload/repositories/{repository_key}.
+  * Click try it out.
+  * Copy key field from above into repository_key.
+  * Click Execute, it may take a minute or two to update.
+  * Under Server response it should say Code 200.
+  * Go to https://central.sonatype.com/publishing and make sure you see a deployment org.checkerframework (via OSSRH Staging API).
 
-   Complete the release at https://oss.sonatype.org/#stagingRepositories.
-
-13. In the Checker Framework, remove `SNAPSHOT` in the StubParser version numbers. 
+14. In the Checker Framework, remove `SNAPSHOT` in the StubParser version numbers. 
    Commit and push your changes to Checker Framework.
 
-14. Push commits to your fork of StubParser.
+15. Push commits to your fork of StubParser.
    ```sh
    git push
    ```
    GitHub Actions CI will not run for your branch.
 
-15. Create a [pull request to `typetools/stubparser`](https://github.com/typetools/stubparser).
+16. Create a [pull request to `typetools/stubparser`](https://github.com/typetools/stubparser).
    Give it a title like "Update to JavaParser 3.24.3".
    Do *not* squash-and-merge the pull request;
    you want to keep a history of what upstream commits were merged in.
 
-16. Create a [pull request to `typetools/checker-framework`](https://github.com/typetools/checkerframework).
+17. Create a [pull request to `typetools/checker-framework`](https://github.com/typetools/checkerframework).
    Give it a title like "Update to StubParser 3.24.3".
 
-17. Merge both pull requests when both pass.
+18. Merge both pull requests when both pass.
 
 ## Changes to StubParser that break the Checker Framework
 
