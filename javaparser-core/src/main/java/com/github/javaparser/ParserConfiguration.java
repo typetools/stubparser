@@ -29,6 +29,7 @@ import com.github.javaparser.ast.validator.ProblemReporter;
 import com.github.javaparser.ast.validator.Validator;
 import com.github.javaparser.ast.validator.language_level_validations.*;
 import com.github.javaparser.ast.validator.postprocessors.*;
+import com.github.javaparser.printer.lexicalpreservation.DefaultLexicalPreservingPrinter;
 import com.github.javaparser.printer.lexicalpreservation.LexicalPreservingPrinter;
 import com.github.javaparser.resolution.SymbolResolver;
 import com.github.javaparser.utils.LineSeparator;
@@ -185,6 +186,8 @@ public class ParserConfiguration {
 
         /**
          * Does no post processing or validation. Only for people wanting the fastest parsing.
+         * Using the RAW language level can lead to parsing errors for features introduced in a specific version of Java
+         * (see issue https://github.com/javaparser/javaparser/issues/4813).
          */
         public static LanguageLevel RAW = null;
 
@@ -362,7 +365,10 @@ public class ParserConfiguration {
             @Override
             public void postProcess(ParseResult<? extends Node> result, ParserConfiguration configuration) {
                 if (configuration.isLexicalPreservationEnabled()) {
-                    result.ifSuccessful(LexicalPreservingPrinter::setup);
+                    result.ifSuccessful(resultNode -> {
+                        LexicalPreservingPrinter.setup(resultNode);
+                        resultNode.setData(Node.PRINTER_KEY, new DefaultLexicalPreservingPrinter());
+                    });
                 }
             }
         });

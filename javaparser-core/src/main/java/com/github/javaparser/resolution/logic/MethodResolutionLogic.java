@@ -24,6 +24,7 @@ import com.github.javaparser.resolution.MethodAmbiguityException;
 import com.github.javaparser.resolution.MethodUsage;
 import com.github.javaparser.resolution.TypeSolver;
 import com.github.javaparser.resolution.declarations.*;
+import com.github.javaparser.resolution.model.LambdaArgumentTypePlaceholder;
 import com.github.javaparser.resolution.model.SymbolReference;
 import com.github.javaparser.resolution.model.typesystem.ReferenceTypeImpl;
 import com.github.javaparser.resolution.types.*;
@@ -65,6 +66,43 @@ public class MethodResolutionLogic {
     public static boolean isApplicable(
             ResolvedMethodDeclaration method, String name, List<ResolvedType> argumentsTypes, TypeSolver typeSolver) {
         return isApplicable(method, name, argumentsTypes, typeSolver, false);
+    }
+
+    private static boolean isConflictingLambdaType(
+            LambdaArgumentTypePlaceholder lambdaPlaceholder, ResolvedType expectedType) {
+        // TODO: It might be possible to use the resolved type variable here, but that would either require
+        //  a type parameters map to be passed in, or the type variable to be resolved here which could lead
+        //  to duplicated work or maybe infinite recursion.
+        if (!expectedType.isReferenceType()) {
+            return false;
+        }
+        Optional<MethodUsage> maybeFunctionalInterface = FunctionalInterfaceLogic.getFunctionalMethod(expectedType);
+        if (maybeFunctionalInterface.isPresent()) {
+            MethodUsage functionalInterface = maybeFunctionalInterface.get();
+            // If the lambda expression does not have the same number of parameters as the functional interface
+            // method, the lambda cannot implement that interface.
+            if (lambdaPlaceholder.getParameterCount().isPresent()
+                    && functionalInterface.getNoParams()
+                            != lambdaPlaceholder.getParameterCount().get()) {
+                return true;
+            }
+            // If the lambda method has a block body then:
+            //   1. If the block contains a return statement with a returned value, the lambda can only implement
+            //      non-void methods.
+            //   2. If the block contains an empty return statement, or no return statement, the lambda can only
+            //      implement void methods.
+            if (lambdaPlaceholder.bodyBlockHasExplicitNonVoidReturn().isPresent()) {
+                boolean lambdaReturnIsVoid =
+                        !lambdaPlaceholder.bodyBlockHasExplicitNonVoidReturn().get();
+                if (lambdaReturnIsVoid && !functionalInterface.returnType().isVoid()) {
+                    return true;
+                }
+                if (!lambdaReturnIsVoid && functionalInterface.returnType().isVoid()) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     /**
@@ -145,6 +183,11 @@ public class MethodResolutionLogic {
         for (int i = 0; i < countOfMethodParametersDeclared; i++) {
             ResolvedType expectedDeclaredType = methodDeclaration.getParam(i).getType();
             ResolvedType actualArgumentType = needleArgumentTypes.get(i);
+            if (actualArgumentType instanceof LambdaArgumentTypePlaceholder
+                    && isConflictingLambdaType(
+                            (LambdaArgumentTypePlaceholder) actualArgumentType, expectedDeclaredType)) {
+                return false;
+            }
             if ((expectedDeclaredType.isTypeVariable() && !(expectedDeclaredType.isWildcard()))
                     && expectedDeclaredType.asTypeParameter().declaredOnMethod()) {
                 matchedParameters.put(expectedDeclaredType.asTypeParameter().getName(), actualArgumentType);
@@ -193,7 +236,14 @@ public class MethodResolutionLogic {
                     // we want to keep this method for future resolution
                     if (actualArgumentType.isConstraint()
                             && withWildcardTolerance
-                            && expectedDeclaredType.isPrimitive()) {
+                            && (actualArgumentType.asConstraintType().getBound().isTypeVariable()
+                                    || (!actualArgumentType
+                                                    .asConstraintType()
+                                                    .getBound()
+                                                    .isTypeVariable()
+                                            && expectedDeclaredType.isAssignableBy(actualArgumentType
+                                                    .asConstraintType()
+                                                    .getBound())))) {
                         needForWildCardTolerance = true;
                         continue;
                     }
@@ -644,10 +694,17 @@ public class MethodResolutionLogic {
             }
             // If some null arguments have been provided, use this to eliminate some opitons.
             if (!nullParamIndexes.isEmpty()) {
-                // remove method with array param if a non array exists and arg is null
+                // filter method with array param if a non array exists and arg is null
+                // For example, if we define 2 methods
+                // {@code void get(String str0, Object ... objects)}
+                // {@code void get(String str0, String str1, Object ... objects)}
+                // and want to determine the most specific method invoked by this expression
+                // {@code foo.get("", null , new Object());}
                 Set<ResolvedMethodDeclaration> removeCandidates = new HashSet<>();
                 for (Integer nullParamIndex : nullParamIndexes) {
                     for (ResolvedMethodDeclaration methDecl : applicableMethods) {
+                        //                        if (nullParamIndex < methDecl.getNumberOfParams() &&
+                        // methDecl.getParam(nullParamIndex).getType().isArray()) {
                         if (methDecl.getParam(nullParamIndex).getType().isArray()) {
                             removeCandidates.add(methDecl);
                         }
@@ -713,14 +770,21 @@ public class MethodResolutionLogic {
 
     protected static boolean isExactMatch(ResolvedMethodLikeDeclaration method, List<ResolvedType> argumentsTypes) {
         for (int i = 0; i < method.getNumberOfParams(); i++) {
-            if (!method.getParam(i).getType().equals(argumentsTypes.get(i))) {
+            ResolvedType paramType = getMethodsExplicitAndVariadicParameterType(method, i);
+            if (paramType == null) {
+                return false;
+            }
+            if (i >= argumentsTypes.size()) {
+                return false;
+            }
+            if (!paramType.equals(argumentsTypes.get(i))) {
                 return false;
             }
         }
         return true;
     }
 
-    private static ResolvedType getMethodsExplicitAndVariadicParameterType(ResolvedMethodDeclaration method, int i) {
+    public static ResolvedType getMethodsExplicitAndVariadicParameterType(ResolvedMethodLikeDeclaration method, int i) {
         int numberOfParams = method.getNumberOfParams();
         if (i < numberOfParams) {
             return method.getParam(i).getType();
@@ -731,8 +795,21 @@ public class MethodResolutionLogic {
         return null;
     }
 
-    private static boolean isMoreSpecific(
-            ResolvedMethodDeclaration methodA, ResolvedMethodDeclaration methodB, List<ResolvedType> argumentTypes) {
+    public static ResolvedType getMethodUsageExplicitAndVariadicParameterType(MethodUsage method, int i) {
+        int numberOfParams = method.getNoParams();
+        if (i < numberOfParams) {
+            return method.getParamType(i);
+        }
+        if (method.getDeclaration().hasVariadicParameter()) {
+            return method.getParamType(numberOfParams - 1);
+        }
+        return null;
+    }
+
+    static boolean isMoreSpecific(
+            ResolvedMethodLikeDeclaration methodA,
+            ResolvedMethodLikeDeclaration methodB,
+            List<ResolvedType> argumentTypes) {
         final boolean aVariadic = methodA.hasVariadicParameter();
         final boolean bVariadic = methodB.hasVariadicParameter();
         final int aNumberOfParams = methodA.getNumberOfParams();
@@ -800,11 +877,13 @@ public class MethodResolutionLogic {
                 // but eventually mark the method A as more specific if the methodB has an argument of type
                 // java.lang.Object
                 isMethodAMoreSpecific = isMethodAMoreSpecific || isJavaLangObject(paramTypeB);
-            } else // If we get to this point then we check whether one of the methods contains a parameter type that is
-            // more
-            // specific. If it does, we can assume the entire declaration is more specific as we would otherwise have
-            // a situation where the declarations are ambiguous in the given context.
-            {
+            } else {
+                // If we get to this point then we check whether one of the methods contains a parameter type that is
+                // more specific. If it does, we can assume the entire declaration is more specific as we would
+                // otherwise have a situation where the declarations are ambiguous in the given context.
+                // Note: This does not account for the case where one parameter is variadic (and therefore an array
+                // type) and the other is not, since these will never be assignable by each other. This case is checked
+                // below.
                 boolean aAssignableFromB = paramTypeA.isAssignableBy(paramTypeB);
                 boolean bAssignableFromA = paramTypeB.isAssignableBy(paramTypeA);
                 if (bAssignableFromA && !aAssignableFromB) {
@@ -814,6 +893,17 @@ public class MethodResolutionLogic {
                 if (aAssignableFromB && !bAssignableFromA) {
                     // B's parameter is more specific
                     return false;
+                }
+            }
+            // Note on safety: methodX.getParam(i) is safe because otherwise paramTypeX would be null, but add
+            // a check in case this changes in the future.
+            if (methodA.getNumberOfParams() > i && methodB.getNumberOfParams() > i) {
+                boolean paramAVariadic = methodA.getParam(i).isVariadic();
+                boolean paramBVariadic = methodB.getParam(i).isVariadic();
+                // Prefer a single parameter over a variadic parameter, e.g.
+                // foo(String s, Object... o) is preferred over foo(Object... o)
+                if (!paramAVariadic && paramBVariadic) {
+                    return true;
                 }
             }
         }
