@@ -31,6 +31,7 @@ StubParser.  Only developers, not users, of StubParser need to do this.
 2. Clone the repository, using *one* of the following two commands:
 
    ```sh
+   # Choose one of these two commands:
    git clone git@github.com:{user.name}/stubparser.git
    git clone https://github.com/{user.name}/stubparser
    ```
