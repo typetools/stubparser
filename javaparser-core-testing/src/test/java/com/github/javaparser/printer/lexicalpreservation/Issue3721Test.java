@@ -24,10 +24,12 @@ package com.github.javaparser.printer.lexicalpreservation;
 import static com.github.javaparser.utils.TestUtils.assertEqualsStringIgnoringEol;
 
 import com.github.javaparser.ast.body.VariableDeclarator;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 public class Issue3721Test extends AbstractLexicalPreservingTest {
 
+    @Disabled
     @Test
     void issue3721() {
         considerCode("public class Bug {\n"

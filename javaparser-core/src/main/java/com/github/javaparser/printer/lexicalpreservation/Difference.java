@@ -429,8 +429,14 @@ public class Difference {
                 diffIndex++;
             } else if (diffElement.isAdded()) {
                 Added addedElement = (Added) diffElement;
-                nodeText.addElement(originalIndex, addedElement.toTextElement());
-                originalIndex++;
+                if (addedElement.isIndent()) {
+                    addIndent();
+                } else if (addedElement.isUnindent()) {
+                    removeIndent();
+                } else {
+                    nodeText.addElement(originalIndex, addedElement.toTextElement());
+                    originalIndex++;
+                }
                 diffIndex++;
             } else {
                 // let's forget this element
@@ -591,11 +597,11 @@ public class Difference {
             }
         } else if (removed.isToken()
                 && originalElementIsToken
-                && (removed.getTokenType() == ((TokenTextElement) originalElement).getTokenKind()
-                        || // handle EOLs separately as their token kind might not be equal. This is because the
-                        // 'removed'
-                        // element always has the current operating system's EOL as type
-                        (((TokenTextElement) originalElement)
+                && ( // handle EOLs separately as their token kind might not be equal. This is because the
+                // 'removed'
+                // element always has the current operating system's EOL as type
+                removed.getTokenType() == ((TokenTextElement) originalElement).getTokenKind()
+                        || (((TokenTextElement) originalElement)
                                         .getToken()
                                         .getCategory()
                                         .isEndOfLine()
@@ -940,19 +946,27 @@ public class Difference {
         return false;
     }
 
+    private void addIndent() {
+        for (int i = 0; i < STANDARD_INDENTATION_SIZE; i++) {
+            indentation.add(new TokenTextElement(GeneratedJavaParserConstants.SPACE));
+        }
+    }
+
+    private void removeIndent() {
+        for (int i = 0; i < STANDARD_INDENTATION_SIZE && !indentation.isEmpty(); i++) {
+            indentation.remove(indentation.size() - 1);
+        }
+    }
+
     private void applyAddedDiffElement(Added added) {
         if (added.isIndent()) {
-            for (int i = 0; i < STANDARD_INDENTATION_SIZE; i++) {
-                indentation.add(new TokenTextElement(GeneratedJavaParserConstants.SPACE));
-            }
+            addIndent();
             addedIndentation = true;
             diffIndex++;
             return;
         }
         if (added.isUnindent()) {
-            for (int i = 0; i < STANDARD_INDENTATION_SIZE && !indentation.isEmpty(); i++) {
-                indentation.remove(indentation.size() - 1);
-            }
+            removeIndent();
             addedIndentation = false;
             diffIndex++;
             return;
