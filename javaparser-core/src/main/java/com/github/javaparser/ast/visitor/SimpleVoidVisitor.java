@@ -248,7 +248,7 @@ public class SimpleVoidVisitor<A> implements VoidVisitor<A> {
 
     @Override
     public void visit(TraditionalJavadocComment n, A arg) {
-      defaultAction(n, arg);
+        defaultAction(n, arg);
     }
 
     @Override
@@ -533,11 +533,11 @@ public class SimpleVoidVisitor<A> implements VoidVisitor<A> {
 
     @Override
     public void visit(MatchAllPatternExpr n, A arg) {
-      defaultAction(n, arg);
+        defaultAction(n, arg);
     }
 
     @Override
     public void visit(MarkdownComment n, A arg) {
-      defaultAction(n, arg);
+        defaultAction(n, arg);
     }
 }
