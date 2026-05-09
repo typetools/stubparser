@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2007-2010 Júlio Vilmar Gesser.
- * Copyright (C) 2011, 2013-2024 The JavaParser Team.
+ * Copyright (C) 2011, 2013-2026 The JavaParser Team.
  *
  * This file is part of JavaParser.
  *
@@ -215,12 +215,12 @@ public class ParserConfiguration {
         /**
          * The latest Java version that is available.
          */
-        public static LanguageLevel CURRENT = JAVA_18;
+        public static LanguageLevel CURRENT = JAVA_25;
 
         /**
          * The newest Java features supported.
          */
-        public static LanguageLevel BLEEDING_EDGE = JAVA_24;
+        public static LanguageLevel BLEEDING_EDGE = JAVA_25;
 
         final Validator validator;
 
@@ -243,7 +243,8 @@ public class ParserConfiguration {
             JAVA_21,
             JAVA_22,
             JAVA_23,
-            JAVA_24
+            JAVA_24,
+            JAVA_25
         };
 
         LanguageLevel(Validator validator, PostProcessors postProcessor) {

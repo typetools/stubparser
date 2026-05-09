@@ -1,7 +1,7 @@
 
-Next Release (Version 3.28.1-snapshot)
+Next Release (Version 3.28.2-snapshot)
 --------------------------------------
-[issues resolved](https://github.com/javaparser/javaparser/milestone/215?closed=1)
+[issues resolved](https://github.com/javaparser/javaparser/milestone/216?closed=1)
 
 ### Added
 ### Changed
@@ -9,6 +9,41 @@ Next Release (Version 3.28.1-snapshot)
 ### Removed
 ### Fixed
 ### Security
+
+Version 3.28.1
+--------------
+[issues resolved](https://github.com/javaparser/javaparser/milestone/215?closed=1)
+
+### Added
+
+* Implement switch expr type extraction (PR [#4968](https://github.com/javaparser/javaparser/pull/4968) by [@mrjameshamilton](https://github.com/mrjameshamilton))
+
+### Changed
+
+* refactor(lexicalpreservation): introduce TextElementSequence API and migrate core classes (PR [#4955](https://github.com/javaparser/javaparser/pull/4955) by [@jlerbsc](https://github.com/jlerbsc))
+* refactor: Extract and centralize indentation logic in lexical preservation (PR [#4952](https://github.com/javaparser/javaparser/pull/4952) by [@jlerbsc](https://github.com/jlerbsc))
+
+### Fixed
+
+* fix(grammar): allow empty component list in RecordPattern (PR [#5008](https://github.com/javaparser/javaparser/pull/5008) by [@jlerbsc](https://github.com/jlerbsc))
+* Fix: issue #4974 How to detect array.length ValueDeclaration (PR [#5000](https://github.com/javaparser/javaparser/pull/5000) by [@jlerbsc](https://github.com/jlerbsc))
+* Fix CommentInserter crash on compact classes (PR [#4963](https://github.com/javaparser/javaparser/pull/4963) by [@johannescoetzee](https://github.com/johannescoetzee))
+* Resolve parsing issue for module-info classes with multiple exports (PR [#4962](https://github.com/javaparser/javaparser/pull/4962) by [@mrjameshamilton](https://github.com/mrjameshamilton))
+* Issue3365 (PR [#4956](https://github.com/javaparser/javaparser/pull/4956) by [@jlerbsc](https://github.com/jlerbsc))
+* Fix: issue 4949 Parsing issue in switch with yield with Java 25 parser configuration (PR [#4950](https://github.com/javaparser/javaparser/pull/4950) by [@jlerbsc](https://github.com/jlerbsc))
+
+### Uncategorised
+
+* Add comprehensive test suite for lexical preserving printer rules (PR [#4957](https://github.com/javaparser/javaparser/pull/4957) by [@jlerbsc](https://github.com/jlerbsc))
+
+### :heart: Contributors
+
+Thank You to all contributors who worked on this release!
+
+* [@mrjameshamilton](https://github.com/mrjameshamilton)
+* [@johannescoetzee](https://github.com/johannescoetzee)
+* [@jlerbsc](https://github.com/jlerbsc)
+
 
 Version 3.28.0
 --------------
