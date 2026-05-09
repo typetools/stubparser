@@ -53,7 +53,7 @@ StubParser.  Only developers, not users, of StubParser need to do this.
    ```
 2. Find an appropriate [tag name](https://github.com/javaparser/javaparser/tags):
    ```sh
-   export VER=3.27.1
+   export VER=3.28.1
    export TAG_NAME=javaparser-parent-${VER}
    ```
 3. Create and checkout a new branch, via ONE of the below:
@@ -82,10 +82,14 @@ StubParser.  Only developers, not users, of StubParser need to do this.
 
 8. Deploy the snapshot. (This has been tested on tern.)
    Update the `version` block in `javaparser-core/cfMavenCentral.xml` to be the same as the
-   JavaParser version plus `-SNAPSHOT`.  Run the following in `javaparser-core` 
+   JavaParser version plus `-SNAPSHOT`.  Run the following in `javaparser-core`
    ```sh
+   # HOSTING_INFO_DIR=$HOME/private/cf-hosting-info
    export STUBPARSER=stubparser-${VER}
-   export HOSTING_INFO_DIR=/projects/swlab1/checker-framework/hosting-info
+   [ -z "$HOSTING_INFO_DIR" ] && HOSTING_INFO_DIR="/projects/swlab1/checker-framework/hosting-info"
+   export HOSTING_INFO_DIR
+   ([ -f $HOSTING_INFO_DIR/release-private.password ] || (echo "Missing file $HOSTING_INFO_DIR/release-private.password" && false)) && \
+   ([ -f $HOME/.m2/settings.xml ] || (echo "Missing file $HOME/.m2/settings.xml" && false)) && \
     ../mvnw gpg:sign-and-deploy-file -Durl=https://central.sonatype.com/repository/maven-snapshots/  \
        -DpomFile=cfMavenCentral.xml -Dfile=target/$STUBPARSER.jar\
        -Dgpg.keyname=checker-framework-dev@googlegroups.com \
@@ -96,15 +100,27 @@ StubParser.  Only developers, not users, of StubParser need to do this.
 
 9. Update the stubparser version number in the Checker Framework.  Create
    a branch with the same name as your StubParser branch.  In
-   `checker-framework/framework/build.gradle`, update `stubparserJar`.
-10. Run Checker Framework tests (`./gradlew build`), using your StubParser branch.
-If any tests fail, fix them before continuing.
-11. Commit and push your changes to Checker Framework.
-12. Once the Azure tests pass, release the Stubparser:
+   `checker-framework/gradle/libs.versions.toml`, update `stubparser`
+   to use the SNAPSHOT version.
+10. Commit and push your changes to Checker Framework, which is probably just file
+   `checker-framework/gradle/libs.versions.toml`.  (Use JDK 21 or later.)
+
+   ```sh
+   git commit -m "Use Stub Parser $VER" checker-framework/gradle/libs.versions.toml
+   ```
+
+11. Create a [pull request to
+   `typetools/checker-framework`](https://github.com/typetools/checkerframework).
+   Give it a title like "Update to StubParser 3.28.1".  You won't merge the
+   pull request yet.
+
+12. After the junit and nonjunit CI tests pass for the pull request, release the
+   Stubparser:
 
    Delete `-SNAPSHOT` from the version in `javaparser-core/cfMavenCentral.xml`.
 
    ```sh
+   cd javaparser-core && \
    ../mvnw source:jar && \
    ../mvnw javadoc:javadoc && (cd target/reports/apidocs && jar -c -f ../../$STUBPARSER-javadoc.jar com)
 
@@ -128,39 +144,52 @@ If any tests fail, fix them before continuing.
        -DrepositoryId=sonatype-nexus-staging \
        -Dclassifier=sources -Dfile=target/$STUBPARSER-sources.jar
    ```
+
 13. Close the artifacts:
   * Browse to https://ossrh-staging-api.central.sonatype.com/swagger-ui/#/default/manual_search_repositories.
-  * Expand GET manual/search/repositories
+  * Expand "GET manual/search/repositories".
   * Click try it out.
   * Type any in the IP field.
   * Click Execute.
-  * Log in with user token/password.
+  * Log in with user token/password from `~/.m2/settings.xml`.
+  * The response is under "Server response", above the "Responses" section that
+    has examples for codes 200, 400, and 401.
   * Scroll down until you see a JSON block that includes a key like this:
-     "key": "user/ip/org.checkerframework--default-repository",`
-  * Copy the key field.
+     "key": "USER/IP/org.checkerframework--default-repository",`
+  * Copy the key field (without the quotation marks).
   * Expand POST manual/upload/repositories/{repository_key}.
   * Click try it out.
   * Copy key field from above into repository_key.
   * Click Execute, it may take a minute or two to update.
   * Under Server response it should say Code 200.
-  * Go to https://central.sonatype.com/publishing and make sure you see a deployment org.checkerframework (via OSSRH Staging API).
+  * Go to https://central.sonatype.com/publishing and make sure you see a
+    deployment "org.checkerframework (via OSSRH Staging API)".
+  * Click "Publish"
 
-14. In the Checker Framework, remove `SNAPSHOT` in the StubParser version numbers. 
-   Commit and push your changes to Checker Framework.
+14. Commit and push your changes to StubParser (on a branch in your fork).
 
-15. Push commits to your fork of StubParser.
    ```sh
+   git add readme.md javaparser-core/pom.xml javaparser-core/cfMavenCentral.xml
+   git commit -m "Update to JavaParser $VER"
    git push
    ```
+
    GitHub Actions CI will not run for your branch.
 
-16. Create a [pull request to `typetools/stubparser`](https://github.com/typetools/stubparser).
-   Give it a title like "Update to JavaParser 3.24.3".
-   Do *not* squash-and-merge the pull request;
-   you want to keep a history of what upstream commits were merged in.
+15. Create a [pull request to `typetools/stubparser`](https://github.com/typetools/stubparser).
+   * Give it a title like:
+     Update to JavaParser 3.28.1
+   * Remove "Fixes #9999" from the PR description.
+   * Click "Create pull request".
+   * Change "Squash and merge" to "Create a merge commit",
+     in order to keep a history of what upstream commits were merged in.
 
-17. Create a [pull request to `typetools/checker-framework`](https://github.com/typetools/checkerframework).
-   Give it a title like "Update to StubParser 3.24.3".
+16. At https://central.sonatype.com/publishing, wait until the status changes
+    from "publishing" to "published".
+
+17. In the Checker Framework, remove `SNAPSHOT` in the StubParser version number
+   in file `gradle/libs.versions.toml`.  Commit and push your changes to Checker
+   Framework.  CI will begin running for your pull request.
 
 18. Merge both pull requests when both pass.
 
@@ -180,7 +209,7 @@ The remainder of this README file is the original JavaParser README.
 
 <!--
     Note that edits to this readme should be done via `docs/readme.md`.
-    Modifying this file directly within the root directory risks it being overwritten. 
+    Modifying this file directly within the root directory risks it being overwritten.
 -->
 
 # JavaParser
