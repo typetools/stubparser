@@ -14,7 +14,7 @@
     <groupId>com.github.javaparser</groupId>
     <artifactId>javaparser-parent</artifactId>
     <packaging>pom</packaging>
-    <version>3.28.0</version>
+    <version>3.28.1</version>
 
     <name>javaparser-parent</name>
     <url>https://github.com/javaparser</url>
@@ -147,9 +147,9 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <java.version>1.8</java.version>
-        <byte-buddy.version>1.18.3</byte-buddy.version>
+        <byte-buddy.version>1.18.8-jdk5</byte-buddy.version>
         <argLine>-javaagent:'${settings.localRepository}/net/bytebuddy/byte-buddy-agent/${byte-buddy.version}/byte-buddy-agent-${byte-buddy.version}.jar'</argLine>
-        <build.timestamp>2026-01-10T00:00:00Z</build.timestamp>
+        <build.timestamp>2026-05-04T00:00:00Z</build.timestamp>
         <jacoco.javaagent/>
     </properties>
 
@@ -208,7 +208,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-compiler-plugin</artifactId>
-                    <version>3.14.1</version>
+                    <version>3.15.0</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -286,7 +286,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-resources-plugin</artifactId>
-                    <version>3.4.0</version>
+                    <version>3.5.0</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -357,7 +357,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-surefire-plugin</artifactId>
-                    <version>3.5.4</version>
+                    <version>3.5.5</version>
                 </plugin>
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
@@ -372,17 +372,17 @@
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>templating-maven-plugin</artifactId>
-                    <version>3.0.0</version>
+                    <version>3.1.0</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-dependency-plugin</artifactId>
-                    <version>3.9.0</version>
+                    <version>3.10.0</version>
                 </plugin>
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>versions-maven-plugin</artifactId>
-                    <version>2.20.1</version>
+                    <version>2.21.0</version>
                     <configuration>
                         <generateBackupPoms>false</generateBackupPoms>
                     </configuration>
@@ -411,10 +411,13 @@
                     <!-- This is the last version with Java 8 support -->
                     <version>2.46.1</version>
                     <configuration>
+						<lineEndings>UNIX</lineEndings>
                         <java>
                             <!-- google-java-format, but better: see https://github.com/palantir/palantir-java-format -->
                             <palantirJavaFormat/>
                         </java>
+                        <trimTrailingWhitespace/>
+      					<endWithNewline/>
                     </configuration>
                 </plugin>
             </plugins>
@@ -427,17 +430,17 @@
             <dependency>
                 <groupId>org.javassist</groupId>
                 <artifactId>javassist</artifactId>
-                <version>3.30.2-GA</version>
+                <version>3.31.0-GA</version>
             </dependency>
             <dependency>
                 <groupId>com.google.guava</groupId>
                 <artifactId>guava</artifactId>
-                <version>33.5.0-jre</version>
+                <version>33.6.0-jre</version>
             </dependency>
 			<dependency>
 				<groupId>org.checkerframework</groupId>
 				<artifactId>checker-qual</artifactId>
-				<version>3.54.0</version>
+				<version>3.55.1</version>
 			</dependency>
             <dependency>
                 <groupId>org.hamcrest</groupId>
@@ -448,7 +451,7 @@
 			<dependency>
 				<groupId>org.junit</groupId>
 				<artifactId>junit-bom</artifactId>
-				<version>5.14.2</version>
+				<version>5.14.4</version>
 				<type>pom</type>
 				<scope>import</scope>
 			</dependency>
